@@ -36,17 +36,26 @@ without knowing anything about Phoenix time.
 
 ## Finishing the setup
 
-Everything in this folder is built and committed. Three things are left, and all
-three need your account, which is why they are not done:
+Everything in this folder is built and committed. What is left needs your GitHub
+account, which is why it is not done.
 
-### 1. Create the GitHub repo
+> **Run these in PowerShell, not Git Bash.** In bash a Windows path gets its
+> backslashes eaten — `C:\BrophyUAV-web` arrives as `C:BrophyUAV-web` and git
+> answers `cannot change to 'C:BrophyUAV-web'`. If you would rather use bash,
+> write the path with forward slashes: `git -C /c/BrophyUAV-web …`.
 
-Make a **new, empty** repo (no README, no .gitignore — this folder already has
-both). Public or private both work; Netlify can build from either.
+### 1. Sign in to GitHub, and create the repo
 
-Then, from a terminal:
+As of 2026-08-23 Chrome on this machine is **not signed in to GitHub** — that is
+the actual blocker, and it is the one step nobody can do for you.
 
-```bash
+Then make a **new, empty** repo called `brophy-uav-dashboard` (no README, no
+.gitignore — this folder already has both). Public or private both work; Netlify
+can build from either.
+
+Then, from PowerShell:
+
+```powershell
 git -C C:\BrophyUAV-web remote add origin https://github.com/YOUR-USER/brophy-uav-dashboard.git
 ```
 
@@ -56,7 +65,7 @@ The first push has to be interactive, because it is what signs git in to GitHub.
 A browser window opens, you approve, and Git Credential Manager caches the token
 in Windows Credential Manager for this user. Every later push is silent.
 
-```bash
+```powershell
 git -C C:\BrophyUAV-web push -u origin main
 ```
 
