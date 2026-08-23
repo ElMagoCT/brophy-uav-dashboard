@@ -534,19 +534,51 @@ function allWindows(){
   return out;
 }
 
+/* Today's date IN THE LAB'S ZONE, as a yyyy-mm-dd key.
+   Not the visitor's date: someone opening this from the east coast at 9pm is
+   already on tomorrow, and would otherwise be shown the wrong day's hours. */
+function labDateKey(){
+  try {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Phoenix' }).format(new Date());
+  } catch (e){
+    var d = new Date();
+    function p(n){ return (n < 10 ? '0' : '') + n; }
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  }
+}
+
+/* Where "today" actually sits in the snapshot.
+   Emphatically NOT always index 0. The snapshot is written by the kiosk, and
+   the kiosk can be off - a weekend, a holiday, a dead scheduled task - so day 0
+   is only "today" if it was published today. Trusting index 0 would put a
+   "today" flag on a day that has already been and gone, and quietly list past
+   hours as upcoming ones. Returns -1 if today is not in the snapshot at all. */
+function todayIndex(){
+  if (!DATA || !DATA.schedule.days.length) return -1;
+  var key = labDateKey();
+  for (var i = 0; i < DATA.schedule.days.length; i++){
+    if (DATA.schedule.days[i].date === key) return i;
+  }
+  return -1;
+}
+
 function relativeDayWord(dateKey){
   if (!DATA || !DATA.schedule.days.length) return '';
-  var todayKey = DATA.schedule.days[0].date;
-  if (dateKey === todayKey) return 'today';
+  var days = DATA.schedule.days;
+  var t = todayIndex();
+
   var idx = -1;
-  for (var i = 0; i < DATA.schedule.days.length; i++){
-    if (DATA.schedule.days[i].date === dateKey){ idx = i; break; }
+  for (var i = 0; i < days.length; i++){
+    if (days[i].date === dateKey){ idx = i; break; }
   }
-  if (idx === 1) return 'tomorrow';
-  var day = DATA.schedule.days[idx];
-  if (!day) return '';
-  if (idx > 1 && idx < 7) return day.dowFull;
-  return day.dowFull + ', ' + day.label;
+  if (idx < 0) return '';
+
+  if (t >= 0){
+    if (idx === t) return 'today';
+    if (idx === t + 1) return 'tomorrow';
+    if (idx > t && idx < t + 7) return days[idx].dowFull;
+  }
+  return days[idx].dowFull + ', ' + days[idx].label;
 }
 
 /* ----------------------------------------------------------------- rendering */
@@ -596,7 +628,9 @@ function renderStatus(){
   if (brief){
     line += ' &middot; short gap between classes';
   }
-  if (DATA.schedule.closedLabel && next.day.date === DATA.schedule.days[0].date){
+  /* Only explain what the room is busy with if the next window is later TODAY -
+     "class in session until then" is nonsense pointing at Monday morning. */
+  if (DATA.schedule.closedLabel && next.day.date === labDateKey()){
     line += '<br>' + esc(DATA.schedule.closedLabel) + ' until then.';
   }
   detail.innerHTML = line;
@@ -686,7 +720,19 @@ function renderHours(){
   }
 
   var now = Date.now();
-  var today = days[0];
+  var t = todayIndex();
+
+  /* If today is not in the snapshot the kiosk has not published in a while.
+     Say so rather than presenting stale days as current ones. */
+  if (t < 0){
+    $('hours').innerHTML =
+      '<div class="msg">This snapshot was taken on ' + esc(days[0].label) +
+      ' and no longer covers today. The kiosk has not published since then.</div>';
+    $('hoursHint').textContent = 'snapshot out of date';
+    return;
+  }
+
+  var today = days[t];
 
   var todayVal;
   if (!today.open){
@@ -707,10 +753,13 @@ function renderHours(){
       '<div class="val">' + todayVal + '</div>' +
     '</div>';
 
-  var limit = showAllDays ? days.length : 8;
+  /* List from today forward. Days before today are dropped, not greyed out -
+     nobody visits this page to find out when they could have flown. */
+  var upcoming = days.slice(t);
+  var limit = showAllDays ? upcoming.length : 8;
 
-  for (var i = 0; i < Math.min(limit, days.length); i++){
-    var day = days[i];
+  for (var i = 0; i < Math.min(limit, upcoming.length); i++){
+    var day = upcoming[i];
     var cls = 'day' + (day.open ? '' : ' shut') + (i === 0 ? ' is-today' : '');
     var body = '';
 
@@ -736,9 +785,9 @@ function renderHours(){
       '</div>';
   }
 
-  if (days.length > 8){
+  if (upcoming.length > 8){
     html += '<div class="more"><button type="button" id="moreDays">' +
-            (showAllDays ? 'Show less' : 'Show all ' + days.length + ' days') +
+            (showAllDays ? 'Show less' : 'Show all ' + upcoming.length + ' days') +
             '</button></div>';
   }
 
