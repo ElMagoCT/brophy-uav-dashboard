@@ -22,6 +22,16 @@ C:\BrophyUAV\index.html          ─┘         every 15 min)                   
 carries an absolute instant, so the page can compare it to the visitor's clock
 without knowing anything about Phoenix time.
 
+> **The lab's timezone is pinned in the exporter, not read off the kiosk PC.**
+> That machine is set to Pacific while the school is in Phoenix. In August the
+> two agree; from November they differ by an hour, and an exporter trusting the
+> machine would publish every window an hour early all winter. It resolves
+> against `US Mountain Standard Time` (Arizona, no DST) instead. Do not "simplify"
+> that back to `[TimeZoneInfo]::Local`.
+>
+> This protects the *website*. The kiosk itself still has the same latent bug —
+> see the tail of `C:\BrophyUAV\CHANGELOG.md`.
+
 ---
 
 ## Finishing the setup
