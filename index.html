@@ -584,8 +584,8 @@ function renderStatus(){
   word.textContent = 'Closed';
 
   if (!next){
-    detail.innerHTML = 'No open time in the next ' +
-      (DATA.schedule.days.length) + ' days.';
+    var span = DATA.schedule.days.length;
+    detail.innerHTML = 'No open time in the next ' + span + (span === 1 ? ' day.' : ' days.');
     return;
   }
 
