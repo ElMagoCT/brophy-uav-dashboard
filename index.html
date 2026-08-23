@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Brophy UAV — Flight Simulator Lab</title>
+<meta name="description" content="Live hours, pilot leaderboard and flight reel for the Brophy UAV flight simulator lab.">
+<meta name="color-scheme" content="light">
+<meta property="og:title" content="Brophy UAV — Flight Simulator Lab">
+<meta property="og:description" content="Hours, leaderboard and flight reel for the club sim lab.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23f2ece0'/><g stroke='%231f3350' stroke-width='2.4' fill='none' stroke-linecap='round'><circle cx='16' cy='16' r='3.4'/><path d='M8 8 13 13M24 8 19 13M8 24 13 19M24 24 19 19'/><circle cx='7' cy='7' r='3.2'/><circle cx='25' cy='7' r='3.2'/><circle cx='7' cy='25' r='3.2'/><circle cx='25' cy='25' r='3.2'/></g></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Cabin+Sketch:wght@400;700&family=Architects+Daughter&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================================
+   Brophy UAV — public dashboard.
+
+   Same design system as the kiosk (C:\BrophyUAV\index.html): off-white paper,
+   blueprint grid, blue-black ink, flat white boxes laid on the desk. Two rules
+   carried over from that project on purpose:
+
+     * THE GRID IS THE DESK; THE BOXES ON IT ARE WHITE. --glass is the field the
+       grid is printed on; --glass-2 is the opaque white of anything you read.
+       Use background-color, never the background shorthand, on desk surfaces,
+       or the shorthand resets the grid image out from under them.
+     * THE TWO PENCIL FACES ARE FOR THE WORDMARK ONLY. Cabin Sketch and
+       Architects Daughter appear in the h1, the stamp and section eyebrows.
+       Nothing read word by word is set in them.
+
+   Nothing here is smaller than 13px.
+   ========================================================================== */
+
+:root{
+  --paper:#f2ece0;
+  --paper-2:#eae2d1;
+  --ink:#1f3350;
+  --ink-soft:#546881;
+  --graphite:#3b3f45;
+  --rust:#8f3d12;
+  --amber:#7d5810;
+  --green:#1f5230;
+  --green-soft:#356b45;
+  --sky:#1c5578;
+  --violet:#4b3287;
+  --gold:#f0a91a;
+  --silver:#8497a9;
+  --bronze:#c9803a;
+  --line:rgba(31,51,80,.20);
+  --line-hard:rgba(31,51,80,.42);
+  --glass:#f3eee2;
+  --glass-2:#ffffff;
+
+  --font-sketch:'Cabin Sketch','Architects Daughter',cursive;
+  --font-hand:'Architects Daughter','Segoe Print',cursive;
+  --font-mono:'Share Tech Mono','Consolas',monospace;
+  --font-body:'Barlow','Segoe UI',system-ui,sans-serif;
+
+  --r:10px;
+  --shadow:0 1px 0 rgba(31,51,80,.14), 0 6px 18px rgba(31,51,80,.07);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background-color:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.5;
+  min-height:100vh;
+}
+
+/* ---------- paper + grid texture ---------- */
+#paper-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+#paper-bg .grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(var(--line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:28px 28px;
+  opacity:.28;
+}
+#paper-bg .grid-fine{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(31,51,80,.10) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(31,51,80,.10) 1px,transparent 1px);
+  background-size:7px 7px;
+  opacity:.5;
+}
+#paper-bg .vignette{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 45% 32%,rgba(255,255,255,.42) 0%,rgba(255,255,255,0) 48%),
+             radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 55%,rgba(120,100,60,.13) 100%);
+}
+
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:28px 20px 64px}
+
+/* ---------- title block ---------- */
+header.title{
+  background-color:var(--glass);
+  border:1.5px solid var(--line-hard);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  padding:22px 24px;
+  display:flex;flex-wrap:wrap;gap:18px 24px;
+  align-items:flex-end;justify-content:space-between;
+}
+.title h1{
+  font-family:var(--font-sketch);
+  font-weight:700;
+  font-size:clamp(34px,7vw,58px);
+  line-height:.95;
+  margin:0;
+  letter-spacing:.5px;
+}
+.title .sub{
+  font-family:var(--font-mono);
+  font-size:14px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  margin-top:6px;
+}
+.stamp{
+  font-family:var(--font-hand);
+  font-size:19px;
+  color:var(--rust);
+  transform:rotate(-3deg);
+  border:2.5px solid var(--rust);
+  border-radius:6px;
+  padding:3px 11px;
+  display:inline-block;
+  margin-top:12px;
+  opacity:.9;
+}
+
+/* ---------- status pill ---------- */
+.status{
+  background-color:var(--glass-2);
+  border:1.5px solid var(--line-hard);
+  border-radius:var(--r);
+  padding:14px 18px;
+  min-width:262px;
+  box-shadow:var(--shadow);
+}
+.status .lamp{display:flex;align-items:center;gap:10px}
+.status .dot{
+  width:13px;height:13px;border-radius:50%;
+  background:var(--ink-soft);
+  box-shadow:0 0 0 4px rgba(84,104,129,.16);
+  flex:none;
+}
+.status.is-open .dot{background:var(--green);box-shadow:0 0 0 4px rgba(31,82,48,.18)}
+.status.is-open .word{color:var(--green)}
+.status.is-shut .dot{background:var(--rust);box-shadow:0 0 0 4px rgba(143,61,18,.16)}
+.status.is-shut .word{color:var(--rust)}
+.status .word{
+  font-family:var(--font-mono);
+  font-size:20px;letter-spacing:.1em;text-transform:uppercase;font-weight:400;
+}
+.status .detail{font-size:15px;color:var(--ink-soft);margin-top:7px;line-height:1.35}
+.status .detail strong{color:var(--ink);font-weight:600}
+
+/* ---------- section scaffolding ---------- */
+section{margin-top:30px}
+.eyebrow{
+  display:flex;align-items:baseline;gap:12px;
+  margin:0 2px 12px;
+}
+.eyebrow h2{
+  font-family:var(--font-mono);
+  font-size:15px;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:400;color:var(--ink);margin:0;
+}
+.eyebrow .rule{flex:1;height:1px;background:var(--line-hard);opacity:.75}
+.eyebrow .hint{font-size:13.5px;color:var(--ink-soft)}
+
+.card{
+  background-color:var(--glass-2);
+  border:1.5px solid var(--line-hard);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+}
+
+/* ---------- stat strip ---------- */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat{padding:16px 18px}
+.stat .n{
+  font-family:var(--font-mono);
+  font-size:clamp(26px,4.4vw,36px);
+  line-height:1.05;
+  letter-spacing:-.01em;
+}
+.stat .n small{font-size:.5em;letter-spacing:.06em;color:var(--ink-soft);margin-left:3px}
+.stat .k{
+  font-size:13px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-soft);margin-top:7px;font-weight:600;
+}
+
+/* ---------- leaderboard ---------- */
+.board{overflow:hidden}
+.row{
+  display:grid;
+  grid-template-columns:52px 1fr auto;
+  gap:0 14px;
+  align-items:center;
+  padding:13px 18px;
+  border-top:1px solid var(--line);
+}
+.row:first-child{border-top:0}
+.rank{
+  font-family:var(--font-mono);
+  font-size:20px;
+  text-align:center;
+  color:var(--ink-soft);
+}
+.row.medal .rank{
+  color:var(--ink);
+  background:var(--paper-2);
+  border:1.5px solid var(--line-hard);
+  border-radius:7px;
+  padding:2px 0;
+}
+.row.m1 .rank{border-color:var(--gold);   box-shadow:inset 0 0 0 2px rgba(240,169,26,.28)}
+.row.m2 .rank{border-color:var(--silver); box-shadow:inset 0 0 0 2px rgba(132,151,169,.28)}
+.row.m3 .rank{border-color:var(--bronze); box-shadow:inset 0 0 0 2px rgba(201,128,58,.28)}
+
+.who{min-width:0}
+.who .nm{font-size:17px;font-weight:600;line-height:1.25;overflow-wrap:break-word}
+.who .meta{font-size:13.5px;color:var(--ink-soft);margin-top:2px}
+.who .meta .gs{color:var(--violet);font-weight:600}
+
+.hrs{
+  font-family:var(--font-mono);
+  font-size:19px;
+  text-align:right;
+  white-space:nowrap;
+}
+.hrs .z{color:var(--ink-soft)}
+
+.bar{
+  grid-column:2 / 4;
+  height:9px;
+  margin-top:9px;
+  border-radius:5px;
+  background:var(--paper-2);
+  border:1px solid var(--line);
+  display:flex;overflow:hidden;
+}
+.bar i{display:block;height:100%}
+.bar.empty{opacity:.55}
+
+.legend{
+  display:flex;flex-wrap:wrap;gap:8px 18px;
+  padding:14px 18px;
+  border-top:1px solid var(--line);
+  background-color:var(--glass);
+}
+.legend span{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink-soft)}
+.legend b{width:11px;height:11px;border-radius:3px;flex:none}
+
+/* ---------- hours ---------- */
+.hours{padding:4px 0}
+.today{
+  padding:16px 18px;
+  background-color:var(--glass);
+  border-bottom:1px solid var(--line-hard);
+}
+.today .lbl{
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-soft);
+}
+.today .val{font-size:17px;font-weight:600;margin-top:5px}
+
+.day{
+  display:grid;grid-template-columns:112px 1fr;gap:4px 16px;
+  padding:11px 18px;border-top:1px solid var(--line);
+  align-items:baseline;
+}
+.day:first-of-type{border-top:0}
+.day.shut{color:var(--ink-soft)}
+.day.is-today{background-color:#fffdf6;box-shadow:inset 3px 0 0 var(--green)}
+.day .d{font-family:var(--font-mono);font-size:14.5px;letter-spacing:.04em}
+.day .w{display:flex;flex-wrap:wrap;gap:6px 8px}
+.slot{
+  font-family:var(--font-mono);font-size:14px;
+  background:var(--paper-2);
+  border:1px solid var(--line-hard);
+  border-radius:6px;padding:2px 8px;white-space:nowrap;
+}
+.slot.brief{opacity:.62;font-size:13px;border-style:dashed}
+.slot.now{background:rgba(31,82,48,.12);border-color:var(--green);color:var(--green);font-weight:700}
+.day .shutword{font-size:14.5px;font-style:italic}
+.more{
+  padding:13px 18px;border-top:1px solid var(--line);
+  background-color:var(--glass);
+}
+.more button{
+  font-family:var(--font-mono);font-size:14px;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--glass-2);color:var(--ink);
+  border:1.5px solid var(--line-hard);border-radius:7px;
+  padding:7px 14px;cursor:pointer;
+}
+.more button:hover{background:var(--paper-2)}
+
+/* ---------- reel ---------- */
+.reelhead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:0 2px 12px}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px}
+.btn{
+  font-family:var(--font-mono);font-size:14px;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--glass-2);color:var(--ink);text-decoration:none;
+  border:1.5px solid var(--line-hard);border-radius:7px;
+  padding:9px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  box-shadow:var(--shadow);
+}
+.btn:hover{background:var(--paper-2)}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.primary:hover{background:#182740}
+
+.reel{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.vid{overflow:hidden;display:flex;flex-direction:column}
+.vid .frame{
+  position:relative;aspect-ratio:16/9;background:var(--graphite);
+  border-bottom:1.5px solid var(--line-hard);cursor:pointer;overflow:hidden;
+}
+.vid .frame img{width:100%;height:100%;object-fit:cover;display:block}
+/* If i.ytimg.com is blocked - which is exactly what the school's filter does to
+   half the internet - fall back to a drawn panel rather than a broken image.
+   The video itself still plays on tap; only the poster is gone. */
+.vid .frame.noimg{
+  background-color:var(--ink);
+  background-image:
+    linear-gradient(rgba(242,236,224,.13) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(242,236,224,.13) 1px,transparent 1px);
+  background-size:22px 22px;
+}
+.vid .frame.noimg img{display:none}
+.vid .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vid .play{
+  position:absolute;inset:0;display:grid;place-items:center;
+  background:linear-gradient(rgba(31,51,80,.06),rgba(31,51,80,.34));
+}
+.vid .play svg{
+  width:56px;height:56px;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.45));
+}
+.vid .cap{padding:11px 14px 13px}
+.vid .cap .t{font-size:15.5px;font-weight:600;line-height:1.3}
+.vid .cap .a{font-size:13.5px;color:var(--ink-soft);margin-top:2px}
+
+/* ---------- footer ---------- */
+footer{
+  margin-top:34px;padding:16px 18px;
+  background-color:var(--glass);
+  border:1.5px solid var(--line-hard);border-radius:var(--r);
+  font-size:13.5px;color:var(--ink-soft);
+  display:flex;flex-wrap:wrap;gap:6px 20px;justify-content:space-between;
+}
+footer a{color:var(--ink)}
+
+.msg{padding:22px 18px;font-size:16px;color:var(--ink-soft)}
+.msg.bad{color:var(--rust)}
+
+/* ---------- responsive ---------- */
+@media (max-width:860px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .reel{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:600px){
+  .wrap{padding:18px 13px 52px}
+  header.title{padding:18px 16px}
+  .status{min-width:0;width:100%}
+  .reel{grid-template-columns:1fr}
+  .row{grid-template-columns:40px 1fr auto;gap:0 10px;padding:12px 14px}
+  .bar{grid-column:2 / 4}
+  .day{grid-template-columns:1fr;padding:11px 14px}
+  .day .d{color:var(--ink)}
+  .stat{padding:14px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .btn,.more button{transition:background-color .14s ease}
+}
+</style>
+</head>
+<body>
+
+<div id="paper-bg" aria-hidden="true">
+  <div class="grid"></div>
+  <div class="grid-fine"></div>
+  <div class="vignette"></div>
+</div>
+
+<div class="wrap">
+
+  <header class="title">
+    <div>
+      <h1>Brophy UAV</h1>
+      <div class="sub">Flight Simulator Lab &middot; Club Room</div>
+      <div class="stamp">open to anyone</div>
+    </div>
+    <div class="status" id="status" role="status" aria-live="polite">
+      <div class="lamp"><span class="dot"></span><span class="word" id="statusWord">Loading</span></div>
+      <div class="detail" id="statusDetail">Reading the lab schedule&hellip;</div>
+    </div>
+  </header>
+
+  <section aria-label="Club totals">
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <section aria-labelledby="lbHead">
+    <div class="eyebrow">
+      <h2 id="lbHead">Leaderboard</h2>
+      <span class="rule"></span>
+      <span class="hint">total time logged on the kiosk</span>
+    </div>
+    <div class="card board" id="board"><div class="msg">Loading&hellip;</div></div>
+  </section>
+
+  <section aria-labelledby="hrHead">
+    <div class="eyebrow">
+      <h2 id="hrHead">When you can fly</h2>
+      <span class="rule"></span>
+      <span class="hint" id="hoursHint"></span>
+    </div>
+    <div class="card hours" id="hours"><div class="msg">Loading&hellip;</div></div>
+  </section>
+
+  <section aria-labelledby="reHead">
+    <div class="reelhead">
+      <div class="eyebrow" style="margin:0;flex:1">
+        <h2 id="reHead">Flight reel</h2>
+        <span class="rule"></span>
+      </div>
+      <div class="btnrow">
+        <button class="btn" id="shuffle" type="button">Shuffle</button>
+        <a class="btn primary" id="playlistLink" href="#" target="_blank" rel="noopener">Full playlist &rarr;</a>
+      </div>
+    </div>
+    <div class="reel" id="reel"></div>
+  </section>
+
+  <footer>
+    <span id="stampLine">&nbsp;</span>
+    <span>Opening hours and flight time come from the club kiosk. Videos are other people&rsquo;s work, embedded from YouTube.</span>
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================================
+   One fetch of data.json, then everything is drawn from that object.
+
+   data.json is a DERIVED snapshot written by Publish-Dashboard.ps1 on the kiosk
+   (see the repo README). The important thing about its shape: every opening
+   window carries an absolute startIso/endIso with the Phoenix offset baked in,
+   so this page does no timezone arithmetic at all - it compares Date.now()
+   against instants and is therefore correct for a visitor in any zone.
+   ========================================================================== */
+
+var SIM_COLOR = {
+  liftoff:     'var(--sky)',
+  microdrones: 'var(--violet)',
+  skydive:     'var(--rust)',
+  fpvlabs:     'var(--amber)',
+  picasim:     'var(--green-soft)'
+};
+
+/* A window this short is a passing period between classes, not a chance to fly.
+   It stays in the data because the room genuinely is unlocked; the UI just
+   stops it shouting. */
+var BRIEF_MIN = 20;
+
+var DATA = null;
+var showAllDays = false;
+var reelPicks = [];
+
+/* ------------------------------------------------------------------ helpers */
+
+function $(id){ return document.getElementById(id); }
+
+function esc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function hoursMinutes(ms){
+  var mins = Math.floor((ms || 0) / 60000);
+  var h = Math.floor(mins / 60);
+  var m = mins % 60;
+  if (h === 0) return m + 'm';
+  return h + 'h ' + (m < 10 ? '0' : '') + m + 'm';
+}
+
+/* 13:05 -> "1:05 PM". Takes the snapshot's own HH:mm strings so the label is
+   the lab's local time, not the visitor's. */
+function clockLabel(hhmm){
+  var bits = String(hhmm).split(':');
+  var h = parseInt(bits[0], 10);
+  var m = bits[1];
+  var suffix = h >= 12 ? 'PM' : 'AM';
+  var h12 = h % 12; if (h12 === 0) h12 = 12;
+  return h12 + ':' + m + ' ' + suffix;
+}
+
+function minutesBetween(hhmmA, hhmmB){
+  function toMin(s){ var b = String(s).split(':'); return parseInt(b[0],10)*60 + parseInt(b[1],10); }
+  return toMin(hhmmB) - toMin(hhmmA);
+}
+
+/* Every window in the snapshot, flattened and stamped with parsed instants. */
+function allWindows(){
+  var out = [];
+  if (!DATA || !DATA.schedule || !DATA.schedule.days) return out;
+  for (var i = 0; i < DATA.schedule.days.length; i++){
+    var day = DATA.schedule.days[i];
+    for (var j = 0; j < (day.windows || []).length; j++){
+      var w = day.windows[j];
+      out.push({
+        day:   day,
+        from:  w.from,
+        to:    w.to,
+        start: Date.parse(w.startIso),
+        end:   Date.parse(w.endIso)
+      });
+    }
+  }
+  return out;
+}
+
+function relativeDayWord(dateKey){
+  if (!DATA || !DATA.schedule.days.length) return '';
+  var todayKey = DATA.schedule.days[0].date;
+  if (dateKey === todayKey) return 'today';
+  var idx = -1;
+  for (var i = 0; i < DATA.schedule.days.length; i++){
+    if (DATA.schedule.days[i].date === dateKey){ idx = i; break; }
+  }
+  if (idx === 1) return 'tomorrow';
+  var day = DATA.schedule.days[idx];
+  if (!day) return '';
+  if (idx > 1 && idx < 7) return day.dowFull;
+  return day.dowFull + ', ' + day.label;
+}
+
+/* ----------------------------------------------------------------- rendering */
+
+function renderStatus(){
+  var box = $('status'), word = $('statusWord'), detail = $('statusDetail');
+  box.classList.remove('is-open','is-shut');
+
+  if (!DATA){ return; }
+
+  var now = Date.now();
+  var windows = allWindows();
+  var current = null, next = null;
+
+  /* windows arrive in chronological order, so the first hit wins in both cases
+     and we can stop at whichever comes first */
+  for (var i = 0; i < windows.length; i++){
+    var w = windows[i];
+    if (now >= w.start && now < w.end){ current = w; break; }
+    if (w.start > now){ next = w; break; }
+  }
+
+  if (current){
+    box.classList.add('is-open');
+    word.textContent = 'Open now';
+    var leftMs = current.end - now;
+    var leftTxt = leftMs > 3600000
+      ? hoursMinutes(leftMs) + ' left'
+      : Math.max(1, Math.round(leftMs / 60000)) + ' min left';
+    detail.innerHTML = 'Closes at <strong>' + esc(clockLabel(current.to)) + '</strong> &middot; ' + esc(leftTxt);
+    return;
+  }
+
+  box.classList.add('is-shut');
+  word.textContent = 'Closed';
+
+  if (!next){
+    detail.innerHTML = 'No open time in the next ' +
+      (DATA.schedule.days.length) + ' days.';
+    return;
+  }
+
+  var when = relativeDayWord(next.day.date);
+  var brief = minutesBetween(next.from, next.to) < BRIEF_MIN;
+  var line = 'Opens <strong>' + esc(when) + '</strong> at <strong>' +
+             esc(clockLabel(next.from)) + '</strong>';
+  if (brief){
+    line += ' &middot; short gap between classes';
+  }
+  if (DATA.schedule.closedLabel && next.day.date === DATA.schedule.days[0].date){
+    line += '<br>' + esc(DATA.schedule.closedLabel) + ' until then.';
+  }
+  detail.innerHTML = line;
+}
+
+function renderStats(){
+  var t = DATA.totals;
+  var hoursTotal = Math.floor((t.clubMs || 0) / 3600000);
+  var minsTotal  = Math.round(((t.clubMs || 0) % 3600000) / 60000);
+
+  var cells = [
+    { n: hoursTotal + '<small>h ' + minsTotal + 'm</small>', k: 'Hours flown' },
+    { n: t.pilots,        k: 'Pilots logged' },
+    { n: t.activePilots7, k: 'Flying this week' },
+    { n: t.sims,          k: 'Simulators' }
+  ];
+
+  var html = '';
+  for (var i = 0; i < cells.length; i++){
+    html += '<div class="card stat"><div class="n">' + cells[i].n + '</div>' +
+            '<div class="k">' + esc(cells[i].k) + '</div></div>';
+  }
+  $('stats').innerHTML = html;
+}
+
+function renderBoard(){
+  var pilots = DATA.pilots || [];
+  if (!pilots.length){
+    $('board').innerHTML = '<div class="msg">No pilots on the board yet.</div>';
+    return;
+  }
+
+  var top = pilots[0].totalMs || 1;
+  var html = '';
+
+  for (var i = 0; i < pilots.length; i++){
+    var p = pilots[i];
+    var medal = i < 3 && p.totalMs > 0 ? ' medal m' + (i + 1) : '';
+
+    var meta = [];
+    if (p.gsPct > 0) meta.push('<span class="gs">Ground School ' + p.gsPct + '%</span>');
+    if (p.gsLessons > 0) meta.push(p.gsLessons + (p.gsLessons === 1 ? ' lesson' : ' lessons') + ' passed');
+
+    /* The bar is scaled against the leader, so it reads as "share of the top
+       pilot's time" rather than a meaningless percentage of a total. */
+    var width = p.totalMs > 0 ? Math.max(2, (p.totalMs / top) * 100) : 0;
+    var segs = '';
+    if (p.totalMs > 0){
+      for (var s = 0; s < DATA.sims.length; s++){
+        var sim = DATA.sims[s];
+        var ms  = (p.perSimMs && p.perSimMs[sim.id]) || 0;
+        if (ms <= 0) continue;
+        var share = (ms / p.totalMs) * width;
+        segs += '<i style="width:' + share.toFixed(3) + '%;background:' +
+                (SIM_COLOR[sim.id] || 'var(--ink-soft)') + '" title="' +
+                esc(sim.name + ' — ' + hoursMinutes(ms)) + '"></i>';
+      }
+    }
+
+    html +=
+      '<div class="row' + medal + '">' +
+        '<div class="rank">' + (i + 1) + '</div>' +
+        '<div class="who">' +
+          '<div class="nm">' + esc(p.name) + '</div>' +
+          (meta.length ? '<div class="meta">' + meta.join(' &middot; ') + '</div>' : '') +
+        '</div>' +
+        '<div class="hrs' + (p.totalMs > 0 ? '' : ' z') + '">' + hoursMinutes(p.totalMs) + '</div>' +
+        '<div class="bar' + (segs ? '' : ' empty') + '">' + segs + '</div>' +
+      '</div>';
+  }
+
+  var legend = '<div class="legend">';
+  for (var L = 0; L < DATA.sims.length; L++){
+    legend += '<span><b style="background:' + (SIM_COLOR[DATA.sims[L].id] || 'var(--ink-soft)') +
+              '"></b>' + esc(DATA.sims[L].name) + '</span>';
+  }
+  legend += '</div>';
+
+  $('board').innerHTML = html + legend;
+}
+
+function renderHours(){
+  var days = DATA.schedule.days || [];
+  if (!days.length){
+    $('hours').innerHTML = '<div class="msg">No schedule in the snapshot.</div>';
+    return;
+  }
+
+  var now = Date.now();
+  var today = days[0];
+
+  var todayVal;
+  if (!today.open){
+    todayVal = 'Closed all day' + (today.note ? ' &mdash; ' + esc(today.note) : '');
+  } else {
+    var parts = [];
+    for (var w = 0; w < today.windows.length; w++){
+      var win = today.windows[w];
+      if (minutesBetween(win.from, win.to) < BRIEF_MIN) continue;
+      parts.push(clockLabel(win.from) + ' &ndash; ' + clockLabel(win.to));
+    }
+    todayVal = parts.length ? parts.join(' &nbsp;&middot;&nbsp; ') : 'Only short gaps between classes today';
+  }
+
+  var html =
+    '<div class="today">' +
+      '<div class="lbl">Today &middot; ' + esc(today.dowFull + ', ' + today.label) + '</div>' +
+      '<div class="val">' + todayVal + '</div>' +
+    '</div>';
+
+  var limit = showAllDays ? days.length : 8;
+
+  for (var i = 0; i < Math.min(limit, days.length); i++){
+    var day = days[i];
+    var cls = 'day' + (day.open ? '' : ' shut') + (i === 0 ? ' is-today' : '');
+    var body = '';
+
+    if (!day.open){
+      body = '<span class="shutword">' + esc(day.note || 'Closed') + '</span>';
+    } else {
+      body = '<div class="w">';
+      for (var j = 0; j < day.windows.length; j++){
+        var win2 = day.windows[j];
+        var isBrief = minutesBetween(win2.from, win2.to) < BRIEF_MIN;
+        var isNow = now >= Date.parse(win2.startIso) && now < Date.parse(win2.endIso);
+        body += '<span class="slot' + (isBrief ? ' brief' : '') + (isNow ? ' now' : '') + '">' +
+                esc(clockLabel(win2.from)) + '&ndash;' + esc(clockLabel(win2.to)) +
+                '</span>';
+      }
+      body += '</div>';
+    }
+
+    html +=
+      '<div class="' + cls + '">' +
+        '<div class="d">' + esc(day.dow + ' ' + day.label) + (i === 0 ? ' &middot; today' : '') + '</div>' +
+        '<div>' + body + '</div>' +
+      '</div>';
+  }
+
+  if (days.length > 8){
+    html += '<div class="more"><button type="button" id="moreDays">' +
+            (showAllDays ? 'Show less' : 'Show all ' + days.length + ' days') +
+            '</button></div>';
+  }
+
+  $('hours').innerHTML = html;
+
+  var btn = $('moreDays');
+  if (btn){
+    btn.addEventListener('click', function(){
+      showAllDays = !showAllDays;
+      renderHours();
+    });
+  }
+
+  $('hoursHint').textContent = DATA.schedule.closedLabel
+    ? 'dashed slots are passing periods; the rest of the day is ' +
+      DATA.schedule.closedLabel.toLowerCase()
+    : 'dashed slots are short gaps between classes';
+}
+
+/* Pick three at random out of the embeddable set. Only ids that the kiosk has
+   already verified as embeddable are in the snapshot - seven of the playlist's
+   videos answer Error 150 and would render a dead grey box. */
+function pickReel(){
+  var pool = (DATA.reel || []).slice();
+  for (var i = pool.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+  }
+  reelPicks = pool.slice(0, 3);
+}
+
+function renderReel(){
+  if (!DATA.reel || !DATA.reel.length){
+    $('reel').innerHTML = '<div class="card msg">No videos in this snapshot.</div>';
+    return;
+  }
+
+  var html = '';
+  for (var i = 0; i < reelPicks.length; i++){
+    var v = reelPicks[i];
+    html +=
+      '<div class="card vid">' +
+        '<div class="frame" data-id="' + esc(v.id) + '" role="button" tabindex="0" ' +
+             'aria-label="Play ' + esc(v.title) + ' by ' + esc(v.author) + '">' +
+          '<img loading="lazy" alt="" src="https://i.ytimg.com/vi/' + esc(v.id) + '/hqdefault.jpg">' +
+          '<span class="play">' +
+            '<svg viewBox="0 0 68 48" aria-hidden="true">' +
+              '<path d="M66.5 7.7a8 8 0 0 0-5.6-5.7C56 .7 34 .7 34 .7s-22 0-26.9 1.3A8 8 0 0 0 1.5 7.7C.2 12.6.2 24 .2 24s0 11.4 1.3 16.3a8 8 0 0 0 5.6 5.7C12 47.3 34 47.3 34 47.3s22 0 26.9-1.3a8 8 0 0 0 5.6-5.7C67.8 35.4 67.8 24 67.8 24s0-11.4-1.3-16.3z" fill="#8f3d12"/>' +
+              '<path d="M45 24 27 14v20z" fill="#f2ece0"/>' +
+            '</svg>' +
+          '</span>' +
+        '</div>' +
+        '<div class="cap">' +
+          '<div class="t">' + esc(v.title) + '</div>' +
+          '<div class="a">' + esc(v.author) + '</div>' +
+        '</div>' +
+      '</div>';
+  }
+  $('reel').innerHTML = html;
+
+  var frames = $('reel').querySelectorAll('.frame');
+  for (var f = 0; f < frames.length; f++){
+    frames[f].addEventListener('click', playFrame);
+    frames[f].addEventListener('keydown', function(ev){
+      if (ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); playFrame.call(this, ev); }
+    });
+    var thumb = frames[f].querySelector('img');
+    if (thumb){
+      thumb.addEventListener('error', function(){
+        if (this.parentNode) this.parentNode.classList.add('noimg');
+      });
+    }
+  }
+}
+
+/* Swap the poster for a real player only on a tap. Three autoplaying iframes on
+   a phone is a lot of bandwidth for a page most people open to read one number. */
+function playFrame(){
+  var id = this.getAttribute('data-id');
+  if (!id || this.getAttribute('data-live') === '1') return;
+  this.setAttribute('data-live','1');
+  this.innerHTML =
+    '<iframe src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) +
+    '?autoplay=1&rel=0&modestbranding=1" title="Flight reel video" allowfullscreen ' +
+    'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>';
+}
+
+function renderFooter(){
+  var link = $('playlistLink');
+  if (DATA.club.playlistUrl){
+    link.href = DATA.club.playlistUrl;
+  } else {
+    link.style.display = 'none';
+  }
+
+  var d = new Date(DATA.generated);
+  var stamp = isNaN(d.getTime()) ? DATA.generatedIso : d.toLocaleString();
+  $('stampLine').innerHTML = 'Data as of <strong>' + esc(stamp) + '</strong>';
+}
+
+function renderAll(){
+  renderStatus();
+  renderStats();
+  renderBoard();
+  renderHours();
+  renderReel();
+  renderFooter();
+}
+
+/* ---------------------------------------------------------------------- boot */
+
+function fail(msg){
+  $('statusWord').textContent = 'Unavailable';
+  $('statusDetail').textContent = msg;
+  $('board').innerHTML = '<div class="msg bad">' + esc(msg) + '</div>';
+  $('hours').innerHTML = '<div class="msg bad">' + esc(msg) + '</div>';
+}
+
+function load(){
+  /* cache-bust so a CDN edge cache can never pin an old leaderboard */
+  fetch('data.json?t=' + Date.now(), { cache: 'no-store' })
+    .then(function(r){
+      if (!r.ok) throw new Error('data.json returned ' + r.status);
+      return r.json();
+    })
+    .then(function(json){
+      DATA = json;
+      pickReel();
+      renderAll();
+    })
+    .catch(function(err){
+      fail('Could not load the lab snapshot. ' + (err && err.message ? err.message : ''));
+    });
+}
+
+$('shuffle').addEventListener('click', function(){
+  if (!DATA) return;
+  pickReel();
+  renderReel();
+});
+
+/* The open/closed lamp has to keep up with the clock without a reload, and the
+   snapshot itself is worth re-checking now and then for anyone who leaves the
+   page open on a wall display. */
+setInterval(function(){ if (DATA) { renderStatus(); } }, 30000);
+setInterval(load, 5 * 60 * 1000);
+document.addEventListener('visibilitychange', function(){
+  if (!document.hidden && DATA) { renderStatus(); }
+});
+
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# Local-only marker the exporter uses to tell "nothing changed" from "first run".
+# It must not travel with the repo or a fresh clone would think it is up to date.
+.snapshot-hash
+
+# The exporter's own log, written next to the repo for convenience.
+publish.log
+
+# Windows noise
+Thumbs.db
+desktop.ini

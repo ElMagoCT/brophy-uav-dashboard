@@ -1,0 +1,25 @@
+# Static site, no build step - same rule as the kiosk it reports on.
+# Netlify just serves the folder.
+
+[build]
+  publish = "."
+
+# data.json is the whole point of the site and it changes on every push.
+# Never let an edge cache pin an old leaderboard. index.html revalidates for
+# the same reason: someone leaves this open on a wall display for a week.
+[[headers]]
+  for = "/data.json"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
