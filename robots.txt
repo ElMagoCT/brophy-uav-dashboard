@@ -1,2 +1,9 @@
+# This dashboard is meant to be opened by anyone who has the link - club
+# members, parents, visitors - but NOT to be indexed. It carries students'
+# names, and a page that pairs those with the club's name should not be
+# something a search engine surfaces.
+#
+# This is not access control. Anyone with the URL can read the page; that is
+# the point. It only keeps well-behaved crawlers from listing it.
 User-agent: *
-Allow: /
+Disallow: /
