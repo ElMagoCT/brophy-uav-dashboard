@@ -1,0 +1,13 @@
+# File-based headers, so the site needs no build step at all.
+#
+# netlify.toml expresses the same thing, but a [build] section makes Netlify
+# Drop treat the upload as a build and demand an account. This file works for
+# a drag-and-drop deploy AND a git-based one, so it is the portable half.
+/data.json
+  Cache-Control: public, max-age=0, must-revalidate
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Robots-Tag: noindex, nofollow
