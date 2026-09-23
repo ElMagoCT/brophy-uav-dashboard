@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<!-- Everything this page may load or talk to. Nothing inline, no third-party
+     script, and the only network destination is GitHub's API. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
+<title>Instructor Console · Brophy UAV</title>
+<link rel="stylesheet" href="../groundschool/fonts.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="wrap" id="app" hidden>
+
+  <header class="top">
+    <div>
+      <h1>Instructor console</h1>
+      <div class="sub">Brophy UAV · flight simulator lab</div>
+    </div>
+    <div class="who" id="who"></div>
+  </header>
+
+  <!-- ============ sign in ============ -->
+  <section class="card" id="signin">
+    <h2>Sign in</h2>
+    <p class="muted">Two keys, both needed. Your GitHub token proves you may write to the
+      private <code>brophy-uav-control</code> repo; the instructor password signs every command,
+      and each kiosk refuses anything it can't verify. The password never leaves this page.</p>
+    <label>GitHub token
+      <input id="tok" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
+    </label>
+    <div class="hint">A <b>fine-grained</b> token with access to <b>only</b> <code>ElMagoCT/brophy-uav-control</code>,
+      permission <b>Contents: Read and write</b>, expiry 90 days or less.
+      It's kept in this tab only (sessionStorage) and is gone when you close the tab.</div>
+    <label>Instructor password
+      <input id="pw" type="password" autocomplete="current-password">
+    </label>
+    <div class="row">
+      <button id="go" class="primary">Sign in</button>
+      <span class="msg" id="signMsg"></span>
+    </div>
+  </section>
+
+  <!-- ============ console ============ -->
+  <section id="console" hidden>
+    <nav class="tabs" id="tabs"></nav>
+
+    <div class="card">
+      <div class="row between">
+        <h2 id="mName">Kiosk</h2>
+        <div class="row"><span class="badge" id="verify"></span><button id="refresh">Refresh status</button></div>
+      </div>
+      <div class="grid" id="status"><div class="muted">Loading…</div></div>
+      <div class="muted small" id="statusAge"></div>
+    </div>
+
+    <div class="card">
+      <h2>Actions</h2>
+      <div class="actions" id="actions"></div>
+      <div class="row wrapline">
+        <label class="inline">Open lab for
+          <input id="openMins" type="number" min="5" max="480" value="60"> min</label>
+        <label class="inline">Log
+          <select id="logName">
+            <option>kiosk</option><option>sync</option><option>vremote</option>
+            <option>remote</option><option>admin</option><option>rgb</option>
+          </select></label>
+      </div>
+      <p class="muted small">Commands reach the kiosk within about 15 s. They expire after 10 minutes
+        and each one runs once. Firewall / Steam blocking needs admin rights and stays in the admin
+        dashboard on the kiosk itself (use Chrome Remote Desktop).</p>
+    </div>
+
+    <div class="card">
+      <div class="row between"><h2>Results</h2><button id="signout" class="ghost">Sign out</button></div>
+      <div id="results"><div class="muted">Nothing yet.</div></div>
+    </div>
+  </section>
+</div>
+<noscript>This console needs JavaScript.</noscript>
+<script src="admin.js"></script>
+</body>
+</html>

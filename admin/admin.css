@@ -1,0 +1,47 @@
+:root{
+  --bg:#f4f1ea; --card:#fffdf8; --ink:#1d2330; --muted:#5d6574; --line:#d9d2c3;
+  --accent:#8f3d12; --ok:#1f7a45; --bad:#b3261e; --warn:#9a6700; --chip:#efe9dc;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#15181e; --card:#1d2129; --ink:#e9e6df; --muted:#a2a8b4; --line:#343a46;
+         --accent:#e0874f; --ok:#5cc98a; --bad:#ff7b72; --warn:#e3b341; --chip:#262b35; }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Barlow,system-ui,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 60px}
+h1{margin:0;font-size:28px;font-weight:600;letter-spacing:.2px}
+h2{margin:0 0 10px;font-size:19px;font-weight:600}
+.sub,.muted{color:var(--muted)} .small{font-size:13.5px}
+code{font-family:"Share Tech Mono",ui-monospace,monospace;font-size:.95em;background:var(--chip);padding:1px 5px;border-radius:4px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.who{font-size:14px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:14px}
+label{display:block;margin:12px 0 4px;font-weight:500}
+label.inline{display:inline-flex;align-items:center;gap:8px;margin:8px 16px 0 0;font-weight:400}
+input,select{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+#tok,#pw{width:100%;display:block;margin-top:4px}
+#openMins{width:80px}
+.hint{font-size:13.5px;color:var(--muted);margin-top:4px}
+.row{display:flex;align-items:center;gap:10px}
+.row.between{justify-content:space-between}
+.wrapline{flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:6px;padding:8px 14px}
+button:hover{border-color:var(--muted)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;margin-top:14px}
+button.danger{color:var(--bad);border-color:var(--bad)}
+button.ghost{background:transparent}
+button:disabled{opacity:.5;cursor:default}
+.msg{margin-top:14px;color:var(--bad)}
+.tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px 18px;margin:6px 0}
+.grid div b{display:block;font-size:12.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.badge{font-size:13px;padding:3px 9px;border-radius:999px;background:var(--chip)}
+.badge.ok{color:var(--ok)} .badge.bad{color:var(--bad)} .badge.warn{color:var(--warn)}
+.res{border-top:1px solid var(--line);padding:10px 0}
+.res:first-child{border-top:0}
+.res .h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px}
+.res pre{white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;margin:6px 0 0;font:13px/1.4 "Share Tech Mono",ui-monospace,monospace;max-height:340px;overflow:auto}
+.st-ok{color:var(--ok)} .st-bad{color:var(--bad)} .st-wait{color:var(--warn)}
+@media (max-width:560px){ h1{font-size:23px} .card{padding:14px} }
