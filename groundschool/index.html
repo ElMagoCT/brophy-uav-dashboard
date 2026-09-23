@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FPV Ground School - Brophy UAV</title>
+<!-- Fonts are SELF-HOSTED, same as index.html. Do NOT replace this with a
+     fonts.googleapis.com link: the kiosk makes no outbound request at runtime,
+     and on a filtered school network a blocking font stylesheet costs the whole
+     network timeout before the page paints. -->
+<link href="fonts.css" rel="stylesheet">
+<link href="gs-theme.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- the drafting-table paper, same four layers as the hangar -->
+<div id="paper-bg">
+  <div class="grid"></div>
+  <div class="grid-fine"></div>
+  <div class="stains"></div>
+  <div class="vignette"></div>
+</div>
+
+<div id="app">
+
+  <!-- ===================== SYLLABUS ===================== -->
+  <!-- No inline display here. It used to carry style="display:flex", which beat
+       the #syllabusWrap.off rule in gs-theme.css - an inline style outranks any
+       class selector - so opening a lesson never actually hid the syllabus and
+       the two split the screen 50/50. Layout lives in the stylesheet. -->
+  <div id="syllabusWrap">
+
+    <header class="titleblock pad" style="padding-bottom:0">
+      <h1>FPV <span class="accent">GROUND SCHOOL</span></h1>
+      <div class="subtitle">Brophy UAV &middot; Rules, hardware, video, stick work and tricks</div>
+      <div class="rule"></div>
+      <div class="rule thin"></div>
+      <div class="backrow">
+        <button class="linkbtn subtle" id="resetBtn" title="Set every lesson back to not-started for this pilot">Start the course over</button>
+        <button class="minibtn" id="backBtn">&larr;&nbsp; Back to the dashboard</button>
+      </div>
+    </header>
+
+    <div class="pad" style="padding-top:14px;padding-bottom:0;flex:0 0 auto">
+      <div class="pilotbar">
+        <span class="tag">Pilot</span>
+        <span class="who none" id="who">no pilot selected</span>
+        <span class="spacer"></span>
+        <div class="meter">
+          <span class="of" id="lessonsOf">0 of 22 lessons</span>
+          <div class="track"><i id="meterFill" style="width:0%"></i></div>
+          <span class="pct" id="meterPct">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="scroll" class="pad" style="padding-top:16px">
+      <div id="syllabus"><!-- built by gs-app.js --></div>
+    </div>
+  </div>
+
+  <!-- ===================== LESSON ===================== -->
+  <div id="lesson">
+    <div class="lhead">
+      <span class="lcode" id="lCode">GS-00-00</span>
+      <h2 id="lTitle">Lesson</h2>
+      <span class="spacer"></span>
+      <!-- Clock #6. Shown when the lesson clock has stopped banking time after
+           30 s of no keyboard, mouse or transmitter movement. Worded to match
+           the kiosk's own TIME PAUSED (IDLE) so students see one vocabulary. -->
+      <span class="pausetag" id="lPaused">time paused &middot; idle</span>
+      <button class="minibtn" id="lExit" style="margin-left:14px">Save &amp; exit</button>
+    </div>
+    <!-- One tab per section of the lesson, built by gs-app.js. Replaced a row
+         of anonymous dots: the dots said how far through you were but not what
+         any of it was, and could not be clicked. -->
+    <div class="ltabs" id="lTabs"></div>
+    <div class="lbody" id="lBody"></div>
+    <div class="lfoot">
+      <span class="hint" id="lHint"></span>
+      <span class="spacer"></span>
+      <button class="minibtn" id="lPrev">&larr;&nbsp; Back</button>
+      <button class="minibtn go big" id="lNext">Next &nbsp;&rarr;</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== no-pilot gate ===================== -->
+<div class="scrim" id="gate">
+  <div class="card">
+    <h2>Who is flying?</h2>
+    <div class="hint">Ground School records progress against a pilot</div>
+    <div class="rule"></div>
+    <p>Nothing you do here can be saved until a pilot is selected, so pick your
+       name on the hangar screen first and come back.</p>
+    <p>If your name is not on the list yet, add it there with <b>New pilot</b>.</p>
+    <div class="foot">
+      <button class="minibtn go big" id="gateBack">Go pick my name</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== reset confirm ===================== -->
+<div class="scrim" id="resetScrim">
+  <div class="card">
+    <h2>Start the course over?</h2>
+    <div class="hint">This cannot be undone</div>
+    <div class="rule"></div>
+    <p>Every lesson goes back to not-started for <b id="resetWho">this pilot</b>, so
+       you can work through the whole thing again from the top.</p>
+    <p>Your <b>best score</b> on each lesson is kept — the kiosk never lowers a
+       score it has already recorded, so a fresh run can only improve them. Your
+       flight hours in the simulators are not touched at all.</p>
+    <div class="foot">
+      <button class="minibtn" id="resetNo">Never mind</button>
+      <button class="minibtn danger" id="resetYes">Start over</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Load order matters: content and input are plain data/helpers, gs-panels
+     builds on helpers exported by gs-drills, and gs-app drives all of them. -->
+<script src="gs-content.js"></script>
+<script src="gs-web.js"></script>
+<script src="gs-input.js"></script>
+<script src="gs-drills.js"></script>
+<script src="gs-panels.js"></script>
+<script src="gs-app.js"></script>
+</body>
+</html>

@@ -1,0 +1,878 @@
+/* ===========================================================================
+   FPV GROUND SCHOOL - theme
+   ---------------------------------------------------------------------------
+   The token block is lifted VERBATIM from index.html so the course and the
+   hangar cannot drift apart. If the dashboard's palette changes, copy the
+   :root block across again - do not hand-tune values here.
+
+   Everything below :root is Ground School's own components, built out of the
+   same idioms the hangar already uses: an off-white grid DESK with flat white
+   boxes on it, 2px ink borders with a 1px dashed inset, hard offset shadows
+   instead of blur, Share Tech Mono for labels and numbers, Barlow for
+   everything that is read.
+
+   TYPE RULE, tightened 2026-08-21 after "it's a little too pencily": the two
+   decorative faces are now for the WORDMARK ONLY - the h1 in this file and its
+   twin in index.html, plus the ANYONE stamp and the two full-screen titles over
+   there. Nothing else. Cabin Sketch draws each glyph as a pair of thin broken
+   outlines and Architects Daughter is handwriting: read once at 44px as the
+   name of a place that is the club's identity, and at any smaller size, over
+   any length, it is mush. Headings, module names, lesson names, captions and
+   margin notes are all Barlow now - 500 or 600 for anything scanned and
+   compared side by side. Barlow 300 stays banned: it reads washed out.
+
+   Fonts come from fonts.css - SELF-HOSTED. Do not add a Google Fonts link;
+   the kiosk makes no outbound request at runtime and must keep not making one.
+   =========================================================================== */
+
+:root{
+  --paper:#f2ece0;
+  --paper-2:#eae2d1;
+  --ink:#1f3350;
+  --ink-soft:#546881;
+  --graphite:#3b3f45;
+  --rust:#8f3d12;
+  --rust-soft:#a85b28;
+  --amber:#7d5810;
+  --amber-soft:#96701f;
+  --green:#1f5230;
+  --green-soft:#356b45;
+  --line:rgba(31,51,80,.20);
+  --line-hard:rgba(31,51,80,.42);
+  --sky:#1c5578;
+  --violet:#4b3287;
+  --gold:#7d5c10;
+  --silver:#4f6070;
+  --bronze:#7a4a1f;
+  /* Copied across from index.html with the rest of this block, 2026-08-21.
+     The grid is the DESK; the boxes on it are white. These were three
+     translucent cream washes, which let the blueprint grid show through
+     everything anybody had to read.
+     The whiteness ORDER is unchanged - glass < glass-2 < glass-3 - because
+     every rule in both files was written against it. Only the values moved.
+       --glass    the off-white field the grid is printed on
+       --glass-2  boxes laid on it - flat opaque white
+       --glass-3  sheets and fields, the whitest step */
+  --glass:#f3eee2;
+  --glass-2:#ffffff;
+  --glass-3:#ffffff;
+  --font-hand:'Architects Daughter','Segoe Print',cursive;
+  --font-sketch:'Cabin Sketch','Architects Daughter',cursive;
+  --font-mono:'Share Tech Mono','Consolas',monospace;
+  --font-body:'Barlow','Segoe UI',system-ui,sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-body);
+  overflow:hidden;
+  -webkit-user-select:none;user-select:none;
+  cursor:default;
+}
+
+/* ---------- propeller cursor, same as the hangar ---------- */
+body,button,.linkbtn,input,.lrow,.sheet{
+  cursor:url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'>\
+<g transform='rotate(-18 15 15)'>\
+<ellipse cx='15' cy='15' rx='13' ry='3.4' fill='%238f3d12' stroke='%23f2ece0' stroke-width='1.3'/>\
+<ellipse cx='15' cy='15' rx='3.4' ry='13' fill='%23a85b28' stroke='%23f2ece0' stroke-width='1.3' opacity='.92'/>\
+<circle cx='15' cy='15' r='3.1' fill='%23f2ece0' stroke='%2396701f' stroke-width='1.4'/>\
+</g></svg>") 15 15, auto;
+}
+button:hover,.linkbtn:hover,.lrow.can:hover{
+  cursor:url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'>\
+<g transform='rotate(22 17 17)'>\
+<ellipse cx='17' cy='17' rx='15' ry='3.9' fill='%237d5c10' stroke='%23f2ece0' stroke-width='1.4'/>\
+<ellipse cx='17' cy='17' rx='3.9' ry='15' fill='%238f3d12' stroke='%23f2ece0' stroke-width='1.4' opacity='.95'/>\
+<circle cx='17' cy='17' r='3.5' fill='%23f2ece0' stroke='%2396701f' stroke-width='1.5'/>\
+</g></svg>") 17 17, pointer;
+}
+input[type=text]{cursor:text}
+
+/* ---------- paper + grid texture ---------- */
+#paper-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+#paper-bg .grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(var(--line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:28px 28px;opacity:.28;
+}
+#paper-bg .grid-fine{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(31,51,80,.10) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(31,51,80,.10) 1px,transparent 1px);
+  background-size:7px 7px;opacity:.5;
+}
+#paper-bg .vignette{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 45% 40%,rgba(255,255,255,.35) 0%,rgba(255,255,255,0) 45%),
+             radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 55%,rgba(120,100,60,.13) 100%);
+}
+#paper-bg .stains{
+  position:absolute;inset:0;opacity:.35;
+  background:
+    radial-gradient(circle at 12% 82%,rgba(150,120,70,.16),transparent 22%),
+    radial-gradient(circle at 78% 12%,rgba(150,120,70,.12),transparent 18%),
+    radial-gradient(circle at 62% 90%,rgba(150,120,70,.10),transparent 16%);
+}
+
+/* ---------- shell ---------- */
+#app{position:relative;z-index:2;height:100%;display:flex;flex-direction:column}
+.pad{padding:20px clamp(24px,3vw,54px)}
+
+/* ---------- title block ---------- */
+header.titleblock{flex:0 0 auto;position:relative;padding-bottom:10px}
+.titleblock .rule{height:2px;background:var(--ink);opacity:.55;margin-top:6px}
+.titleblock .rule.thin{height:1px;opacity:.3;margin-top:3px}
+/* The wordmark keeps the pencil, exactly like the hangar's h1: Cabin Sketch is
+   the club's handwriting when it is read once at 44px as the name of a place,
+   and mush at sentence length - which is why it is confined to this rule. */
+h1{
+  font-family:var(--font-sketch);
+  font-size:clamp(29.6px,2.7vw,44.5px);
+  font-weight:700;line-height:.98;letter-spacing:.5px;color:var(--ink);
+}
+h1 .accent{color:var(--rust)}
+.subtitle{
+  font-family:var(--font-mono);font-size:16.1px;letter-spacing:2.6px;
+  text-transform:uppercase;color:var(--ink-soft);margin-top:7px;
+}
+.titleblock .backrow{position:absolute;right:0;top:2px;display:flex;align-items:center;gap:18px}
+
+.linkbtn{
+  background:none;border:none;
+  font-family:var(--font-body);font-size:17.7px;font-weight:500;
+  color:var(--rust);border-bottom:1px dashed var(--rust);
+  padding:1px 0;letter-spacing:.3px;
+}
+.linkbtn:hover{color:var(--ink);border-bottom-color:var(--ink)}
+.linkbtn.subtle{color:var(--ink-soft);border-bottom-color:rgba(84,104,129,.5);font-size:16.4px}
+.linkbtn.subtle:hover{color:var(--rust);border-bottom-color:var(--rust)}
+
+.minibtn{
+  flex:0 0 auto;font-family:var(--font-mono);font-size:15px;letter-spacing:1.6px;
+  text-transform:uppercase;padding:8px 13px;
+  border:1.5px solid var(--ink);color:var(--ink);background:none;
+}
+.minibtn:hover{background:var(--ink);color:var(--paper)}
+.minibtn.go{border-color:var(--green);color:var(--green)}
+.minibtn.go:hover{background:var(--green);color:#fff}
+.minibtn.warn{border-color:var(--amber);color:var(--amber)}
+.minibtn.warn:hover{background:var(--amber);color:#fff}
+.minibtn.danger{border-color:var(--rust);color:var(--rust)}
+.minibtn.danger:hover{background:var(--rust);color:#fff}
+.minibtn.big{font-size:16.1px;padding:11px 20px;letter-spacing:2px}
+.minibtn[disabled]{opacity:.3}
+.minibtn[disabled]:hover{background:none;color:var(--ink)}
+/* EXCEPTION, and an important one. The answer buttons in a panel drill are all
+   set disabled the moment one is picked, so the reveal cannot be re-clicked.
+   Without this rule the generic dimming above fired on them and the CORRECT
+   answer was painted at 30% opacity - the one thing on screen the student most
+   needs to read. Disabled here means "no longer clickable", not "no longer
+   worth reading"; the wrong options are de-emphasised in JS instead. */
+.sortbtns .minibtn[disabled]{opacity:1}
+.sortbtns .minibtn[disabled]:hover{color:inherit}
+.sortbtns .minibtn.go[disabled],.sortbtns .minibtn.go[disabled]:hover{background:var(--green);color:#fff;border-color:var(--green)}
+.sortbtns .minibtn.danger[disabled],.sortbtns .minibtn.danger[disabled]:hover{background:var(--rust);color:#fff;border-color:var(--rust)}
+
+/* ---------- pilot strip ---------- */
+.pilotbar{
+  flex:0 0 auto;display:flex;align-items:center;gap:16px;
+  padding:9px 16px;background:var(--glass-2);
+  border:1px solid var(--line-hard);border-radius:2px;
+  box-shadow:2px 2px 0 rgba(31,51,80,.07);
+}
+.pilotbar .tag{font-family:var(--font-mono);font-size:16.3px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-soft)}
+.pilotbar .who{font-family:var(--font-body);font-weight:600;font-size:27.3px;color:var(--ink);line-height:1}
+.pilotbar .who.none{color:var(--rust)}
+.pilotbar .spacer{flex:1}
+
+/* the overall course progress meter */
+.meter{display:flex;align-items:center;gap:11px}
+.meter .track{
+  width:clamp(140px,16vw,260px);height:12px;
+  border:1.5px solid var(--line-hard);background:rgba(31,51,80,.06);position:relative;
+}
+.meter .track i{
+  display:block;height:100%;
+  background:repeating-linear-gradient(45deg,var(--green) 0 6px,var(--green-soft) 6px 12px);
+  background-size:34px 34px;transition:width .4s ease-out;
+}
+.meter .pct{font-family:var(--font-mono);font-size:19.8px;color:var(--ink);font-variant-numeric:tabular-nums}
+.meter .of{font-family:var(--font-mono);font-size:15.6px;letter-spacing:1.4px;color:var(--ink-soft);text-transform:uppercase}
+
+/* ---------- scroll region ---------- */
+#scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden}
+#scroll::-webkit-scrollbar{width:11px}
+#scroll::-webkit-scrollbar-track{background:rgba(31,51,80,.05)}
+#scroll::-webkit-scrollbar-thumb{background:rgba(31,51,80,.28);border:2px solid var(--paper)}
+#scroll::-webkit-scrollbar-thumb:hover{background:rgba(31,51,80,.45)}
+
+/* ===========================================================================
+   SYLLABUS - the course map
+   =========================================================================== */
+#syllabus{display:grid;grid-template-columns:repeat(auto-fit,minmax(430px,1fr));gap:16px;padding-bottom:34px}
+
+.sheet{
+  position:relative;background:var(--glass-3);
+  border:1.5px solid var(--line-hard);border-radius:2px;
+  box-shadow:3px 3px 0 rgba(31,51,80,.08);
+  padding:14px 18px 12px;
+}
+.sheet::before{
+  content:'';position:absolute;inset:4px;
+  border:1px dashed rgba(31,51,80,.18);border-radius:2px;pointer-events:none;
+}
+.sheet.done{border-color:var(--green);box-shadow:3px 3px 0 rgba(45,106,62,.18);background:rgba(246,252,246,.80)}
+.sheet.locked{opacity:.55}
+
+.sheethead{display:flex;align-items:baseline;gap:12px;position:relative;z-index:1}
+.sheethead .mcode{
+  font-family:var(--font-mono);font-size:15.6px;letter-spacing:2.2px;
+  color:var(--rust);border:1.5px solid var(--rust);padding:3px 7px;flex:0 0 auto;
+}
+.sheet.done .sheethead .mcode{color:var(--green);border-color:var(--green)}
+.sheethead h2{
+  font-family:var(--font-body);font-size:clamp(26.2px,1.85vw,32.9px);
+  font-weight:700;line-height:1;flex:1 1 auto;min-width:0;
+}
+.sheethead .mmins{font-family:var(--font-mono);font-size:15.6px;letter-spacing:1.5px;color:var(--ink-soft);flex:0 0 auto}
+.sheetsub{
+  font-family:var(--font-body);font-weight:400;font-size:18.4px;line-height:1.46;
+  color:var(--ink-soft);margin-top:7px;position:relative;z-index:1;
+}
+.sheetrule{height:1px;background:var(--ink);opacity:.28;margin:11px 0 4px;position:relative;z-index:1}
+
+/* one lesson row */
+.lrow{
+  display:flex;align-items:center;gap:12px;
+  padding:9px 8px;border-bottom:1px dashed rgba(31,51,80,.20);
+  position:relative;z-index:1;background:none;border-left:0;border-right:0;border-top:0;
+  width:100%;text-align:left;font-family:inherit;color:inherit;
+}
+.lrow:last-child{border-bottom:0}
+.lrow.can:hover{background:rgba(31,51,80,.055)}
+.lrow.no{opacity:.45}
+.lrow .tick{
+  flex:0 0 auto;width:22px;height:22px;border:1.5px solid var(--line-hard);
+  display:grid;place-items:center;background:var(--paper);
+}
+.lrow .tick svg{width:14px;height:14px;display:block}
+.lrow.st-complete .tick{border-color:var(--green);background:var(--green)}
+.lrow.st-in-progress .tick{border-color:var(--amber);background:rgba(125,88,16,.16)}
+.lrow .ltitle{flex:1 1 auto;min-width:0;font-size:19.3px;font-weight:500;line-height:1.3}
+.lrow.st-complete .ltitle{color:var(--ink-soft)}
+.lrow .lkind{
+  flex:0 0 auto;font-family:var(--font-mono);font-size:14px;letter-spacing:1.5px;
+  text-transform:uppercase;padding:3px 6px;border:1px solid currentColor;
+}
+.lkind.k-read{color:var(--ink-soft)}
+.lkind.k-drill{color:var(--rust)}
+.lkind.k-quiz{color:var(--violet)}
+.lrow .lmin{
+  flex:0 0 auto;font-family:var(--font-mono);font-size:16.3px;color:var(--ink-soft);
+  width:44px;text-align:right;font-variant-numeric:tabular-nums;
+}
+.lrow .lscore{
+  flex:0 0 auto;font-family:var(--font-mono);font-size:16.1px;width:42px;text-align:right;
+  font-variant-numeric:tabular-nums;color:var(--green);
+}
+.lrow .lscore.low{color:var(--amber)}
+.lrow .lscore.none{color:rgba(84,104,129,.45)}
+
+/* the checkride sheet gets the stamp treatment */
+.sheet.check{border-color:var(--violet);box-shadow:3px 3px 0 rgba(75,50,135,.16)}
+.sheet.check .sheethead .mcode{color:var(--violet);border-color:var(--violet)}
+.sheet.check.passed{border-color:var(--green);box-shadow:3px 3px 0 rgba(45,106,62,.20)}
+.passseal{
+  position:absolute;right:14px;bottom:12px;
+  font-family:var(--font-mono);font-size:16.3px;letter-spacing:3px;color:var(--green);
+  border:2.5px solid var(--green);padding:6px 12px;transform:rotate(-7deg);
+  background:rgba(242,236,224,.82);box-shadow:0 0 0 3px rgba(242,236,224,.5);
+  text-align:center;line-height:1.3;z-index:2;
+}
+.passseal small{display:block;font-size:14px;letter-spacing:2px;opacity:.85;margin-top:2px}
+
+/* ===========================================================================
+   LESSON VIEW
+   =========================================================================== */
+/* Exactly one of these two occupies the frame at a time. The display value for
+   the syllabus MUST live here and not as an inline style on the element: inline
+   beats any class selector, so an inline display:flex made .off a no-op and a
+   lesson opened into whatever half of the screen was left over. */
+#syllabusWrap{display:flex;flex-direction:column;height:100%;min-height:0}
+#syllabusWrap.off{display:none}
+#lesson{display:none;flex-direction:column;height:100%;min-height:0}
+#lesson.on{display:flex}
+
+.lhead{
+  flex:0 0 auto;display:flex;align-items:center;gap:14px;
+  padding:12px clamp(24px,3vw,54px);
+  border-bottom:2px solid var(--ink);background:var(--glass-2);
+}
+.lhead .lcode{font-family:var(--font-mono);font-size:15.6px;letter-spacing:2.2px;color:var(--rust)}
+.lhead h2{font-family:var(--font-body);font-size:clamp(25.1px,2vw,33.9px);font-weight:600;line-height:1;flex:1 1 auto;min-width:0}
+.lhead .spacer{flex:1}
+
+/* clock #6: the lesson clock has stopped banking time. Amber, because that is
+   what the kiosk already uses for a paused clock - same colour, same words. */
+.pausetag{
+  display:none;flex:0 0 auto;
+  font-family:var(--font-mono);font-size:15px;letter-spacing:1.8px;
+  text-transform:uppercase;color:var(--amber);
+  border:1.5px solid var(--amber);background:rgba(125,88,16,.12);
+  padding:5px 10px;margin-right:6px;
+}
+.pausetag.on{display:inline-block;animation:pausepulse 2.2s ease-in-out infinite}
+@keyframes pausepulse{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* ---------- lesson tabs ----------
+   Card-index tabs along the top of a lesson: the active one is cut into the
+   body below it, the way a tab divider sits in a card file. Replaced a row of
+   anonymous dots that showed position but not content. */
+.ltabs{
+  flex:0 0 auto;display:flex;align-items:flex-end;gap:3px;
+  padding:9px clamp(24px,3vw,54px) 0;
+  background:var(--paper-2);
+  border-bottom:2px solid var(--ink);
+  overflow-x:auto;overflow-y:hidden;
+  scrollbar-width:none;
+}
+.ltabs::-webkit-scrollbar{height:0}
+.ltab{
+  flex:0 0 auto;position:relative;bottom:-2px;
+  display:flex;align-items:baseline;gap:7px;
+  font-family:var(--font-mono);font-size:15px;letter-spacing:1.3px;
+  text-transform:uppercase;padding:8px 13px 9px;
+  border:1.5px solid var(--line-hard);border-bottom:2px solid var(--ink);
+  background:rgba(31,51,80,.045);color:var(--ink-soft);
+  max-width:230px;
+}
+.ltab .tn{
+  font-size:14.5px;color:var(--rust);letter-spacing:.6px;flex:0 0 auto;
+}
+.ltab .tl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ltab:hover{background:var(--glass-2);color:var(--ink)}
+.ltab.done{color:var(--green-soft)}
+.ltab.done .tn{color:var(--green)}
+/* the current tab is part of the page below it, so it loses its bottom edge */
+.ltab.now{
+  background:var(--paper);color:var(--ink);
+  border-color:var(--ink);border-bottom-color:var(--paper);
+  padding-bottom:11px;
+}
+.ltab.now .tn{color:var(--rust)}
+@media (max-width:900px){ .ltab .tl{display:none} .ltab{padding:8px 11px 9px} }
+
+/* Flex column so short content can centre itself vertically - text stranded
+   in the top third of a 1152px screen was rule #1 in README-LEGIBILITY. The
+   centring is done with margin:auto ON THE CHILD, not justify-content:center
+   on this box: auto margins collapse to 0 when content overflows, so a long
+   card still scrolls from its top instead of clipping it. */
+.lbody{flex:1 1 auto;min-height:0;overflow-y:auto;padding:24px clamp(24px,3vw,54px) 30px;display:flex;flex-direction:column}
+.lbody > .rcard,.lbody > .qwrap,.lbody > .scorecard{margin-top:auto;margin-bottom:auto;width:100%}
+.lbody::-webkit-scrollbar{width:11px}
+.lbody::-webkit-scrollbar-track{background:rgba(31,51,80,.05)}
+.lbody::-webkit-scrollbar-thumb{background:rgba(31,51,80,.28);border:2px solid var(--paper)}
+
+.lfoot{
+  flex:0 0 auto;display:flex;align-items:center;gap:14px;
+  padding:12px clamp(24px,3vw,54px);
+  border-top:2px solid var(--ink);background:var(--glass-2);
+}
+.lfoot .spacer{flex:1}
+.lfoot .hint{font-family:var(--font-mono);font-size:15.6px;letter-spacing:1.6px;color:var(--ink-soft);text-transform:uppercase}
+
+/* ---------- reading card ----------
+   2026-08-21 overhaul: the text no longer sits naked on the paper texture.
+   Everything a student reads lives in a WHITE SHEET (.rmain) on the blueprint
+   grid - same trick the drills already used, applied to the reading half.
+   Copy is kept short and the structure carries it: fact chips, step strips,
+   two-column DO/DON'T boards and PRO TIP callouts instead of paragraphs. */
+.rcard{
+  max-width:min(1480px,94vw);margin:0 auto;display:grid;
+  grid-template-columns:1fr minmax(0,340px);gap:clamp(20px,3vw,44px);align-items:start;
+}
+.rcard.noart{grid-template-columns:1fr;max-width:min(1080px,88vw)}
+.rmain{
+  position:relative;background:var(--glass-3);
+  border:1.5px solid var(--line-hard);border-radius:2px;
+  box-shadow:4px 4px 0 rgba(31,51,80,.09);
+  padding:24px 30px 26px;
+}
+.rmain::before{
+  content:'';position:absolute;inset:5px;
+  border:1px dashed rgba(31,51,80,.16);border-radius:2px;pointer-events:none;
+}
+.rmain > *{position:relative;z-index:1}
+.rcard h3{
+  font-family:var(--font-body);font-size:clamp(29.7px,2.6vw,44.5px);
+  font-weight:700;line-height:1.04;margin-bottom:14px;
+}
+.rcard h3 em{color:var(--rust);font-style:normal}
+.rcard p{font-size:clamp(20.5px,1.35vw,22.8px);line-height:1.62;font-weight:400;color:var(--ink)}
+.rcard p + p{margin-top:13px}
+.rcard p b{font-weight:600;color:var(--ink)}
+
+/* ---------- key-fact chips ----------
+   A row of small white boxes, each holding ONE number or ONE word that
+   matters, with a mono label under it. Replaces the sentence that used to
+   bury the number in the middle of a paragraph. */
+.kfacts{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.kf{
+  flex:1 1 120px;min-width:118px;max-width:220px;
+  border:1.5px solid var(--line-hard);background:var(--glass-3);
+  box-shadow:2px 2px 0 rgba(31,51,80,.08);
+  padding:12px 12px 10px;text-align:center;
+}
+.kf .kn{
+  display:block;font-family:var(--font-mono);
+  font-size:clamp(23px,1.7vw,30px);line-height:1.05;color:var(--ink);
+  font-variant-numeric:tabular-nums;letter-spacing:.5px;
+  white-space:nowrap;
+}
+.kf .kl{
+  display:block;font-family:var(--font-mono);font-size:14px;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--ink-soft);margin-top:6px;line-height:1.3;
+}
+.kf.c-green .kn{color:var(--green)}
+.kf.c-rust  .kn{color:var(--rust)}
+.kf.c-amber .kn{color:var(--amber)}
+.kf.c-sky   .kn{color:var(--sky)}
+.kf.c-green{border-color:var(--green)}
+.kf.c-rust {border-color:var(--rust)}
+.kf.c-amber{border-color:var(--amber)}
+.kf.c-sky  {border-color:var(--sky)}
+
+/* ---------- step strip ----------
+   A numbered sequence read left to right - the shape of a procedure, not a
+   paragraph about one. Wraps on narrow screens. */
+.stepflow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:stretch}
+.sf{
+  flex:1 1 150px;min-width:140px;position:relative;
+  border:1.5px solid var(--line-hard);background:var(--glass-3);
+  box-shadow:2px 2px 0 rgba(31,51,80,.08);
+  padding:11px 13px 10px 13px;
+}
+.sf .sfn{
+  display:inline-grid;place-items:center;width:27px;height:27px;
+  border:1.5px solid var(--rust);color:var(--rust);
+  font-family:var(--font-mono);font-size:15.5px;margin-bottom:7px;
+}
+.sf .sft{
+  display:block;font-family:var(--font-mono);font-size:15.5px;letter-spacing:1.8px;
+  text-transform:uppercase;color:var(--ink);margin-bottom:4px;
+}
+.sf .sfd{display:block;font-family:var(--font-body);font-size:16.8px;font-weight:400;line-height:1.4;color:var(--ink-soft)}
+.sf:last-child .sfn{border-color:var(--green);color:var(--green)}
+.sf:last-child .sft{color:var(--green)}
+
+/* ---------- two-column board ----------
+   tone 'dd'  = DO (green) against DON'T (rust)
+   tone 'vs'  = neutral comparison (sky against rust-soft), for analog/digital
+                and rate/angle where neither side is wrong */
+.board2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.b2{
+  border:1.5px solid var(--line-hard);background:var(--glass-3);
+  box-shadow:2px 2px 0 rgba(31,51,80,.08);padding:12px 15px 13px;
+  border-top-width:3.5px;
+}
+.b2 .b2h{
+  font-family:var(--font-mono);font-size:15px;letter-spacing:2.2px;
+  text-transform:uppercase;margin-bottom:9px;
+}
+.b2 ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.b2 li{
+  display:flex;gap:9px;align-items:flex-start;
+  font-family:var(--font-body);font-size:17.7px;font-weight:400;line-height:1.42;color:var(--ink);
+}
+.b2 li::before{
+  font-family:var(--font-mono);font-size:15px;line-height:1.5;flex:0 0 auto;
+}
+.b2.ok  {border-top-color:var(--green)}
+.b2.ok .b2h{color:var(--green)}
+.b2.ok li::before{content:'\2713';color:var(--green)}
+.b2.no  {border-top-color:var(--rust)}
+.b2.no .b2h{color:var(--rust)}
+.b2.no li::before{content:'\2717';color:var(--rust)}
+.b2.va  {border-top-color:var(--sky)}
+.b2.va .b2h{color:var(--sky)}
+.b2.va li::before{content:'\2022';color:var(--sky)}
+.b2.vb  {border-top-color:var(--violet)}
+.b2.vb .b2h{color:var(--violet)}
+.b2.vb li::before{content:'\2022';color:var(--violet)}
+@media (max-width:900px){ .board2{grid-template-columns:1fr} }
+
+/* ---------- PRO TIP callout ----------
+   Different job from .marginnote: the margin note is a hand-written warning
+   in the margin; this is a technique tip a coach would give you, and it is
+   deliberately loud enough to be found by someone skimming. */
+.tipbox{
+  display:flex;gap:13px;align-items:flex-start;margin-top:18px;
+  border:1.5px solid var(--line-hard);border-left:4px solid var(--gold);
+  background:var(--glass-3);box-shadow:2px 2px 0 rgba(31,51,80,.08);
+  padding:12px 16px 13px;
+}
+.tipbox .tico{flex:0 0 auto;width:30px;height:30px;margin-top:2px}
+.tipbox .tico svg{width:100%;height:100%;display:block}
+.tipbox .tbody{flex:1 1 auto;min-width:0}
+.tipbox .tlab{
+  display:block;font-family:var(--font-mono);font-size:14px;letter-spacing:2.4px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:3px;
+}
+.tipbox .ttext{font-family:var(--font-body);font-size:18.4px;font-weight:400;line-height:1.5;color:var(--ink)}
+.tipbox .ttext b{font-weight:600}
+
+/* ---------- video embed ----------
+   The ONE outbound request this app is allowed, and it is student-initiated:
+   nothing loads until the poster is tapped. The poster itself is local - no
+   thumbnail fetch. If the school network filters YouTube the student taps and
+   gets the player's own error inside the box; the caption under it already
+   says the video needs the internet, so the failure explains itself.
+   NEVER add referrerpolicy="no-referrer" here - that is Error 153 (see the
+   reel notes in CLAUDE.md). All nine ids were scanned embeddable 2026-08-21
+   with the concepts/_yt-scan.html method. */
+.vidwrap{margin-top:18px}
+.vidwrap + .vidwrap{margin-top:14px}
+.vidbox{
+  position:relative;width:100%;aspect-ratio:16/9;
+  border:1.5px solid var(--line-hard);background:var(--glass-3);
+  box-shadow:4px 4px 0 rgba(31,51,80,.10);overflow:hidden;
+}
+.vidwrap.alt .vidbox{aspect-ratio:auto}
+.vidbox iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vposter{
+  position:absolute;inset:0;width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  background:
+    radial-gradient(ellipse at 50% 42%,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 68%),
+    repeating-linear-gradient(0deg,rgba(31,51,80,.05) 0 1px,transparent 1px 28px),
+    repeating-linear-gradient(90deg,rgba(31,51,80,.05) 0 1px,transparent 1px 28px),
+    var(--glass-3);
+  border:0;font-family:var(--font-body);padding:18px;text-align:center;
+}
+.vposter:hover .vplay circle{fill:var(--rust)}
+.vposter:hover .vplay path{fill:#fff}
+.vplay{width:74px;height:74px;flex:0 0 auto}
+.vplay svg{width:100%;height:100%;display:block}
+.vtitle{font-size:21.1px;font-weight:600;color:var(--ink);line-height:1.3;max-width:34ch}
+.vmeta{
+  font-family:var(--font-mono);font-size:14.5px;letter-spacing:1.8px;
+  text-transform:uppercase;color:var(--ink-soft);
+}
+.vhint{
+  font-family:var(--font-body);font-weight:500;font-size:15.9px;color:var(--rust);
+}
+/* compact variant for the optional deep-dive video */
+.vidwrap.alt .vposter{
+  position:static;flex-direction:row;justify-content:flex-start;gap:14px;
+  padding:11px 16px;text-align:left;
+}
+.vidwrap.alt .vplay{width:40px;height:40px}
+.vidwrap.alt .vtitle{font-size:17.7px;max-width:none;flex:1 1 auto;min-width:0}
+.vidwrap.alt .vmeta{flex:0 0 auto}
+.vidwrap.alt .vhint{display:none}
+/* once playing, the alt box needs real video height */
+.vidwrap.alt .vidbox.playing{aspect-ratio:16/9}
+.vcap{
+  font-family:var(--font-body);font-weight:500;font-size:16.5px;color:var(--ink-soft);
+  margin-top:7px;line-height:1.3;
+}
+.vcap b{color:var(--rust);font-weight:400}
+
+/* ---------- the art box beside a reading card ---------- */
+.rcard .art{
+  border:1.5px solid var(--line-hard);background:var(--glass-3);
+  box-shadow:3px 3px 0 rgba(31,51,80,.08);padding:12px;
+}
+.rcard .art svg{width:100%;height:auto;display:block;overflow:visible}
+.rcard .art .cap{
+  font-family:var(--font-body);font-weight:500;font-size:17.7px;color:var(--rust);
+  text-align:center;margin-top:7px;line-height:1.25;
+}
+.marginnote{
+  font-family:var(--font-body);font-weight:500;font-size:19.4px;color:var(--rust);
+  border-left:2px solid var(--rust);padding:2px 0 2px 12px;margin-top:18px;line-height:1.34;
+}
+
+/* ---------- check questions ---------- */
+/* Same white sheet as the reading cards - a question floating on the grid
+   texture was the last text left outside a box after the 2026-08-21 pass. */
+.qwrap{
+  max-width:min(940px,88vw);margin:0 auto;
+  position:relative;background:var(--glass-3);
+  border:1.5px solid var(--line-hard);border-radius:2px;
+  box-shadow:4px 4px 0 rgba(31,51,80,.09);
+  padding:24px 30px 28px;
+}
+.qwrap::before{
+  content:'';position:absolute;inset:5px;
+  border:1px dashed rgba(31,51,80,.16);border-radius:2px;pointer-events:none;
+}
+.qwrap > *{position:relative;z-index:1}
+.qhead{font-family:var(--font-mono);font-size:15.6px;letter-spacing:2.4px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px}
+/* NOT font-sketch. Cabin Sketch draws every glyph as a pair of thin broken
+   outlines - it carries a four-word title beautifully and a question sentence
+   not at all, where it reads as faint and half-erased. Decorative faces are
+   for headings, captions and margin notes; anything the student has to parse
+   is Barlow with real weight behind it. */
+.qtext{
+  font-family:var(--font-body);font-size:clamp(23.9px,1.85vw,30.7px);
+  font-weight:600;line-height:1.3;margin-bottom:22px;color:var(--ink);
+  max-width:34ch;text-wrap:balance;
+}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{
+  display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%;
+  padding:13px 15px;border:1.5px solid var(--line-hard);background:var(--glass-2);
+  font-family:var(--font-body);font-size:21.1px;font-weight:500;color:var(--ink);line-height:1.42;
+}
+.opt:hover{border-color:var(--ink);background:var(--glass-3)}
+.opt .key{
+  flex:0 0 auto;font-family:var(--font-mono);font-size:16.3px;letter-spacing:1px;
+  color:var(--rust);border:1px solid var(--rust);padding:2px 6px;margin-top:1px;
+}
+.opt.right{border-color:var(--green);background:rgba(246,252,246,.9)}
+.opt.right .key{border-color:var(--green);background:var(--green);color:#fff}
+.opt.wrong{border-color:var(--rust);background:rgba(255,246,242,.9)}
+.opt.wrong .key{background:var(--rust);color:#fff}
+.opt.dim{opacity:.62}
+.opt[disabled]:hover{border-color:var(--line-hard);background:var(--glass-2)}
+.opt.right[disabled]:hover{border-color:var(--green);background:rgba(246,252,246,.9)}
+.opt.wrong[disabled]:hover{border-color:var(--rust);background:rgba(255,246,242,.9)}
+.why{
+  margin-top:16px;padding:13px 16px;border:1.5px solid var(--line-hard);
+  border-left:3px solid var(--rust);background:var(--glass-3);
+  font-family:var(--font-body);font-weight:400;font-size:20.5px;line-height:1.5;color:var(--ink);
+}
+.why.ok{border-left-color:var(--green)}
+.why b{font-weight:600;color:var(--ink);font-family:var(--font-mono);font-size:16.3px;letter-spacing:2px;display:block;margin-bottom:4px;text-transform:uppercase}
+
+/* ---------- drill staging ---------- */
+.drill{max-width:min(1560px,96vw);margin:0 auto}
+.drillbrief{
+  display:flex;align-items:flex-start;gap:18px;margin-bottom:16px;
+  padding:14px 18px;border:1.5px solid var(--line-hard);background:var(--glass-2);
+  box-shadow:3px 3px 0 rgba(31,51,80,.07);
+}
+.drillbrief .b1{flex:1 1 auto;min-width:0}
+.drillbrief h4{font-family:var(--font-body);font-size:26px;font-weight:600;line-height:1.05;margin-bottom:5px}
+.drillbrief p{font-size:19.6px;font-weight:400;line-height:1.5;color:var(--ink)}
+.drillbrief p b{font-weight:600;color:var(--ink)}
+.drillbrief .b2{flex:0 0 auto;text-align:right}
+
+.hud{
+  display:flex;align-items:center;gap:clamp(14px,2vw,34px);
+  padding:9px 16px;border:1.5px solid var(--line-hard);
+  background:var(--glass-2);margin-bottom:0;flex-wrap:wrap;
+}
+.hud .cell{display:flex;flex-direction:column;gap:2px}
+.hud .k{font-family:var(--font-mono);font-size:14.2px;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink-soft)}
+.hud .v{font-family:var(--font-mono);font-size:25.1px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.hud .v.good{color:var(--green)}
+.hud .v.warn{color:var(--amber)}
+.hud .v.bad{color:var(--rust)}
+.hud .spacer{flex:1}
+.hud .src{font-family:var(--font-mono);font-size:15px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink-soft)}
+.hud .src b{color:var(--green)}
+
+.stage{
+  position:relative;border:1.5px solid var(--line-hard);border-top:0;
+  background:var(--glass-3);box-shadow:3px 3px 0 rgba(31,51,80,.08);
+}
+.stage canvas{display:block;width:100%;height:auto}
+.stageover{
+  position:absolute;inset:0;display:none;place-items:center;
+  background:rgba(242,236,224,.90);text-align:center;padding:20px;
+}
+.stageover.on{display:grid}
+.stageover h4{font-family:var(--font-body);font-size:clamp(31.8px,3vw,50.9px);font-weight:600;line-height:1;color:var(--ink)}
+.stageover h4.win{color:var(--green)}
+.stageover h4.lose{color:var(--rust)}
+.stageover .sub{font-family:var(--font-body);font-weight:400;font-size:21.1px;color:var(--ink);margin-top:9px;max-width:52ch;line-height:1.5}
+.stageover .big{font-family:var(--font-mono);font-size:64px;line-height:1;color:var(--ink);margin-top:12px;font-variant-numeric:tabular-nums}
+.stageover .btns{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.stageover .keyhint{font-family:var(--font-mono);font-size:15px;letter-spacing:2px;color:var(--ink-soft);margin-top:14px;text-transform:uppercase}
+
+/* the little stick visualiser */
+.sticks{display:flex;gap:22px;align-items:center;justify-content:center}
+.stickbox{text-align:center}
+.stickpad{
+  width:96px;height:96px;border:1.5px solid var(--line-hard);
+  background:var(--glass-3);position:relative;
+}
+.stickpad::before,.stickpad::after{
+  content:'';position:absolute;background:rgba(31,51,80,.18);
+}
+.stickpad::before{left:50%;top:4px;bottom:4px;width:1px}
+.stickpad::after{top:50%;left:4px;right:4px;height:1px}
+.stickpad i{
+  position:absolute;width:16px;height:16px;border-radius:50%;
+  background:var(--rust);border:1.5px solid var(--paper);
+  transform:translate(-50%,-50%);left:50%;top:50%;
+  box-shadow:0 0 0 1.5px var(--rust);
+}
+.stickbox .sl{font-family:var(--font-mono);font-size:14.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink-soft);margin-top:6px}
+
+/* motor-picker drill */
+.quadpick{display:grid;place-items:center;padding:8px 0 4px}
+.quadpick svg{width:min(420px,72vw);height:auto;overflow:visible}
+.mtarget{}
+.mtarget circle.hit{fill:var(--green)}
+.mtarget circle.miss{fill:var(--rust)}
+.mtarget circle.sel{fill:var(--amber)}
+
+/* channel grid drill */
+.chgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;max-width:760px;margin:0 auto}
+.chcell{
+  border:1.5px solid var(--line-hard);background:var(--glass-2);padding:11px 4px;text-align:center;
+  font-family:var(--font-mono);font-size:18.6px;color:var(--ink);
+}
+.chcell small{display:block;font-size:14px;letter-spacing:1.2px;color:var(--ink-soft);margin-top:3px;text-transform:uppercase}
+.chcell.taken{background:rgba(143,61,18,.14);border-color:var(--rust);color:var(--rust)}
+.chcell.adj{background:rgba(125,88,16,.12);border-color:var(--amber);color:var(--amber)}
+.chcell.pick{background:var(--green);border-color:var(--green);color:#fff}
+.chcell.bad{background:var(--rust);border-color:var(--rust);color:#fff}
+.chcell:hover:not(.taken){border-color:var(--ink)}
+
+/* go/no-go sort drill */
+.scen{
+  max-width:min(1000px,88vw);margin:0 auto 18px;padding:20px 24px;
+  border:2px solid var(--ink);background:var(--glass-3);
+  box-shadow:6px 6px 0 rgba(31,51,80,.13);position:relative;
+}
+.scen::before{content:'';position:absolute;inset:5px;border:1px dashed rgba(31,51,80,.26);pointer-events:none}
+.scen .sn{font-family:var(--font-mono);font-size:15px;letter-spacing:2.2px;color:var(--rust);text-transform:uppercase}
+/* Also not a decorative face. This is the scenario or the arithmetic problem -
+   the thing being asked - so it gets read, not admired. */
+.scen .st{
+  font-family:var(--font-body);font-size:clamp(21.7px,1.65vw,28.5px);font-weight:500;
+  line-height:1.42;margin-top:9px;color:var(--ink);text-wrap:balance;
+}
+.sortbtns{display:flex;gap:12px;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.sortbtns .minibtn{min-width:132px;justify-content:center;text-align:center}
+
+/* voltage slider */
+.vwrap{max-width:640px;margin:0 auto}
+.vread{display:flex;align-items:baseline;gap:14px;justify-content:center;margin-bottom:6px}
+.vread .vv{font-family:var(--font-mono);font-size:52px;line-height:1;font-variant-numeric:tabular-nums}
+.vread .vc{font-family:var(--font-mono);font-size:21.1px;color:var(--ink-soft)}
+.vstate{
+  font-family:var(--font-mono);font-size:17.4px;letter-spacing:3px;text-transform:uppercase;
+  text-align:center;padding:7px;border:2px solid currentColor;margin:10px 0 16px;
+}
+.vstate.s-full{color:var(--sky)}
+.vstate.s-good{color:var(--green)}
+.vstate.s-land{color:var(--amber)}
+.vstate.s-dead{color:var(--rust)}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:26px;background:none;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:8px;background:rgba(31,51,80,.14);border:1.5px solid var(--line-hard);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:26px;margin-top:-11px;
+  background:var(--rust);border:1.5px solid var(--paper);box-shadow:0 0 0 1.5px var(--rust);
+}
+
+/* generic key/value result table */
+.rtab{width:100%;border-collapse:collapse;max-width:560px;margin:14px auto 0}
+.rtab td{padding:7px 10px;border-bottom:1px dashed rgba(31,51,80,.22);font-size:19.3px;font-weight:400;color:var(--ink)}
+.rtab td.k{font-family:var(--font-mono);font-size:15.6px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink-soft);width:46%}
+.rtab td.v{text-align:right;font-family:var(--font-mono);font-size:19.8px;color:var(--ink);font-variant-numeric:tabular-nums}
+.rtab tr:last-child td{border-bottom:0}
+
+/* step checklist (recovery drill) */
+.steps{display:flex;flex-direction:column;gap:7px;max-width:290px}
+.step{
+  display:flex;align-items:center;gap:10px;padding:8px 11px;
+  border:1.5px solid var(--line-hard);background:var(--glass-2);
+}
+.step .n{font-family:var(--font-mono);font-size:15px;letter-spacing:1.6px;color:var(--ink-soft);width:56px;flex:0 0 auto}
+.step .d{font-family:var(--font-body);font-size:18.4px;font-weight:400;color:var(--ink);flex:1 1 auto}
+.step.now{border-color:var(--amber);background:rgba(125,88,16,.13)}
+.step.now .n{color:var(--amber)}
+.step.ok{border-color:var(--green);background:rgba(45,106,62,.10)}
+.step.ok .n{color:var(--green)}
+
+/* ---------- quiz ---------- */
+.qprog{display:flex;gap:3px;flex-wrap:wrap;max-width:420px}
+.qprog i{width:13px;height:6px;background:rgba(31,51,80,.20);display:block}
+.qprog i.ok{background:var(--green)}
+.qprog i.no{background:var(--rust)}
+.qprog i.now{background:var(--amber)}
+
+.scorecard{
+  max-width:640px;margin:0 auto;text-align:center;
+  position:relative;background:var(--glass-3);
+  border:1.5px solid var(--line-hard);border-radius:2px;
+  box-shadow:4px 4px 0 rgba(31,51,80,.09);
+  padding:28px 30px 30px;
+}
+.scorecard::before{
+  content:'';position:absolute;inset:5px;
+  border:1px dashed rgba(31,51,80,.16);border-radius:2px;pointer-events:none;
+}
+.scorecard > *{position:relative;z-index:1}
+.scorecard .bigscore{
+  font-family:var(--font-mono);font-size:clamp(72px,10vw,132px);line-height:.9;
+  font-variant-numeric:tabular-nums;color:var(--ink);
+}
+.scorecard .bigscore.pass{color:var(--green)}
+.scorecard .bigscore.fail{color:var(--rust)}
+.scorecard .verdict{
+  font-family:var(--font-mono);font-size:19.8px;letter-spacing:5px;text-transform:uppercase;
+  margin-top:4px;
+}
+.scorecard .verdict.pass{color:var(--green)}
+.scorecard .verdict.fail{color:var(--rust)}
+
+/* ---------- toast ---------- */
+#toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);
+  background:var(--ink);color:var(--paper);
+  font-family:var(--font-mono);font-size:16.1px;letter-spacing:1.4px;
+  padding:11px 20px;opacity:0;pointer-events:none;
+  transition:opacity .2s ease,transform .2s ease;z-index:60;
+  box-shadow:4px 4px 0 rgba(31,51,80,.22);
+}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- modal scrim ---------- */
+.scrim{
+  position:fixed;inset:0;z-index:50;display:none;place-items:center;
+  background:rgba(31,51,80,.34);backdrop-filter:blur(1.5px);
+}
+.scrim.show{display:grid}
+.card{
+  width:min(640px,86vw);background:var(--paper);
+  border:2px solid var(--ink);box-shadow:8px 8px 0 rgba(31,51,80,.15);
+  padding:30px 34px 28px;position:relative;
+}
+.card::before{content:'';position:absolute;inset:6px;border:1px dashed rgba(31,51,80,.30);pointer-events:none}
+.card h2{font-family:var(--font-body);font-size:36.3px;font-weight:600;line-height:1;color:var(--ink)}
+.card .hint{font-family:var(--font-mono);font-size:16.3px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-soft);margin-top:7px}
+.card .rule{height:2px;background:var(--ink);opacity:.5;margin:14px 0 18px}
+.card p{font-size:20.5px;font-weight:400;line-height:1.55;color:var(--ink)}
+.card p + p{margin-top:11px}
+.card .foot{display:flex;gap:12px;justify-content:flex-end;margin-top:22px;flex-wrap:wrap}
+
+/* ---------- focus + motion ---------- */
+:focus-visible{outline:2px solid var(--rust);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+}
+
+/* ---------- narrow / small screens ---------- */
+@media (max-width:1100px){
+  #syllabus{grid-template-columns:1fr}
+  .rcard{grid-template-columns:1fr;max-width:min(900px,92vw)}
+}
