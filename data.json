@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1790288938900,
-    "generatedIso":  "2026-09-24T15:28:59-07:00",
+    "generated":  1790289840511,
+    "generatedIso":  "2026-09-24T15:44:00-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,12 +9,12 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  211376845,
+                   "clubMs":  211648268,
                    "pilots":  29,
                    "activePilots7":  19,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  149825417.9282999,
+                                    "liftoff":  150096841.45659989,
                                     "microdrones":  59746804.75710085,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  274725.16310000006,
@@ -136,7 +136,7 @@
                                     },
                        "gsPct":  9,
                        "gsLessons":  2,
-                       "lastSeen":  1790288803938
+                       "lastSeen":  1790289294941
                    },
                    {
                        "name":  "Aeson T.",
@@ -210,9 +210,9 @@
                    },
                    {
                        "name":  "Asher B.",
-                       "totalMs":  3137172,
+                       "totalMs":  3408595,
                        "perSimMs":  {
-                                        "liftoff":  2239693,
+                                        "liftoff":  2511117,
                                         "microdrones":  867154,
                                         "skydive":  30325,
                                         "fpvlabs":  0,
@@ -220,7 +220,7 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790288915811
+                       "lastSeen":  1790289290940
                    },
                    {
                        "name":  "Aled L.",
