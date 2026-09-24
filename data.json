@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1790203459325,
-    "generatedIso":  "2026-09-23T15:44:19-07:00",
+    "generated":  1790211571390,
+    "generatedIso":  "2026-09-23T17:59:31-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  205946507,
+                   "clubMs":  207148843,
                    "pilots":  29,
                    "activePilots7":  20,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  144707519.24929988,
-                                    "microdrones":  59744920.75710085,
+                                    "liftoff":  145907971.24929988,
+                                    "microdrones":  59746804.75710085,
                                     "skydive":  447435.15579998121,
                                     "fpvlabs":  274725.16310000006,
                                     "picasim":  771904.38230001263
@@ -265,6 +265,20 @@
                        "lastSeen":  1789670197226
                    },
                    {
+                       "name":  "Benny T",
+                       "totalMs":  1525652,
+                       "perSimMs":  {
+                                        "liftoff":  1523768,
+                                        "microdrones":  1884,
+                                        "skydive":  0,
+                                        "fpvlabs":  0,
+                                        "picasim":  0
+                                    },
+                       "gsPct":  0,
+                       "gsLessons":  0,
+                       "lastSeen":  1790204400480
+                   },
+                   {
                        "name":  "Bruno A.",
                        "totalMs":  1454515,
                        "perSimMs":  {
@@ -375,20 +389,6 @@
                        "gsPct":  0,
                        "gsLessons":  0,
                        "lastSeen":  1788976362719
-                   },
-                   {
-                       "name":  "Benny T",
-                       "totalMs":  323316,
-                       "perSimMs":  {
-                                        "liftoff":  323316,
-                                        "microdrones":  0,
-                                        "skydive":  0,
-                                        "fpvlabs":  0,
-                                        "picasim":  0
-                                    },
-                       "gsPct":  0,
-                       "gsLessons":  0,
-                       "lastSeen":  1790203188050
                    },
                    {
                        "name":  "Mr. Burr",
