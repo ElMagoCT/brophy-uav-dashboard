@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1790274518254,
-    "generatedIso":  "2026-09-24T11:28:38-07:00",
+    "generated":  1790275418448,
+    "generatedIso":  "2026-09-24T11:43:38-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,14 +9,14 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  207839616,
+                   "clubMs":  207987994,
                    "pilots":  29,
-                   "activePilots7":  18,
+                   "activePilots7":  17,
                    "sims":  5,
                    "perSimMs":  {
                                     "liftoff":  146436566.60109991,
                                     "microdrones":  59746804.75710085,
-                                    "skydive":  609612.58339998685,
+                                    "skydive":  757990.89219998755,
                                     "fpvlabs":  274725.16310000006,
                                     "picasim":  771904.38230001263
                                 }
@@ -98,17 +98,17 @@
                    },
                    {
                        "name":  "Bode K.",
-                       "totalMs":  20955851,
+                       "totalMs":  21104229,
                        "perSimMs":  {
                                         "liftoff":  11044682,
                                         "microdrones":  9779316,
-                                        "skydive":  131853,
+                                        "skydive":  280231,
                                         "fpvlabs":  0,
                                         "picasim":  0
                                     },
                        "gsPct":  23,
                        "gsLessons":  5,
-                       "lastSeen":  1790274498296
+                       "lastSeen":  1790274646679
                    },
                    {
                        "name":  "Micah T.",
@@ -178,7 +178,7 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790188352268
+                       "lastSeen":  1790274646698
                    },
                    {
                        "name":  "Ben.H",
