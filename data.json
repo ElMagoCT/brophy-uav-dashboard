@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1790370047206,
-    "generatedIso":  "2026-09-25T14:00:47-07:00",
+    "generated":  1790377257571,
+    "generatedIso":  "2026-09-25T16:00:57-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -120,9 +120,9 @@
                                         "fpvlabs":  0,
                                         "picasim":  0
                                     },
-                       "gsPct":  9,
-                       "gsLessons":  2,
-                       "lastSeen":  1790347836162
+                       "gsPct":  100,
+                       "gsLessons":  22,
+                       "lastSeen":  1790377131500
                    },
                    {
                        "name":  "Micah T.",
@@ -136,7 +136,7 @@
                                     },
                        "gsPct":  23,
                        "gsLessons":  5,
-                       "lastSeen":  1790350640615
+                       "lastSeen":  1790376836221
                    },
                    {
                        "name":  "Aeson T.",
