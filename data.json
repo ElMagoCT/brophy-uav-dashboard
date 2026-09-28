@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1790626111367,
-    "generatedIso":  "2026-09-28T13:08:31-07:00",
+    "generated":  1790627011996,
+    "generatedIso":  "2026-09-28T13:23:32-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  229865989,
+                   "clubMs":  230589075,
                    "pilots":  30,
                    "activePilots7":  19,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  161256673.89329895,
-                                    "microdrones":  66804694.390500791,
+                                    "liftoff":  161877260.93849894,
+                                    "microdrones":  66907192.917200781,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  274725.16310000006,
                                     "picasim":  771904.38230001263
@@ -84,17 +84,17 @@
                    },
                    {
                        "name":  "Cyrus G.",
-                       "totalMs":  22480341,
+                       "totalMs":  23203427,
                        "perSimMs":  {
-                                        "liftoff":  12673582,
-                                        "microdrones":  9790531,
+                                        "liftoff":  13294170,
+                                        "microdrones":  9893029,
                                         "skydive":  0,
                                         "fpvlabs":  0,
                                         "picasim":  16228
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790626097814
+                       "lastSeen":  1790626999002
                    },
                    {
                        "name":  "Colton O.",
