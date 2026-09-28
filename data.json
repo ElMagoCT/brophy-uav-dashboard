@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1790619805687,
-    "generatedIso":  "2026-09-28T11:23:26-07:00",
+    "generated":  1790620707383,
+    "generatedIso":  "2026-09-28T11:38:27-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,12 +9,12 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  227909940,
+                   "clubMs":  229420823,
                    "pilots":  30,
                    "activePilots7":  19,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  159745791.01339898,
+                                    "liftoff":  161256673.89329895,
                                     "microdrones":  66359528.236500777,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  274725.16310000006,
@@ -70,9 +70,9 @@
                    },
                    {
                        "name":  "Bode K.",
-                       "totalMs":  24065670,
+                       "totalMs":  24349599,
                        "perSimMs":  {
-                                        "liftoff":  12221106,
+                                        "liftoff":  12505035,
                                         "microdrones":  11564333,
                                         "skydive":  280231,
                                         "fpvlabs":  0,
@@ -80,7 +80,7 @@
                                     },
                        "gsPct":  23,
                        "gsLessons":  5,
-                       "lastSeen":  1790619688053
+                       "lastSeen":  1790620512047
                    },
                    {
                        "name":  "Colton O.",
@@ -168,9 +168,9 @@
                    },
                    {
                        "name":  "Jameson S.",
-                       "totalMs":  9290144,
+                       "totalMs":  9708632,
                        "perSimMs":  {
-                                        "liftoff":  8670640,
+                                        "liftoff":  9089128,
                                         "microdrones":  619504,
                                         "skydive":  0,
                                         "fpvlabs":  0,
@@ -178,7 +178,21 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790619790275
+                       "lastSeen":  1790620208774
+                   },
+                   {
+                       "name":  "Asher B.",
+                       "totalMs":  7671374,
+                       "perSimMs":  {
+                                        "liftoff":  6773896,
+                                        "microdrones":  867154,
+                                        "skydive":  30325,
+                                        "fpvlabs":  0,
+                                        "picasim":  0
+                                    },
+                       "gsPct":  0,
+                       "gsLessons":  0,
+                       "lastSeen":  1790620519744
                    },
                    {
                        "name":  "Ben.H",
@@ -207,20 +221,6 @@
                        "gsPct":  0,
                        "gsLessons":  0,
                        "lastSeen":  1788987212415
-                   },
-                   {
-                       "name":  "Asher B.",
-                       "totalMs":  6862908,
-                       "perSimMs":  {
-                                        "liftoff":  5965430,
-                                        "microdrones":  867154,
-                                        "skydive":  30325,
-                                        "fpvlabs":  0,
-                                        "picasim":  0
-                                    },
-                       "gsPct":  0,
-                       "gsLessons":  0,
-                       "lastSeen":  1790354748593
                    },
                    {
                        "name":  "Aled L.",
