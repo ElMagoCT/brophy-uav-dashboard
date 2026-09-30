@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1790752221094,
-    "generatedIso":  "2026-09-30T00:10:21-07:00",
+    "generated":  1790779243000,
+    "generatedIso":  "2026-09-30T07:40:43-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  262133519,
+                   "clubMs":  262558683,
                    "pilots":  32,
                    "activePilots7":  20,
                    "sims":  5,
                    "perSimMs":  {
                                     "liftoff":  190455226.77639893,
-                                    "microdrones":  69835448.062700659,
+                                    "microdrones":  70260611.631300718,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  274725.16310000006,
                                     "picasim":  810127.12200001709
@@ -154,17 +154,17 @@
                    },
                    {
                        "name":  "Bryson E.",
-                       "totalMs":  16007937,
+                       "totalMs":  16433101,
                        "perSimMs":  {
                                         "liftoff":  12021494,
-                                        "microdrones":  3986444,
+                                        "microdrones":  4411607,
                                         "skydive":  0,
                                         "fpvlabs":  0,
                                         "picasim":  0
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790705179040
+                       "lastSeen":  1790779215135
                    },
                    {
                        "name":  "Jameson S.",
