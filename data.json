@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1790801766006,
-    "generatedIso":  "2026-09-30T13:56:06-07:00",
+    "generated":  1790802666556,
+    "generatedIso":  "2026-09-30T14:11:06-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  270654002,
+                   "clubMs":  271810721,
                    "pilots":  33,
-                   "activePilots7":  18,
+                   "activePilots7":  19,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  194283577.581299,
-                                    "microdrones":  74527582.082500711,
+                                    "liftoff":  194599553.606299,
+                                    "microdrones":  75368325.082500711,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  274725.16310000006,
                                     "picasim":  810127.12200001709
@@ -126,9 +126,9 @@
                    },
                    {
                        "name":  "Colton O.",
-                       "totalMs":  22067394,
+                       "totalMs":  22383370,
                        "perSimMs":  {
-                                        "liftoff":  15828304,
+                                        "liftoff":  16144280,
                                         "microdrones":  6239090,
                                         "skydive":  0,
                                         "fpvlabs":  0,
@@ -136,7 +136,7 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790182686135
+                       "lastSeen":  1790802608218
                    },
                    {
                        "name":  "Aeson T.",
@@ -237,6 +237,20 @@
                        "lastSeen":  1790178665980
                    },
                    {
+                       "name":  "V",
+                       "totalMs":  2758788,
+                       "perSimMs":  {
+                                        "liftoff":  0,
+                                        "microdrones":  2758788,
+                                        "skydive":  0,
+                                        "fpvlabs":  0,
+                                        "picasim":  0
+                                    },
+                       "gsPct":  0,
+                       "gsLessons":  0,
+                       "lastSeen":  1790802524051
+                   },
+                   {
                        "name":  "Marco F.",
                        "totalMs":  2570780,
                        "perSimMs":  {
@@ -291,20 +305,6 @@
                        "gsPct":  0,
                        "gsLessons":  0,
                        "lastSeen":  1790704385806
-                   },
-                   {
-                       "name":  "V",
-                       "totalMs":  1918045,
-                       "perSimMs":  {
-                                        "liftoff":  0,
-                                        "microdrones":  1918045,
-                                        "skydive":  0,
-                                        "fpvlabs":  0,
-                                        "picasim":  0
-                                    },
-                       "gsPct":  0,
-                       "gsLessons":  0,
-                       "lastSeen":  1790801683286
                    },
                    {
                        "name":  "Bruno A.",
