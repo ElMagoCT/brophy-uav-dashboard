@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1790876513279,
-    "generatedIso":  "2026-10-01T10:41:53-07:00",
+    "generated":  1790877415068,
+    "generatedIso":  "2026-10-01T10:56:55-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,16 +9,16 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  284064384,
+                   "clubMs":  284912677,
                    "pilots":  33,
                    "activePilots7":  19,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  200245386.19849885,
+                                    "liftoff":  201089279.55829883,
                                     "microdrones":  81934101.080700621,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
-                                    "picasim":  810127.12200001709
+                                    "picasim":  814526.99810002092
                                 }
                },
     "sims":  [
@@ -98,17 +98,17 @@
                    },
                    {
                        "name":  "Micah T.",
-                       "totalMs":  25158751,
+                       "totalMs":  26007044,
                        "perSimMs":  {
-                                        "liftoff":  14926517,
+                                        "liftoff":  15770410,
                                         "microdrones":  8996521,
                                         "skydive":  225289,
                                         "fpvlabs":  254749,
-                                        "picasim":  755676
+                                        "picasim":  760076
                                     },
                        "gsPct":  23,
                        "gsLessons":  5,
-                       "lastSeen":  1790876496303
+                       "lastSeen":  1790877397354
                    },
                    {
                        "name":  "Colton O.",
