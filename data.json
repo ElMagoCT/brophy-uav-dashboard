@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1790877415068,
-    "generatedIso":  "2026-10-01T10:56:55-07:00",
+    "generated":  1790878315624,
+    "generatedIso":  "2026-10-01T11:11:55-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,12 +9,12 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  284912677,
+                   "clubMs":  285813903,
                    "pilots":  33,
                    "activePilots7":  19,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  201089279.55829883,
+                                    "liftoff":  201990505.27509886,
                                     "microdrones":  81934101.080700621,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
@@ -98,9 +98,9 @@
                    },
                    {
                        "name":  "Micah T.",
-                       "totalMs":  26007044,
+                       "totalMs":  26908270,
                        "perSimMs":  {
-                                        "liftoff":  15770410,
+                                        "liftoff":  16671636,
                                         "microdrones":  8996521,
                                         "skydive":  225289,
                                         "fpvlabs":  254749,
@@ -108,7 +108,7 @@
                                     },
                        "gsPct":  23,
                        "gsLessons":  5,
-                       "lastSeen":  1790877397354
+                       "lastSeen":  1790878298602
                    },
                    {
                        "name":  "Colton O.",
