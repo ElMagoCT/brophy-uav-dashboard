@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1790973804185,
-    "generatedIso":  "2026-10-02T13:43:24-07:00",
+    "generated":  1790974705289,
+    "generatedIso":  "2026-10-02T13:58:25-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  303608837,
+                   "clubMs":  304449690,
                    "pilots":  35,
                    "activePilots7":  22,
                    "sims":  5,
                    "perSimMs":  {
                                     "liftoff":  214234496.38749918,
-                                    "microdrones":  87485042.88190046,
+                                    "microdrones":  88325895.88190046,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
                                     "picasim":  814526.99810002092
@@ -84,17 +84,17 @@
                    },
                    {
                        "name":  "Cyrus G.",
-                       "totalMs":  30206156,
+                       "totalMs":  31047009,
                        "perSimMs":  {
                                         "liftoff":  17517373,
-                                        "microdrones":  12672555,
+                                        "microdrones":  13513408,
                                         "skydive":  0,
                                         "fpvlabs":  0,
                                         "picasim":  16228
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790973680294
+                       "lastSeen":  1790974521169
                    },
                    {
                        "name":  "Micah T.",
