@@ -109,6 +109,7 @@ Everything is in `posters/src/`:
 ```bash
 cd posters/src
 python3 gen_map.py --check     # writes 03..06 (the four Pilot Path map sheets) and reports collisions
+python3 gen_dock.py            # writes 08..15, the drone dock sheets (4 drone classes x 8.5x11 and 7x11)
 python3 build.py               # renders every NN-*.html to ../NN.pdf and ../preview/NN.png
 ```
 
@@ -116,7 +117,10 @@ Needs Google Chrome (headless) and, for the PNGs, macOS's `qlmanage`. Fonts are
 the kiosk's self-hosted woff2 files, served over a throwaway local HTTP server
 because Chrome refuses `@font-face` from `file://`. Posters 01, 02 and 07 are
 hand-written HTML; the map sheets are generated from the `SHEETS` data at the
-top of `gen_map.py` — move a node and the trail, the numbered pins and the
+top of `gen_map.py`, and the drone docks (pin a sheet up, write your name,
+hang the drone on pins through the ⊕ marks) from `CLASSES` in `gen_dock.py` —
+the outline is drawn in millimetres so it prints at actual size, or scaled with
+a note when the frame is wider than the paper — move a node and the trail, the numbered pins and the
 collision-aware card placement follow. The how-to poster's screenshots are
 inlined as data URIs so the PDF never depends on image load timing.
 
