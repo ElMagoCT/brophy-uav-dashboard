@@ -77,15 +77,13 @@ def drone_svg(c, w_mm, h_mm):
     if top_edge > 26:
         o.append('<path d="M%.1f %.1f v-10 m-4 4 l4 -4 l4 4" stroke-width="1.2"/>' % (cx, top_edge - 6))
         o.append('<text x="%.1f" y="%.1f" font-family="Share Tech Mono, monospace" font-size="4.2" fill="%s" text-anchor="middle" stroke="none" letter-spacing=".6">FRONT</text>' % (cx, top_edge - 19, SOFT))
-    else:
-        o.append('<path d="M8 16 v-9 m-3.5 3.5 l3.5 -3.5 l3.5 3.5" stroke-width="1.2"/>')
-        o.append('<text x="13" y="14" font-family="Share Tech Mono, monospace" font-size="4.2" fill="%s" stroke="none" letter-spacing=".6">FRONT</text>' % SOFT)
+    # (no room: the how-line says "front is up" instead - see render())
     size_note = 'ACTUAL SIZE' if scale > 0.995 else 'SCALED TO FIT · %d%%' % round(scale * 100)
     # wheelbase dimension line, bottom-right
     o.append('<text x="%.1f" y="%.1f" font-family="Share Tech Mono, monospace" font-size="3.6" fill="%s" text-anchor="end" stroke="none" letter-spacing=".5">%s · %d MM WHEELBASE · PROPS %d MM</text>'
              % (w_mm - 2, h_mm - 2, SOFT, size_note, c['wb'], c['prop']))
     o.append('</g></svg>')
-    return '\n'.join(o)
+    return '\n'.join(o), top_edge > 26
 
 def render(c, paper):
     pw, ph = PAPERS[paper]
@@ -94,7 +92,8 @@ def render(c, paper):
     top_h = H * c['top']
     inner_w = W - 2 * margin
     drone_h_px = H - top_h - margin
-    svg = drone_svg(c, inner_w / 96 * 25.4, drone_h_px / 96 * 25.4)
+    svg, has_arrow = drone_svg(c, inner_w / 96 * 25.4, drone_h_px / 96 * 25.4)
+    front = '' if has_arrow else ' &middot; front is up.' 
     cells = ''.join('<div class="cell"><span>%s</span></div>' % s for s in c['specs'])
     return f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -143,7 +142,7 @@ h1 small{{display:block;font-family:'Share Tech Mono',monospace;font-size:11.5px
       <div class="name"><span>Drone</span></div>
     </div>
     <div class="specs">{cells}</div>
-    <div class="how"><b>HOW</b> &nbsp;Pin the sheet up &middot; pins through the <span style="color:{RUST}">&oplus;</span> marks &middot; hang the drone by its arms, props off or facing out.</div>
+    <div class="how"><b>HOW</b> &nbsp;Pin the sheet up &middot; pins through the <span style="color:{RUST}">&oplus;</span> marks &middot; hang the drone by its arms, props off or facing out{front}</div>
   </div>
   <div class="drone">{svg}</div>
 </div>
