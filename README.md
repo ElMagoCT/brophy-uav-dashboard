@@ -98,9 +98,10 @@ change, Netlify rebuilds in a few seconds, and the site is current.
 | Path | What it is |
 |---|---|
 | `groundschool/` | the FPV Ground School course app, copied from the kiosk by `Publish-GroundSchool.ps1` |
-| `progression/` | **the Pilot Path** — the FPV Club badge program: four tiers (sim → Meteor → full-size → event pilot) and all 28 badges, filterable. Static; edit the `B` array in its `index.html` when the badge sheet changes |
+| `flightschool/` | **Flight School** — the whole badge curriculum (28 badges, four tiers; quiz, bench and witnessed badges), with a pilot picker so progress is per pilot. `badges.js` is the one badge catalogue the site uses; keep it in step with the kiosk's `config.json` catalogue. Progress merges the kiosk snapshot (earned badges, hours), Ground School lessons done on this device, and bench-step ticks made on the page |
+| `progression/` | redirect to `flightschool/` — kept because the printed posters' QR codes point here |
 | `posters/` | the seven 11×17 posters above the simulators, as PDFs with PNG previews, plus a printing page. **Sources in `posters/src/`** — see below |
-| `admin/` | the instructor console (signed commands to the kiosks) |
+| `admin/` | the instructor console (signed commands to the kiosks). `admin/#approvals` is the Flight School sign-off view: pick pilot + badge, Approve sends a signed `badge.award` to a kiosk |
 
 ### Rebuilding the posters
 
@@ -242,7 +243,7 @@ plays.
 | `data.json` | the generated snapshot. **Do not hand-edit** — the next publish overwrites it |
 | `netlify.toml` | publish dir and cache headers. No build command, on purpose |
 | `robots.txt` | crawlable; the page is meant to be found |
-| `progression/`, `posters/` | the badge program page and the printed posters — see "The other pages" |
+| `flightschool/`, `posters/` | the badge curriculum and the printed posters — see "The other pages" |
 | `publish.log` | what the exporter did. Git-ignored |
 | `.snapshot-hash` | local change-detection marker. Git-ignored |
 | `C:\BrophyUAV\Publish-Dashboard.ps1` | the exporter |

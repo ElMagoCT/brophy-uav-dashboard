@@ -45,3 +45,16 @@ button:disabled{opacity:.5;cursor:default}
 .res pre{white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;margin:6px 0 0;font:13px/1.4 "Share Tech Mono",ui-monospace,monospace;max-height:340px;overflow:auto}
 .st-ok{color:var(--ok)} .st-bad{color:var(--bad)} .st-wait{color:var(--warn)}
 @media (max-width:560px){ h1{font-size:23px} .card{padding:14px} }
+
+/* views (Kiosks / Approvals) */
+.views{display:flex;gap:18px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.views a{color:var(--muted);text-decoration:none;padding:6px 2px 8px;font-weight:500;border-bottom:2px solid transparent}
+.views a.on{color:var(--ink);border-bottom-color:var(--accent)}
+#apPilot{width:200px} #apBadge{width:100%;display:block;margin-top:4px}
+.roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px 16px;font-size:14px}
+.roster div{padding:6px 0;border-bottom:1px solid var(--line)}
+.roster b{display:block;font-weight:600}
+.roster span{color:var(--muted)}
+.roster .tier{display:inline-block;font:12px "Share Tech Mono",ui-monospace,monospace;background:var(--chip);border-radius:4px;padding:1px 6px;margin-left:6px;letter-spacing:.5px}
+.gap-top{margin-top:12px}
+button.primary.flush{margin-top:0}

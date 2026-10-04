@@ -7,7 +7,7 @@
 <meta name="referrer" content="no-referrer">
 <!-- Everything this page may load or talk to. Nothing inline, no third-party
      script, and the only network destination is GitHub's API. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com; base-uri 'none'; form-action 'none'">
 <title>Instructor Console · Brophy UAV</title>
 <link rel="stylesheet" href="../groundschool/fonts.css">
 <link rel="stylesheet" href="admin.css">
@@ -46,6 +46,40 @@
 
   <!-- ============ console ============ -->
   <section id="console" hidden>
+    <nav class="views" id="views">
+      <a href="#kiosks" id="vKiosks" class="on">Kiosks</a>
+      <a href="#approvals" id="vApprovals">Approvals</a>
+    </nav>
+
+    <!-- ---- approvals: Flight School badge sign-off ---- -->
+    <div id="approvals" hidden>
+      <div class="card">
+        <h2>Approve a badge</h2>
+        <p class="muted small">For bench and witnessed badges. The pilot has DM'd their photo (or you watched them do it);
+          you approve here and a signed <code>badge.award</code> command goes to the selected kiosk, which records it
+          and syncs it to the other one. Quiz badges are earned at the kiosk by passing the quiz — only use this to
+          override. Nothing here can be undone by a student; Revoke is yours alone.</p>
+        <div class="row wrapline">
+          <label class="inline">Kiosk <select id="apMachine"></select></label>
+          <label class="inline">Pilot <input id="apPilot" list="apPilots" placeholder="Micah T." autocomplete="off"> <datalist id="apPilots"></datalist></label>
+        </div>
+        <label>Badge <select id="apBadge"></select></label>
+        <div class="muted small" id="apBadgeInfo"></div>
+        <label>Note (optional) <input id="apNote" placeholder="DM received 10/4 · photo of Motors tab"></label>
+        <div class="row wrapline gap-top">
+          <button id="apAward" class="primary flush">Approve</button>
+          <button id="apRevoke" class="danger">Revoke</button>
+          <span class="muted small">Approving a badge that is already earned is harmless.</span>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Who holds what</h2>
+        <p class="muted small" id="apRosterNote">From the kiosk's last published snapshot.</p>
+        <div id="apRoster" class="roster"></div>
+      </div>
+    </div>
+
+    <div id="kiosks">
     <nav class="tabs" id="tabs"></nav>
 
     <div class="card">
@@ -78,9 +112,11 @@
       <div class="row between"><h2>Results</h2><button id="signout" class="ghost">Sign out</button></div>
       <div id="results"><div class="muted">Nothing yet.</div></div>
     </div>
+    </div><!-- /kiosks -->
   </section>
 </div>
 <noscript>This console needs JavaScript.</noscript>
+<script src="../flightschool/badges.js"></script>
 <script src="admin.js"></script>
 </body>
 </html>

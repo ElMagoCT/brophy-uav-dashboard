@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flight School — Brophy UAV</title>
+<meta name="description" content="Brophy UAV Flight School: the whole badge curriculum, four tiers from the simulator to flying at school events, with your own progress.">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23f2ece0'/><g stroke='%231f3350' stroke-width='2.4' fill='none' stroke-linecap='round'><circle cx='16' cy='16' r='3.4'/><path d='M8 8 13 13M24 8 19 13M8 24 13 19M24 24 19 19'/><circle cx='7' cy='7' r='3.2'/><circle cx='25' cy='7' r='3.2'/><circle cx='7' cy='25' r='3.2'/><circle cx='25' cy='25' r='3.2'/></g></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Cabin+Sketch:wght@400;700&family=Architects+Daughter&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* Same design system as ../index.html: the grid is the desk, the boxes on it
+   are white, pencil faces for the wordmark only, nothing under 13px. */
+:root{
+  --paper:#f2ece0;--paper-2:#eae2d1;--ink:#1f3350;--ink-soft:#546881;
+  --rust:#8f3d12;--amber:#7d5810;--green:#1f5230;--sky:#1c5578;--violet:#4b3287;--gold:#f0a91a;
+  --line:rgba(31,51,80,.20);--line-hard:rgba(31,51,80,.42);--glass:#f3eee2;--glass-2:#ffffff;
+  --font-sketch:'Cabin Sketch','Architects Daughter',cursive;--font-hand:'Architects Daughter','Segoe Print',cursive;
+  --font-mono:'Share Tech Mono','Consolas',monospace;--font-body:'Barlow','Segoe UI',system-ui,sans-serif;
+  --r:10px;--shadow:0 1px 0 rgba(31,51,80,.14),0 6px 18px rgba(31,51,80,.07);
+}
+*{box-sizing:border-box}
+body{margin:0;background-color:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5;min-height:100vh}
+#paper-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+#paper-bg .grid{position:absolute;inset:0;opacity:.28;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
+#paper-bg .grid-fine{position:absolute;inset:0;opacity:.5;background-image:linear-gradient(rgba(31,51,80,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(31,51,80,.10) 1px,transparent 1px);background-size:7px 7px}
+#paper-bg .vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 45% 32%,rgba(255,255,255,.42) 0%,rgba(255,255,255,0) 48%),radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 55%,rgba(120,100,60,.13) 100%)}
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:28px 20px 64px}
+
+nav.crumbs{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--font-mono);font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+nav.crumbs a{color:var(--ink-soft);text-decoration:none}
+nav.crumbs a:hover,nav.crumbs a[aria-current]{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+
+header.title{background-color:var(--glass);border:1.5px solid var(--line-hard);border-radius:var(--r);box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px 24px;align-items:flex-end;justify-content:space-between}
+.title h1{font-family:var(--font-sketch);font-weight:700;font-size:clamp(34px,7vw,58px);line-height:.95;margin:0;letter-spacing:.5px}
+.title h1 .a{color:var(--rust)}
+.title .sub{font-family:var(--font-mono);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px}
+.stamp{font-family:var(--font-hand);font-size:19px;color:var(--rust);transform:rotate(-3deg);border:2.5px solid var(--rust);border-radius:6px;padding:3px 11px;display:inline-block;margin-top:12px;opacity:.9}
+
+/* ---------- pilot picker ---------- */
+.pilot{background-color:var(--glass-2);border:1.5px solid var(--line-hard);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 18px;min-width:300px;flex:1;max-width:460px}
+.pilot .k{font-family:var(--font-mono);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+.pilot .who{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:4px}
+.pilot .nm{font-family:var(--font-sketch);font-weight:700;font-size:30px;line-height:1}
+.pilot .nm.none{font-family:var(--font-body);font-weight:500;font-size:17px;color:var(--ink-soft)}
+.pilot .next{font-size:14.5px;color:var(--ink-soft);margin-top:8px;line-height:1.35}
+.pilot .next b{color:var(--ink);font-weight:600}
+.linkbtn{font-family:var(--font-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;background:none;border:0;color:var(--rust);cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:0}
+.picker{display:none;margin-top:12px;border-top:1px dashed var(--line-hard);padding-top:12px}
+.picker.open{display:block}
+.picker input{font:inherit;font-size:16px;width:100%;padding:9px 12px;border:1.5px solid var(--line-hard);border-radius:7px;background:var(--glass);color:var(--ink)}
+.picker .names{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;max-height:150px;overflow:auto}
+.picker .names button{font-family:var(--font-mono);font-size:13px;letter-spacing:.06em;background:var(--paper-2);border:1px solid var(--line-hard);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--ink)}
+.picker .names button:hover{background:var(--glass-2)}
+.picker .hint{font-size:13.5px;color:var(--ink-soft);margin-top:8px}
+
+section{margin-top:30px}
+.eyebrow{display:flex;align-items:baseline;gap:12px;margin:0 2px 12px}
+.eyebrow h2{font-family:var(--font-mono);font-size:15px;letter-spacing:.18em;text-transform:uppercase;font-weight:400;color:var(--ink);margin:0}
+.eyebrow .rule{flex:1;height:1px;background:var(--line-hard);opacity:.75}
+.eyebrow .hint{font-size:13.5px;color:var(--ink-soft)}
+.card{background-color:var(--glass-2);border:1.5px solid var(--line-hard);border-radius:var(--r);box-shadow:var(--shadow)}
+
+/* ---------- how it works ---------- */
+.how{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.how .h{padding:14px 16px}
+.how .k{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--rust)}
+.how .v{font-size:15px;margin-top:5px;line-height:1.4}
+.how .v b{font-weight:600}
+
+/* ---------- tiers ---------- */
+.tier{margin-top:26px;border-left:6px solid var(--c);padding-left:14px}
+.tier .th{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin-bottom:10px}
+.tier .tn{font-family:var(--font-mono);font-size:14px;letter-spacing:.22em;text-transform:uppercase;color:var(--c)}
+.tier .nm{font-family:var(--font-sketch);font-weight:700;font-size:30px;line-height:1}
+.tier .gear{font-size:14.5px;color:var(--ink-soft)}
+.tier .gate{font-family:var(--font-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-left:auto}
+.tier .prog{font-family:var(--font-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;background:var(--paper-2);border:1px solid var(--line-hard);border-radius:6px;padding:2px 8px}
+.tier .prog.done{background:rgba(31,82,48,.12);border-color:var(--green);color:var(--green)}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+
+/* ---------- badge card ---------- */
+.badge{padding:13px 15px 13px;border-left:6px solid var(--t);display:flex;flex-direction:column;gap:6px;cursor:pointer}
+.badge .lab{display:flex;justify-content:space-between;gap:8px;font-family:var(--font-mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.badge .lab .type{color:var(--rust)}
+.badge .nm{font-family:var(--font-sketch);font-weight:700;font-size:23px;line-height:1;display:flex;align-items:center;gap:8px}
+.badge .nm .st{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;border-radius:6px;padding:2px 7px;background:var(--paper-2);border:1px solid var(--line-hard);color:var(--ink-soft);font-weight:400}
+.badge .nm .st.earned{background:rgba(31,82,48,.12);border-color:var(--green);color:var(--green)}
+.badge .nm .st.progress{background:rgba(125,88,16,.10);border-color:var(--amber);color:var(--amber)}
+.badge .do{font-size:15px;line-height:1.35}
+.badge .meter{height:7px;border-radius:4px;background:var(--paper-2);border:1px solid var(--line);overflow:hidden}
+.badge .meter i{display:block;height:100%;background:var(--t)}
+.badge .more{display:none;border-top:1px dashed var(--line);padding-top:8px;margin-top:2px;font-size:14px;line-height:1.4}
+.badge.open .more{display:block}
+.badge .more .why{color:var(--ink-soft)}
+.badge .more .why b{color:var(--ink);font-weight:600}
+.badge ul{margin:6px 0 0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+.badge li{display:flex;gap:8px;align-items:flex-start}
+.badge li .tick{width:18px;height:18px;flex:none;border:1.5px solid var(--line-hard);border-radius:4px;display:grid;place-items:center;font-size:12px;color:var(--green);margin-top:2px;background:var(--glass)}
+.badge li .tick.on{border-color:var(--green);background:rgba(31,82,48,.12)}
+.badge li.step{cursor:pointer}
+.badge li.step:hover .tick{border-color:var(--green)}
+.badge li .soon{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);background:var(--paper-2);border:1px dashed var(--line-hard);border-radius:5px;padding:1px 6px;margin-left:6px}
+.badge .std{background-color:var(--glass);border:1px solid var(--line);border-radius:7px;padding:8px 10px;margin-top:6px}
+.badge .std b{font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:400;color:var(--rust);display:block;margin-bottom:2px}
+.badge .act{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.btn{font-family:var(--font-mono);font-size:13.5px;letter-spacing:.1em;text-transform:uppercase;background:var(--glass-2);color:var(--ink);text-decoration:none;border:1.5px solid var(--line-hard);border-radius:7px;padding:8px 13px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{background:var(--paper-2)}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.primary:hover{background:#182740}
+.approve{font-size:13.5px;color:var(--ink-soft);margin-top:8px;line-height:1.4}
+.approve b{color:var(--ink);font-weight:600}
+
+footer{margin-top:34px;padding:16px 18px;background-color:var(--glass);border:1.5px solid var(--line-hard);border-radius:var(--r);font-size:13.5px;color:var(--ink-soft);display:flex;flex-wrap:wrap;gap:6px 20px;justify-content:space-between}
+footer a{color:var(--ink)}
+
+@media (max-width:900px){.how{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.wrap{padding:18px 13px 52px}header.title{padding:18px 16px}.how{grid-template-columns:1fr}.pilot{min-width:0;max-width:none}.tier .gate{margin-left:0}}
+</style>
+</head>
+<body>
+<div id="paper-bg" aria-hidden="true"><div class="grid"></div><div class="grid-fine"></div><div class="vignette"></div></div>
+<div class="wrap">
+
+  <nav class="crumbs" aria-label="Site">
+    <a href="../">Flight lab</a>
+    <a href="./" aria-current="page">Flight School</a>
+    <a href="../posters/">Posters</a>
+  </nav>
+
+  <header class="title">
+    <div>
+      <h1>Flight <span class="a">School</span></h1>
+      <div class="sub">Brophy UAV &middot; 28 badges &middot; four tiers &middot; badges unlock the gear</div>
+      <div class="stamp">sim is Tier 0</div>
+    </div>
+    <div class="pilot" id="pilot">
+      <div class="k">Flying as</div>
+      <div class="who"><span class="nm none" id="pName">nobody yet</span><button class="linkbtn" id="pChange" type="button">pick a pilot</button></div>
+      <div class="next" id="pNext">Pick your name and this page remembers where you are.</div>
+      <div class="picker" id="picker">
+        <input id="pInput" type="text" placeholder="Type your first name and last initial, e.g. Micah T." autocomplete="off">
+        <div class="names" id="pNames"></div>
+        <div class="hint">Same name you use at the kiosk, so the two line up. No password: progress only ever goes forward, so there is nothing to protect.</div>
+      </div>
+    </div>
+  </header>
+
+  <section aria-labelledby="hHead">
+    <div class="eyebrow"><h2 id="hHead">How it works</h2><span class="rule"></span></div>
+    <div class="how">
+      <div class="card h"><div class="k">Quiz badges</div><div class="v">Short lessons, then a 10-question quiz. <b>80 % passes.</b> Retake as often as you like; your best score counts. The kiosk awards these by itself.</div></div>
+      <div class="card h"><div class="k">Bench badges</div><div class="v">Step-by-step instructions on the kiosk or here. Tick the boxes as you go, <b>DM a photo</b> of your work to mtucker27@brophybroncos.org, then an instructor approves.</div></div>
+      <div class="card h"><div class="k">Witnessed badges</div><div class="v">Someone who holds the badge watches you do it against <b>the standard</b> written on the card. Prep drills are in Ground School.</div></div>
+      <div class="card h"><div class="k">Gates</div><div class="v">Earn every badge in a tier and the gate opens: <b>the next drone is yours to fly.</b> Electives are side quests, any time.</div></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="cHead">
+    <div class="eyebrow"><h2 id="cHead">The whole curriculum</h2><span class="rule"></span><span class="hint" id="srcHint">tap a badge for details</span></div>
+    <div id="tiers"></div>
+  </section>
+
+  <footer>
+    <span>Kiosk hours and earned badges come from the lab kiosk. Lessons and ticks you do here are saved on this device for the pilot you picked; the kiosk is the record of truth. Instructors approve badges in the <a href="../admin/#approvals" rel="nofollow">instructor console</a>.</span>
+    <span>mtucker27@ for questions</span>
+  </footer>
+</div>
+
+<script src="badges.js"></script>
+<script>
+/* Three sources, merged per badge:
+     1. the kiosk's published snapshot (../data.json): earned badges + sim hours
+        per pilot, when the kiosk exports them (Flight School v2, Phase 3);
+     2. Ground School lesson progress for the picked pilot, from the course
+        app's localStorage (gsWeb.profiles.v2, written by ../groundschool/gs-web.js);
+     3. bench-step ticks made on this page (fs.progress.v1).
+   Earned-from-kiosk always wins. Nothing here can take a badge away. */
+var FS = window.FS, DATA = null, pilot = null;
+var LS = { pilot: 'fs.pilot.v1', progress: 'fs.progress.v1', gs: 'gsWeb.profiles.v2' };
+
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function lsGet(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+/* ---------- pilot ---------- */
+function setPilot(name) {
+  pilot = name ? { name: name.trim(), slug: FS.slug(name) } : null;
+  lsSet(LS.pilot, pilot);
+  $('picker').classList.remove('open');
+  render();
+}
+function kioskPilot() {
+  if (!pilot || !DATA || !DATA.pilots) return null;
+  for (var i = 0; i < DATA.pilots.length; i++) if (FS.slug(DATA.pilots[i].name) === pilot.slug) return DATA.pilots[i];
+  return null;
+}
+function gsProfile() {
+  if (!pilot) return null;
+  var all = lsGet(LS.gs, {});
+  return all[pilot.slug] || null;
+}
+function progress() { var all = lsGet(LS.progress, {}); return pilot ? (all[pilot.slug] || {}) : {}; }
+function saveProgress(p) { var all = lsGet(LS.progress, {}); if (pilot) { all[pilot.slug] = p; lsSet(LS.progress, all); } }
+
+/* ---------- status per badge ---------- */
+function status(b) {
+  var kp = kioskPilot(), gp = gsProfile(), pr = progress()[b.id] || {};
+  var out = { earned: false, source: '', pct: 0, detail: '' };
+  if (kp && kp.badges && kp.badges.indexOf(b.id) >= 0) { out.earned = true; out.source = 'kiosk'; out.pct = 100; return out; }
+  if (b.type === 'auto') {
+    var h = kp ? (kp.totalMs || 0) / 3600000 : 0;
+    out.pct = Math.min(100, Math.round(h / FS.SIM_HOURS * 100));
+    out.detail = kp ? (h.toFixed(1) + ' of ' + FS.SIM_HOURS + ' h logged at the kiosk') : 'hours come from the kiosk';
+    if (h >= FS.SIM_HOURS) { out.earned = true; out.source = 'hours'; }
+    return out;
+  }
+  if (b.type === 'knowledge') {
+    var ids = b.lessons || [], done = 0;
+    ids.forEach(function (id) { var r = gp && gp.groundSchool && gp.groundSchool.lessons[id]; if (r && r.status === 'complete') done++; });
+    var total = ids.length + (b.planned || []).length + 1;      // + the quiz
+    out.pct = Math.round(done / total * 100);
+    out.detail = done + ' of ' + total + ' parts';
+    return out;
+  }
+  if (b.type === 'bench') {
+    var steps = b.steps || [], ticked = 0;
+    steps.forEach(function (s, i) { if (pr.steps && pr.steps[i]) ticked++; });
+    out.pct = steps.length ? Math.round(ticked / steps.length * 100) : 0;
+    out.detail = ticked + ' of ' + steps.length + ' steps ticked';
+    return out;
+  }
+  if (b.type === 'witnessed') {
+    var prep = b.prep || [], pd = 0;
+    prep.forEach(function (id) { var r = gp && gp.groundSchool && gp.groundSchool.lessons[id]; if (r && r.status === 'complete') pd++; });
+    out.pct = prep.length ? Math.round(pd / prep.length * 90) : 0;
+    out.detail = prep.length ? (pd + ' of ' + prep.length + ' prep drills') : 'waiting for an instructor';
+    return out;
+  }
+  return out;
+}
+function tierDone(t) {
+  var bs = FS.BADGES.filter(function (b) { return b.tier === t.id; }), n = 0;
+  bs.forEach(function (b) { if (status(b).earned) n++; });
+  return { n: n, of: bs.length };
+}
+function nextStep() {
+  if (!pilot) return 'Pick your name and this page remembers where you are.';
+  var order = ['t0', 't1', 't2', 't3'];
+  for (var i = 0; i < order.length; i++) {
+    var t = FS.TIERS[i], bs = FS.BADGES.filter(function (b) { return b.tier === t.id; });
+    var open = bs.filter(function (b) { return !status(b).earned; });
+    if (!open.length) continue;
+    var pick = open.filter(function (b) { return b.type === 'knowledge' || b.type === 'bench'; })[0] || open[0];
+    var verb = { knowledge: 'do the lessons and pass the quiz', bench: 'work through the steps at the kiosk', witnessed: 'ask an examiner to watch you', auto: 'keep flying the sim' }[pick.type];
+    return '<b>Tier ' + t.n + ' · ' + (bs.length - open.length) + ' of ' + bs.length + '</b> · next: <b>' + esc(pick.name) + '</b> — ' + verb + '.';
+  }
+  return '<b>Event Pilot.</b> Every gate is open. Side quests remain.';
+}
+
+/* ---------- render ---------- */
+function render() {
+  $('pName').textContent = pilot ? pilot.name : 'nobody yet';
+  $('pName').className = 'nm' + (pilot ? '' : ' none');
+  $('pChange').textContent = pilot ? 'change' : 'pick a pilot';
+  $('pNext').innerHTML = nextStep();
+  var kp = kioskPilot();
+  $('srcHint').textContent = !pilot ? 'tap a badge for details' :
+    (kp ? (kp.badges ? 'earned badges and hours from the kiosk · ticks saved here' : 'hours from the kiosk · badges not published by the kiosk yet · ticks saved here')
+        : 'this name has not flown at the kiosk yet · everything here is saved on this device');
+
+  var open = {}; var cur = document.querySelectorAll('.badge.open'); for (var i = 0; i < cur.length; i++) open[cur[i].getAttribute('data-id')] = true;
+  var html = '';
+  FS.TIERS.forEach(function (t) {
+    var d = tierDone(t);
+    html += '<div class="tier" id="' + t.id + '" style="--c:' + t.color + '"><div class="th">' +
+      '<span class="tn">' + (t.n >= 0 ? 'Tier ' + t.n : 'Side quests') + '</span><span class="nm">' + esc(t.name) + '</span>' +
+      '<span class="gear">' + esc(t.gear) + '</span>' +
+      (pilot ? '<span class="prog' + (d.n === d.of ? ' done' : '') + '">' + d.n + ' / ' + d.of + '</span>' : '') +
+      '<span class="gate">' + esc(t.gate) + '</span></div><div class="badges">';
+    FS.BADGES.filter(function (b) { return b.tier === t.id; }).forEach(function (b) {
+      var s = status(b), col = { flight: 'var(--sky)', build: 'var(--amber)', know: 'var(--green)', crew: 'var(--violet)' }[b.track];
+      var type = { knowledge: 'Quiz', bench: 'Bench', witnessed: 'Witnessed', auto: 'Automatic' }[b.type];
+      var st = s.earned ? '<span class="st earned">earned' + (s.source === 'kiosk' ? ' · kiosk' : '') + '</span>' : (pilot && s.pct > 0 ? '<span class="st progress">' + s.pct + '%</span>' : '');
+      html += '<div class="card badge' + (open[b.id] ? ' open' : '') + '" data-id="' + b.id + '" style="--t:' + col + '">' +
+        '<div class="lab"><span class="type">' + type + '</span><span>' + esc(FS.TRACK[b.track]) + '</span></div>' +
+        '<div class="nm">' + esc(b.name) + st + '</div>' +
+        '<div class="do">' + esc(b.do) + '</div>' +
+        (pilot ? '<div class="meter"><i style="width:' + (s.earned ? 100 : s.pct) + '%"></i></div>' : '') +
+        '<div class="more">' + more(b, s) + '</div></div>';
+    });
+    html += '</div></div>';
+  });
+  $('tiers').innerHTML = html;
+}
+function more(b, s) {
+  var gp = gsProfile(), pr = progress()[b.id] || {}, h = '<div class="why"><b>Why:</b> ' + esc(b.why) + '</div>';
+  if (b.note) h += '<div class="why" style="margin-top:4px">' + esc(b.note) + '</div>';
+  if (b.type === 'knowledge') {
+    h += '<ul>';
+    (b.lessons || []).forEach(function (id) {
+      var r = gp && gp.groundSchool && gp.groundSchool.lessons[id], on = r && r.status === 'complete';
+      h += '<li><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>' + esc(FS.LESSON_TITLES[id] || id) + '</span></li>';
+    });
+    (b.planned || []).forEach(function (t) { h += '<li><span class="tick"></span><span>' + esc(t) + '<span class="soon">coming</span></span></li>'; });
+    h += '<li><span class="tick"></span><span>Quiz · 10 questions · ' + FS.PASS + ' % to pass<span class="soon">with Flight School v2</span></span></li></ul>';
+    h += '<div class="act"><a class="btn primary" href="../groundschool/">Open the lessons &rarr;</a></div>';
+    h += '<div class="approve">Lessons you finish in Ground School tick off here for the same pilot name. The quiz runs at the kiosk (and here) once v2 ships; passing it earns the badge with no sign-off.</div>';
+  } else if (b.type === 'bench') {
+    h += '<ul>';
+    (b.steps || []).forEach(function (t, i) {
+      var on = pr.steps && pr.steps[i];
+      h += '<li class="step" data-step="' + i + '"><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>' + esc(t) + '</span></li>';
+    });
+    h += '</ul>';
+    h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done — approved at the kiosk or in the instructor console.' : 'an instructor approves this badge in the instructor console once your photo has arrived, or by typing the admin password on the kiosk.') + '</div>';
+  } else if (b.type === 'witnessed') {
+    if (b.prep && b.prep.length) {
+      h += '<ul>';
+      b.prep.forEach(function (id) {
+        var r = gp && gp.groundSchool && gp.groundSchool.lessons[id], on = r && r.status === 'complete';
+        h += '<li><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>Prep: ' + esc(FS.LESSON_TITLES[id] || id) + '</span></li>';
+      });
+      h += '</ul><div class="act"><a class="btn" href="../groundschool/">Prep drills &rarr;</a></div>';
+    }
+    h += '<div class="std"><b>The standard</b>' + esc(b.standard || '') + '</div>';
+    h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done.' : 'an examiner watches you, then approves in the instructor console or with the admin password at the kiosk.') + '</div>';
+  } else if (b.type === 'auto') {
+    h += '<div class="std"><b>Automatic</b>' + esc(b.standard) + (s.detail ? ' · ' + esc(s.detail) : '') + '</div>';
+    h += '<div class="act"><a class="btn" href="../">Lab hours &amp; leaderboard &rarr;</a></div>';
+  }
+  return h;
+}
+
+/* ---------- events ---------- */
+$('tiers').addEventListener('click', function (e) {
+  var step = e.target.closest ? e.target.closest('li.step') : null;
+  var card = e.target.closest ? e.target.closest('.badge') : null;
+  if (!card) return;
+  if (step) {
+    if (!pilot) { $('picker').classList.add('open'); $('pInput').focus(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    var id = card.getAttribute('data-id'), i = +step.getAttribute('data-step');
+    var p = progress(); p[id] = p[id] || { steps: {} }; p[id].steps = p[id].steps || {};
+    p[id].steps[i] = !p[id].steps[i]; p[id].updated = Date.now(); saveProgress(p);
+    render(); return;
+  }
+  if (e.target.closest('a,button')) return;
+  card.classList.toggle('open');
+});
+$('pChange').onclick = function () { $('picker').classList.toggle('open'); if ($('picker').classList.contains('open')) $('pInput').focus(); };
+$('pInput').addEventListener('keydown', function (e) { if (e.key === 'Enter' && this.value.trim().length >= 2) setPilot(this.value); });
+$('pInput').addEventListener('input', drawNames);
+function drawNames() {
+  var q = FS.slug($('pInput').value), box = $('pNames'), names = (DATA && DATA.pilots ? DATA.pilots.map(function (p) { return p.name; }) : []);
+  box.innerHTML = names.filter(function (n) { return !q || FS.slug(n).indexOf(q) >= 0; }).slice(0, 40)
+    .map(function (n) { return '<button type="button" data-n="' + esc(n) + '">' + esc(n) + '</button>'; }).join('') +
+    (q && $('pInput').value.trim().length >= 2 ? '<button type="button" data-n="' + esc($('pInput').value.trim()) + '">+ new: ' + esc($('pInput').value.trim()) + '</button>' : '');
+}
+$('pNames').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setPilot(b.getAttribute('data-n')); });
+
+/* ---------- boot ---------- */
+pilot = lsGet(LS.pilot, null);
+render();
+fetch('../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d; drawNames(); render(); }).catch(function () { drawNames(); });
+if (location.hash && /^#(t0|t1|t2|t3|el)$/.test(location.hash)) setTimeout(function () { var el = document.querySelector(location.hash); if (el) el.scrollIntoView(); }, 50);
+</script>
+</body>
+</html>

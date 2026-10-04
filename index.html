@@ -417,8 +417,7 @@ nav.crumbs a:hover,nav.crumbs a[aria-current]{color:var(--ink);text-decoration:u
 
   <nav class="crumbs" aria-label="Site">
     <a href="./" aria-current="page">Flight lab</a>
-    <a href="groundschool/">Ground School</a>
-    <a href="progression/">Pilot path</a>
+    <a href="flightschool/">Flight School</a>
     <a href="posters/">Posters</a>
   </nav>
 
@@ -438,35 +437,23 @@ nav.crumbs a:hover,nav.crumbs a[aria-current]{color:var(--ink);text-decoration:u
     <div class="stats" id="stats"></div>
   </section>
 
-  <section aria-labelledby="gsHead">
+  <section aria-labelledby="fsHead">
     <div class="reelhead">
       <div class="eyebrow" style="margin:0;flex:1">
-        <h2 id="gsHead">FPV Ground School</h2>
+        <h2 id="fsHead">Flight School</h2>
         <span class="rule"></span>
-        <span class="hint">22 lessons &middot; rules, hardware, video, stick work, tricks &middot; progress saves on your device</span>
+        <span class="hint">28 badges in four tiers &middot; quizzes, bench work and witnessed skills &middot; badges unlock the gear</span>
       </div>
       <div class="btnrow">
-        <a class="btn primary" href="groundschool/">Start the course &rarr;</a>
-      </div>
-    </div>
-  </section>
-
-  <section aria-labelledby="ppHead">
-    <div class="reelhead">
-      <div class="eyebrow" style="margin:0;flex:1">
-        <h2 id="ppHead">The Pilot Path</h2>
-        <span class="rule"></span>
-        <span class="hint">FPV Club badge program &middot; badges unlock the gear</span>
-      </div>
-      <div class="btnrow">
-        <a class="btn primary" href="progression/">All 28 badges &rarr;</a>
+        <a class="btn" href="groundschool/">Lessons &rarr;</a>
+        <a class="btn primary" href="flightschool/">Flight School &rarr;</a>
       </div>
     </div>
     <div class="tiers">
-      <a class="card tier" href="progression/#t0" style="--c:var(--sky)"><span class="tn">Tier 0</span><span class="nm">Simulator</span><span class="s">The five sims in the IC. Have a name. Log 7.5 hours.</span><span class="g">7 badges &rarr; Gate 1</span></a>
-      <a class="card tier" href="progression/#t1" style="--c:var(--violet)"><span class="tn">Tier 1</span><span class="nm">Tiny Whoop</span><span class="s">Meteor 75 Pro, sub-250 g. Your first real flight.</span><span class="g">6 badges &rarr; Gate 2</span></a>
-      <a class="card tier" href="progression/#t2" style="--c:var(--rust)"><span class="tn">Tier 2</span><span class="nm">Full-size</span><span class="s">Pavo 20 Pro &middot; Cinebot 35 &middot; 5-inch.</span><span class="g">8 badges &rarr; Gate 3</span></a>
-      <a class="card tier" href="progression/#el" style="--c:var(--green)"><span class="tn">Tier 3</span><span class="nm">Event Pilot</span><span class="s">Any Tier 2 airframe at a school event, with a spotter.</span><span class="g">+ 7 electives</span></a>
+      <a class="card tier" href="flightschool/#t0" style="--c:var(--sky)"><span class="tn">Tier 0</span><span class="nm">Simulator</span><span class="s">The five sims in the IC. Have a name. Log 7.5 hours, pass Safe Flight and Battery Care, flash a Meteor.</span><span class="g">7 badges &rarr; Gate 1</span></a>
+      <a class="card tier" href="flightschool/#t1" style="--c:var(--violet)"><span class="tn">Tier 1</span><span class="nm">Tiny Whoop</span><span class="s">Meteor 75 Pro, sub-250 g. Your first real flight.</span><span class="g">6 badges &rarr; Gate 2</span></a>
+      <a class="card tier" href="flightschool/#t2" style="--c:var(--rust)"><span class="tn">Tier 2</span><span class="nm">Full-size</span><span class="s">Pavo 20 Pro &middot; Cinebot 35 &middot; 5-inch.</span><span class="g">8 badges &rarr; Gate 3</span></a>
+      <a class="card tier" href="flightschool/#t3" style="--c:var(--green)"><span class="tn">Tier 3</span><span class="nm">Event Pilot</span><span class="s">Any Tier 2 airframe at a school event, with a spotter.</span><span class="g">+ 7 electives</span></a>
     </div>
   </section>
 
@@ -729,7 +716,8 @@ function renderBoard(){
     var medal = i < 3 && p.totalMs > 0 ? ' medal m' + (i + 1) : '';
 
     var meta = [];
-    if (p.gsPct > 0) meta.push('<span class="gs">Ground School ' + p.gsPct + '%</span>');
+    if (p.tier != null) meta.push('<span class="gs">Tier ' + p.tier + (p.badges ? ' · ' + p.badges.length + ' badges' : '') + '</span>');
+    else if (p.gsPct > 0) meta.push('<span class="gs">Ground School ' + p.gsPct + '%</span>');
     if (p.gsLessons > 0) meta.push(p.gsLessons + (p.gsLessons === 1 ? ' lesson' : ' lessons') + ' passed');
 
     /* The bar is scaled against the leader, so it reads as "share of the top

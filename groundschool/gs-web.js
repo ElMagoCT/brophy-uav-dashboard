@@ -6,21 +6,44 @@
    it: gs-app.js is copied verbatim from C:\BrophyUAV by Publish-GroundSchool.ps1
    and must stay identical to the kiosk's copy.
 
+   Since 2026-10-04 progress is kept PER PILOT: the pilot picked on
+   ../flightschool/ (localStorage fs.pilot.v1) owns a profile under
+   gsWeb.profiles.v2[slug]. Flight School reads the same store to tick off the
+   lessons inside each badge. Nobody picked -> a "Guest" profile on this device.
+   The old single profile (gsWebProfile.v1) is migrated into the first pilot
+   who signs in here, once, so nobody loses lessons they already did.
+
    Progress made here lives in THIS browser only. It never reaches the kiosks
    or the leaderboard - the site is one-directional by design (the kiosk
-   publishes; nothing flows back). */
+   publishes; nothing flows back). Instructors approve badges in ../admin/. */
 (function(){
-  var KEY = 'gsWebProfile.v1';
+  var KEY_PILOT = 'fs.pilot.v1', KEY_ALL = 'gsWeb.profiles.v2', KEY_OLD = 'gsWebProfile.v1';
   var realFetch = window.fetch.bind(window);
 
+  function slug(n){ return String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+  function get(k, d){ try{ var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; }catch(e){ return d; } }
+  function set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+  function pilot(){ var p = get(KEY_PILOT, null); return (p && p.name) ? { name:p.name, slug:p.slug || slug(p.name) } : { name:'Guest (this device)', slug:'guest' }; }
+
   function load(){
-    try{ var p = JSON.parse(localStorage.getItem(KEY)); if(p && p.id) return p; }catch(e){}
-    var p2 = { id:'web_' + Math.random().toString(36).slice(2,12), name: 'You (saved on this device)',
-               groundSchool:{ lessons:{}, progressPct:0, updated:0 }, created:Date.now(), lastSeen:Date.now() };
-    save(p2);
-    return p2;
+    var who = pilot(), all = get(KEY_ALL, {});
+    var p = all[who.slug];
+    if(!p){
+      // one-time migration of the pre-2026-10-04 single profile
+      var old = get(KEY_OLD, null);
+      if(old && old.groundSchool && who.slug !== 'guest' && !all.__migrated){
+        p = old; all.__migrated = true;
+        try{ localStorage.removeItem(KEY_OLD); }catch(e){}
+      } else {
+        p = { groundSchool:{ lessons:{}, progressPct:0, updated:0 }, created:Date.now() };
+      }
+    }
+    p.id = 'web_' + who.slug; p.name = who.name; p.lastSeen = Date.now();
+    all[who.slug] = p; set(KEY_ALL, all);
+    return p;
   }
-  function save(p){ try{ localStorage.setItem(KEY, JSON.stringify(p)); }catch(e){} }
+  function save(p){ var all = get(KEY_ALL, {}); all[pilot().slug] = p; set(KEY_ALL, all); }
   function reply(obj){
     return Promise.resolve(new Response(JSON.stringify(obj), { status:200, headers:{'Content-Type':'application/json'} }));
   }
@@ -53,8 +76,11 @@
   }
 
   window.fetch = function(url, opts){
-    var u = String(url);
-    if(u.indexOf('/api/') !== 0) return realFetch(url, opts);
+    /* gs-app.js prefixes its API constant (the bridge's origin on the kiosk,
+       the page origin here); strip anything up to "/api/" and match the path. */
+    var u = String(url), k = u.indexOf('/api/');
+    if(k < 0) return realFetch(url, opts);
+    u = u.slice(k);
     if(u === '/api/active') return reply({ profile: load() });
     if(u === '/api/groundschool/catalog') return reply(catalog());
     if(u === '/api/groundschool/lesson'){
@@ -63,4 +89,20 @@
     }
     return reply({ ok:false });
   };
+
+  /* A thin strip so the pilot can see whose progress this is, and get back to
+     Flight School to change it. Injected, not in the kiosk's markup. */
+  function strip(){
+    var who = pilot(), guest = who.slug === 'guest';
+    var d = document.createElement('div');
+    d.setAttribute('style', 'position:fixed;left:0;right:0;bottom:0;z-index:9999;display:flex;justify-content:center;gap:14px;align-items:center;' +
+      'padding:7px 14px;background:#1f3350;color:#f2ece0;font:14px/1.3 Barlow,system-ui,sans-serif;letter-spacing:.02em');
+    d.innerHTML = '<span>' + (guest ? 'Progress is saved on this device as <b>Guest</b>.' : 'Lessons save on this device for <b></b>.') + '</span>' +
+      '<a href="../flightschool/" style="color:#f0a91a;font-family:\'Share Tech Mono\',monospace;font-size:13px;letter-spacing:.12em;text-transform:uppercase">' +
+      (guest ? 'Pick your pilot \u2192' : 'Flight School \u2192') + '</a>';
+    if(!guest) d.querySelector('b').textContent = who.name;
+    document.body.appendChild(d);
+    document.body.style.paddingBottom = '44px';
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', strip); else strip();
 })();

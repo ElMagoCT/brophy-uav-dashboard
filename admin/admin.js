@@ -33,6 +33,9 @@
     { a: 'dashboard.publish', t: 'Publish website' },
     { a: 'logs',              t: 'Show log', args: function () { return { name: el('logName').value, lines: 80 }; } }
   ];
+  // Flight School sign-off (admin/#approvals). The kiosk's remote agent must
+  // know these two actions; until it does, the kiosk answers "unknown action".
+  var BADGE_ACTIONS = { award: 'badge.award', revoke: 'badge.revoke' };
 
   var S = { token: null, key: null, machine: MACHINES[0], pending: {} };
   function el(id) { return document.getElementById(id); }
@@ -80,7 +83,7 @@
       el('tok').value = '';
       el('signin').hidden = true; el('console').hidden = false;
       el('who').textContent = 'Signed in · token kept in this tab only';
-      drawTabs(); drawActions(); loadStatus();
+      drawTabs(); drawActions(); loadStatus(); drawApprovals(); showView();
     }).catch(function (e) {
       S.token = null;
       el('signMsg').textContent = e.status === 401 ? 'GitHub rejected the token (expired or wrong).' : e.message;
@@ -182,6 +185,66 @@
   function setRow(row, cls, text, output) {
     var st = row.querySelector('.h span:last-child'); st.className = cls; st.textContent = text;
     if (output != null) { var p = document.createElement('pre'); p.textContent = output; row.appendChild(p); }   // textContent: never HTML
+  }
+
+  // ---------------------------------------------------------------- approvals
+  var ROSTER = null;
+  function showView() {
+    var ap = location.hash === '#approvals';
+    el('approvals').hidden = !ap; el('kiosks').hidden = ap;
+    el('vKiosks').className = ap ? '' : 'on'; el('vApprovals').className = ap ? 'on' : '';
+    if (ap && !ROSTER) loadRoster();
+  }
+  window.addEventListener('hashchange', showView);
+  function drawApprovals() {
+    if (!window.FS) return;
+    var ms = el('apMachine'); ms.textContent = '';
+    MACHINES.forEach(function (m) { var o = document.createElement('option'); o.value = o.textContent = m; if (m === S.machine) o.selected = true; ms.appendChild(o); });
+    var bs = el('apBadge'); bs.textContent = '';
+    FS.TIERS.forEach(function (t) {
+      var g = document.createElement('optgroup'); g.label = (t.n >= 0 ? 'Tier ' + t.n + ' · ' : '') + t.name;
+      FS.BADGES.filter(function (b) { return b.tier === t.id && b.type !== 'auto'; }).forEach(function (b) {
+        var o = document.createElement('option'); o.value = b.id;
+        o.textContent = b.name + '  (' + { knowledge: 'quiz', bench: 'bench', witnessed: 'witnessed' }[b.type] + ')';
+        g.appendChild(o);
+      });
+      bs.appendChild(g);
+    });
+    bs.onchange = badgeInfo; badgeInfo();
+    el('apAward').onclick = function () { approve(BADGE_ACTIONS.award, 'Approve'); };
+    el('apRevoke').onclick = function () { if (window.confirm('Revoke this badge from the pilot? Only do this for a mistake.')) approve(BADGE_ACTIONS.revoke, 'Revoke'); };
+  }
+  function badgeInfo() {
+    var b = FS.BADGES.filter(function (x) { return x.id === el('apBadge').value; })[0];
+    el('apBadgeInfo').textContent = b ? (b.do + (b.standard ? ' — Standard: ' + b.standard : '')) : '';
+  }
+  function approve(action, label) {
+    var pilot = el('apPilot').value.trim(), badge = el('apBadge').value, note = el('apNote').value.trim();
+    if (pilot.length < 2) { el('apPilot').focus(); return; }
+    S.machine = el('apMachine').value; drawTabs();
+    send(action, { pilot: pilot, badge: badge, note: note, evidence: ['dm'] }, label + ' · ' + badge + ' · ' + pilot);
+    location.hash = '#kiosks';          // results list lives on the Kiosks view
+  }
+  function loadRoster() {
+    fetch('../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+      ROSTER = d;
+      var dl = el('apPilots'); dl.textContent = '';
+      (d.pilots || []).forEach(function (p) { var o = document.createElement('option'); o.value = p.name; dl.appendChild(o); });
+      var box = el('apRoster'); box.textContent = '';
+      var any = false;
+      (d.pilots || []).forEach(function (p) {
+        var div = document.createElement('div'), b = document.createElement('b'), s = document.createElement('span');
+        b.textContent = p.name;
+        if (p.tier != null) { var t = document.createElement('i'); t.className = 'tier'; t.textContent = 'T' + p.tier; b.appendChild(t); }
+        var badges = p.badges || [];
+        if (badges.length) any = true;
+        s.textContent = badges.length ? badges.map(function (id) { var bb = FS.BADGES.filter(function (x) { return x.id === id; })[0]; return bb ? bb.name : id; }).join(' · ')
+                                      : (Math.round((p.totalMs || 0) / 360000) / 10) + ' h in the sim · no badges published';
+        div.appendChild(b); div.appendChild(s); box.appendChild(div);
+      });
+      el('apRosterNote').textContent = any ? 'From the kiosk\'s last published snapshot (' + (d.generatedIso || '').slice(0, 16).replace('T', ' ') + ').'
+        : 'The kiosk is not publishing badges yet (Flight School v2, Phase 3). Hours shown instead.';
+    }).catch(function (e) { el('apRosterNote').textContent = 'Could not load data.json: ' + e.message; });
   }
 
   // ---------------------------------------------------------------- boot
