@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Pilot Path — Brophy UAV</title>
+<meta name="description" content="The Brophy FPV Club badge program: four tiers from the simulator to flying at school events, and the 28 badges that unlock each one.">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23f2ece0'/><g stroke='%231f3350' stroke-width='2.4' fill='none' stroke-linecap='round'><circle cx='16' cy='16' r='3.4'/><path d='M8 8 13 13M24 8 19 13M8 24 13 19M24 24 19 19'/><circle cx='7' cy='7' r='3.2'/><circle cx='25' cy='7' r='3.2'/><circle cx='7' cy='25' r='3.2'/><circle cx='25' cy='25' r='3.2'/></g></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Cabin+Sketch:wght@400;700&family=Architects+Daughter&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* Same design system as ../index.html — see the notes there. The grid is the
+   desk; the boxes on it are white; pencil faces are for the wordmark only;
+   nothing smaller than 13px. */
+:root{
+  --paper:#f2ece0;--paper-2:#eae2d1;--ink:#1f3350;--ink-soft:#546881;
+  --rust:#8f3d12;--amber:#7d5810;--green:#1f5230;--sky:#1c5578;--violet:#4b3287;
+  --line:rgba(31,51,80,.20);--line-hard:rgba(31,51,80,.42);--glass:#f3eee2;--glass-2:#ffffff;
+  --font-sketch:'Cabin Sketch','Architects Daughter',cursive;--font-hand:'Architects Daughter','Segoe Print',cursive;
+  --font-mono:'Share Tech Mono','Consolas',monospace;--font-body:'Barlow','Segoe UI',system-ui,sans-serif;
+  --r:10px;--shadow:0 1px 0 rgba(31,51,80,.14),0 6px 18px rgba(31,51,80,.07);
+}
+*{box-sizing:border-box}
+body{margin:0;background-color:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5;min-height:100vh}
+#paper-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+#paper-bg .grid{position:absolute;inset:0;opacity:.28;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
+#paper-bg .grid-fine{position:absolute;inset:0;opacity:.5;background-image:linear-gradient(rgba(31,51,80,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(31,51,80,.10) 1px,transparent 1px);background-size:7px 7px}
+#paper-bg .vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 45% 32%,rgba(255,255,255,.42) 0%,rgba(255,255,255,0) 48%),radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 55%,rgba(120,100,60,.13) 100%)}
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:28px 20px 64px}
+
+nav.crumbs{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--font-mono);font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+nav.crumbs a{color:var(--ink-soft);text-decoration:none}
+nav.crumbs a:hover,nav.crumbs a[aria-current]{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+
+header.title{background-color:var(--glass);border:1.5px solid var(--line-hard);border-radius:var(--r);box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px 24px;align-items:flex-end;justify-content:space-between}
+.title h1{font-family:var(--font-sketch);font-weight:700;font-size:clamp(34px,7vw,58px);line-height:.95;margin:0;letter-spacing:.5px}
+.title h1 .a{color:var(--rust)}
+.title .sub{font-family:var(--font-mono);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px}
+.stamp{font-family:var(--font-hand);font-size:19px;color:var(--rust);transform:rotate(-3deg);border:2.5px solid var(--rust);border-radius:6px;padding:3px 11px;display:inline-block;margin-top:12px;opacity:.9}
+.lede{font-family:var(--font-hand);font-size:20px;color:var(--ink-soft);max-width:520px;line-height:1.35;margin:0}
+
+section{margin-top:30px}
+.eyebrow{display:flex;align-items:baseline;gap:12px;margin:0 2px 12px}
+.eyebrow h2{font-family:var(--font-mono);font-size:15px;letter-spacing:.18em;text-transform:uppercase;font-weight:400;color:var(--ink);margin:0}
+.eyebrow .rule{flex:1;height:1px;background:var(--line-hard);opacity:.75}
+.eyebrow .hint{font-size:13.5px;color:var(--ink-soft)}
+.card{background-color:var(--glass-2);border:1.5px solid var(--line-hard);border-radius:var(--r);box-shadow:var(--shadow)}
+
+/* tiers */
+.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.tier{padding:16px 16px 14px;border-top:6px solid var(--c);position:relative}
+.tier .tn{font-family:var(--font-mono);font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--c)}
+.tier .nm{font-family:var(--font-sketch);font-weight:700;font-size:28px;line-height:1;margin-top:4px}
+.tier .gear{font-weight:600;margin-top:10px;line-height:1.3}
+.tier .req{font-size:14px;color:var(--ink-soft);margin-top:8px;line-height:1.4}
+.tier .req b{color:var(--ink);font-weight:600}
+.tier .n{position:absolute;right:14px;top:12px;font-family:var(--font-mono);font-size:13px;letter-spacing:.1em;color:var(--ink-soft)}
+.tier a{color:var(--ink)}
+
+/* filter chips */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.filters button{font-family:var(--font-mono);font-size:13.5px;letter-spacing:.1em;text-transform:uppercase;background:var(--glass-2);color:var(--ink);border:1.5px solid var(--line-hard);border-radius:7px;padding:7px 12px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.filters .sep{width:1px;background:var(--line-hard);margin:4px 4px}
+
+/* badges */
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.badge{padding:13px 15px 12px;border-left:6px solid var(--t);display:flex;flex-direction:column;gap:5px}
+.badge.hide{display:none}
+.badge .lab{display:flex;justify-content:space-between;gap:8px;font-family:var(--font-mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--rust)}
+.badge .lab .tk{color:var(--ink-soft)}
+.badge .nm{font-family:var(--font-sketch);font-weight:700;font-size:23px;line-height:1}
+.badge .do{font-size:15px;line-height:1.35}
+.badge .why{font-size:13.5px;color:var(--ink-soft);line-height:1.35;border-top:1px dashed var(--line);padding-top:6px;margin-top:2px}
+.badge .why b{color:var(--ink);font-weight:600}
+.count{font-family:var(--font-mono);font-size:13.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin:10px 2px 0}
+
+/* how it works */
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.how .h{padding:16px 18px}
+.how .k{font-family:var(--font-mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--rust)}
+.how .v{font-size:16px;margin-top:6px;line-height:1.4}
+.how .v b{font-weight:600}
+
+.btnrow{display:flex;flex-wrap:wrap;gap:10px}
+.btn{font-family:var(--font-mono);font-size:14px;letter-spacing:.1em;text-transform:uppercase;background:var(--glass-2);color:var(--ink);text-decoration:none;border:1.5px solid var(--line-hard);border-radius:7px;padding:9px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:var(--shadow)}
+.btn:hover{background:var(--paper-2)}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.primary:hover{background:#182740}
+
+footer{margin-top:34px;padding:16px 18px;background-color:var(--glass);border:1.5px solid var(--line-hard);border-radius:var(--r);font-size:13.5px;color:var(--ink-soft);display:flex;flex-wrap:wrap;gap:6px 20px;justify-content:space-between}
+footer a{color:var(--ink)}
+
+@media (max-width:900px){.tiers{grid-template-columns:repeat(2,1fr)}.how{grid-template-columns:1fr}}
+@media (max-width:600px){.wrap{padding:18px 13px 52px}header.title{padding:18px 16px}.tiers{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="paper-bg" aria-hidden="true"><div class="grid"></div><div class="grid-fine"></div><div class="vignette"></div></div>
+<div class="wrap">
+
+  <nav class="crumbs" aria-label="Site">
+    <a href="../">Flight lab</a>
+    <a href="../groundschool/">Ground School</a>
+    <a href="./" aria-current="page">Pilot path</a>
+    <a href="../posters/">Posters</a>
+  </nav>
+
+  <header class="title">
+    <div>
+      <h1>The <span class="a">Pilot Path</span></h1>
+      <div class="sub">FPV Club &middot; badge program &middot; 2026&ndash;27</div>
+      <div class="stamp">badges unlock the gear</div>
+    </div>
+    <p class="lede">Four tiers, from the simulator in the IC to flying a real drone in front of a crowd. Every badge is a skill you show someone, not a meeting you sat through.</p>
+  </header>
+
+  <section aria-labelledby="tHead">
+    <div class="eyebrow"><h2 id="tHead">The four tiers</h2><span class="rule"></span><span class="hint">pass every badge in a tier to open the gate to the next</span></div>
+    <div class="tiers">
+      <div class="card tier" style="--c:var(--sky)"><span class="n">Gate 1 &middot; 7 badges</span><div class="tn">Tier 0</div><div class="nm">SIMULATOR</div>
+        <div class="gear">The five FPV sims in the IC &middot; Liftoff, Micro Drones, SkyDive, FPV Labs, PicaSim</div>
+        <div class="req"><b>To get here:</b> have a name. <a href="../">Add it at the kiosk</a> and start logging hours.</div></div>
+      <div class="card tier" style="--c:var(--violet)"><span class="n">Gate 2 &middot; 6 badges</span><div class="tn">Tier 1</div><div class="nm">TINY WHOOP</div>
+        <div class="gear">Meteor 75 Pro &middot; sub-250 g &middot; safe indoors</div>
+        <div class="req"><b>To get here:</b> all seven Tier 0 badges, including 7.5 sim hours. Your first real flight.</div></div>
+      <div class="card tier" style="--c:var(--rust)"><span class="n">Gate 3 &middot; 8 badges</span><div class="tn">Tier 2</div><div class="nm">FULL-SIZE</div>
+        <div class="gear">Pavo 20 Pro &middot; Cinebot 35 &middot; 5-inch</div>
+        <div class="req"><b>To get here:</b> all six Tier 1 badges. Broadcast-quality footage for school events.</div></div>
+      <div class="card tier" style="--c:var(--green)"><span class="n">The top</span><div class="tn">Tier 3</div><div class="nm">EVENT PILOT</div>
+        <div class="gear">Any Tier 2 airframe at a game, dance or rally &middot; always with a spotter</div>
+        <div class="req"><b>To get here:</b> all eight Tier 2 badges &mdash; Spotter, Cinematography and FAA TRUST among them.</div></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="hHead">
+    <div class="eyebrow"><h2 id="hHead">How a badge is earned</h2><span class="rule"></span></div>
+    <div class="how">
+      <div class="card h"><div class="k">1 &middot; Show it</div><div class="v">Do the skill <b>in front of a certified member</b> &mdash; someone who already holds that badge. Demonstration, not attendance.</div></div>
+      <div class="card h"><div class="k">2 &middot; Sign-off</div><div class="v">They sign it off on the club&rsquo;s tracking board. <b>Examiners</b> hold the Mentor badge plus the badge being tested, with officer approval.</div></div>
+      <div class="card h"><div class="k">3 &middot; Unlock</div><div class="v">Finish every badge in your tier and the <b>gate opens</b>: the next tier&rsquo;s drones are yours to fly. Electives can be done any time.</div></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="bHead">
+    <div class="eyebrow"><h2 id="bHead">All 28 badges</h2><span class="rule"></span><span class="hint">tap a filter</span></div>
+    <div class="filters" id="filters">
+      <button type="button" data-f="all" aria-pressed="true">All</button>
+      <span class="sep"></span>
+      <button type="button" data-f="t0">Tier 0</button>
+      <button type="button" data-f="t1">Tier 1</button>
+      <button type="button" data-f="t2">Tier 2</button>
+      <button type="button" data-f="el">Electives</button>
+      <span class="sep"></span>
+      <button type="button" data-f="flight">Flight</button>
+      <button type="button" data-f="build">Build &amp; tech</button>
+      <button type="button" data-f="know">Knowledge &amp; safety</button>
+      <button type="button" data-f="crew">Crew &amp; leadership</button>
+    </div>
+    <div class="badges" id="badges"></div>
+    <div class="count" id="count"></div>
+  </section>
+
+  <section aria-labelledby="pHead">
+    <div class="eyebrow"><h2 id="pHead">On the wall</h2><span class="rule"></span></div>
+    <div class="card" style="padding:16px 18px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between">
+      <div style="max-width:620px">The same path hangs above the simulators as a four-sheet trail map, one sheet per tier, with every gate badge as a numbered checkpoint. The sheets are 11&times;17 PDFs you can reprint.</div>
+      <div class="btnrow"><a class="btn primary" href="../posters/">The posters &rarr;</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Badge program from the FPV Club grant proposal, 2026&ndash;27. Simulator hours are logged by the <a href="../">flight lab kiosk</a>.</span>
+    <span>mtucker27@ for questions</span>
+  </footer>
+</div>
+
+<script>
+/* One list, drawn once, filtered by class. Tiers here are the NEW numbering:
+   the simulator is Tier 0 and the Meteor is Tier 1 — the grant proposal's
+   "Gate 1" badges are therefore the Tier 0 badges, and so on. */
+var TRACK = { flight:['Flight','var(--sky)'], build:['Build & tech','var(--amber)'], know:['Knowledge & safety','var(--green)'], crew:['Crew & leadership','var(--violet)'] };
+var B = [
+  // tier 0 — unlock the Meteor (Gate 1)
+  ['t0','flight','Simulator Flight','7.5 hours logged in the simulator.','Acro muscle memory where crashes cost nothing.'],
+  ['t0','flight','Proficient Flight','In the sim: orbit, Split-S, gaps, and finish a race.','Real control, not just hovering. Sim-only, so it can gate the first real flight.'],
+  ['t0','know','Safe Flight','Know and follow the Brophy FPV safe-flight rules.','The baseline code of conduct for real hardware.'],
+  ['t0','build','Battery Care','Balance-charge, store at storage voltage, spot a puffed pack, explain disposal.','LiPos are the biggest real fire risk in the hobby.'],
+  ['t0','build','Building','Fully build a basic drone from parts.','Members can fix what they break.'],
+  ['t0','build','Betaflight','Flash firmware, set motor direction and order, bind a remote.','Most "won’t fly" problems get solved here.'],
+  ['t0','flight','Line of Sight','Without goggles, take off, hover and land a whoop in angle (self-levelling) mode. Level flying only, supervised.','If video cuts out, the pilot can still level out and land.'],
+  // tier 1 — unlock full-size (Gate 2)
+  ['t1','flight','Tiny Whoop','Take off, fly a set pattern, and land a whoop in real life.','First real flight on a sub-250 g drone that can’t do much damage.'],
+  ['t1','build','Soldering','Solder a 5-inch ESC and motors; solder and heat-shrink 22 AWG wire.','Core electronics skill that transfers to robotics.'],
+  ['t1','know','Electrical Components','Test on choosing motors, ESCs, batteries and props for a given drone.','Why a 3-inch and a 5-inch need different parts.'],
+  ['t1','know','Radio Protocol','Test on ELRS, analog and digital video, and control links.','Prevents dropouts and interference at events.'],
+  ['t1','build','Field Repair','Swap a motor or prop in the field; diagnose a drone that won’t arm.','Keeps a shoot going instead of ending it.'],
+  ['t1','flight','Freestyle Flight','Powerloop, trippy spin, tiny gaps.','Advanced control before flying expensive airframes.'],
+  // tier 2 — become an Event Pilot (Gate 3)
+  ['t2','know','FAA TRUST','Complete the free FAA TRUST certificate online (~20 min, cannot be failed).','Federal requirement for recreational flyers. Official.'],
+  ['t2','know','Airspace','Check a location in B4UFLY and explain when LAANC authorization is needed.','Brophy is near Sky Harbor’s controlled airspace.'],
+  ['t2','know','Emergency Procedures','Demonstrate failsafe setup, flyaway response, LiPo fire procedure, incident reporting.','A plan for when something goes wrong.'],
+  ['t2','crew','Spotter','Run the pre-flight checklist; keep visual line of sight and call hazards.','FPV pilots can’t see around themselves.'],
+  ['t2','know','Event Ops','Set up a flight zone, brief bystanders, keep flights away from crowds.','Ground work before flying at a game or rally.'],
+  ['t2','crew','Cinematography','Frame a follow shot, an orbit and a reveal; deliver one usable clip.','Turns pilots into shooters for Best of Brophy. Filming.'],
+  ['t2','flight','Indoor Proximity','Fly a whoop through a hallway or doorway course without touching walls.','Precision in tight spaces — what an indoor rally race demands. Racing.'],
+  ['t2','flight','Racing','3 clean laps of the club course under a target time.','Gate discipline under pressure; qualifies a pilot for the rally race. Racing.'],
+  // electives — any time
+  ['el','crew','Shot Planning','Write a shot list for a real event and coordinate it with a coach or moderator.','Working with other organizations professionally.'],
+  ['el','crew','Editing','Cut and colour-grade a 30–60 second clip from D-log footage.','Best of Brophy doesn’t depend on one editor.'],
+  ['el','build','Video Systems','Bind O4 to goggles, set recording resolution, choose D-log vs normal and ND filters.','Footage the editor can actually use.'],
+  ['el','build','Tuning','Fix an oscillation with PID or filter changes, with before/after footage.','The skill behind smooth cinematic footage.'],
+  ['el','crew','Fleet Steward','Run equipment check-in/out and a maintenance log for one semester.','Accountability for school-funded gear.'],
+  ['el','crew','Mentor','Coach a new member through their first two badges.','The program trains its own replacements.'],
+  ['el','crew','Examiner','Hold Mentor and the badge being tested, plus officer approval.','Defines who can sign badges off.']
+];
+var TIER = { t0:'Tier 0', t1:'Tier 1', t2:'Tier 2', el:'Elective' };
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+(function(){
+  var box = document.getElementById('badges'), n = {};
+  var html = '';
+  B.forEach(function(b){
+    var tier = b[0], tr = b[1];
+    n[tier] = (n[tier] || 0) + 1;
+    var lab = tier === 'el' ? 'Elective' : TIER[tier] + ' · pt. ' + n[tier];
+    html += '<div class="card badge ' + tier + ' ' + tr + '" style="--t:' + TRACK[tr][1] + '">' +
+      '<div class="lab"><span>' + lab + '</span><span class="tk">' + esc(TRACK[tr][0]) + '</span></div>' +
+      '<div class="nm">' + esc(b[2]) + '</div>' +
+      '<div class="do">' + esc(b[3]) + '</div>' +
+      '<div class="why"><b>Why:</b> ' + esc(b[4]) + '</div></div>';
+  });
+  box.innerHTML = html;
+  var btns = document.querySelectorAll('#filters button'), cards = box.children, count = document.getElementById('count');
+  function apply(f){
+    var shown = 0;
+    for (var i = 0; i < cards.length; i++) {
+      var on = f === 'all' || cards[i].classList.contains(f);
+      cards[i].classList.toggle('hide', !on); if (on) shown++;
+    }
+    for (var j = 0; j < btns.length; j++) btns[j].setAttribute('aria-pressed', btns[j].getAttribute('data-f') === f ? 'true' : 'false');
+    count.textContent = shown + ' of ' + cards.length + ' badges';
+  }
+  for (var k = 0; k < btns.length; k++) btns[k].addEventListener('click', function(){ apply(this.getAttribute('data-f')); });
+  apply(location.hash.replace('#','') || 'all');
+})();
+</script>
+</body>
+</html>

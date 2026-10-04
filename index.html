@@ -370,13 +370,27 @@ footer a{color:var(--ink)}
 .msg{padding:22px 18px;font-size:16px;color:var(--ink-soft)}
 .msg.bad{color:var(--rust)}
 
+/* ---------- site nav + pilot path ---------- */
+nav.crumbs{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--font-mono);font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+nav.crumbs a{color:var(--ink-soft);text-decoration:none}
+nav.crumbs a:hover,nav.crumbs a[aria-current]{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.tier{display:flex;flex-direction:column;gap:5px;padding:14px 16px 13px;border-top:6px solid var(--c);text-decoration:none;color:var(--ink)}
+.tier:hover{background-color:#fffdf6}
+.tier .tn{font-family:var(--font-mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--c)}
+.tier .nm{font-family:var(--font-sketch);font-weight:700;font-size:26px;line-height:1}
+.tier .s{font-size:14px;color:var(--ink-soft);line-height:1.35;flex:1}
+.tier .g{font-family:var(--font-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+
 /* ---------- responsive ---------- */
 @media (max-width:860px){
   .stats{grid-template-columns:repeat(2,1fr)}
+  .tiers{grid-template-columns:repeat(2,1fr)}
   .reel{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:600px){
   .wrap{padding:18px 13px 52px}
+  .tiers{grid-template-columns:1fr}
   header.title{padding:18px 16px}
   .status{min-width:0;width:100%}
   .reel{grid-template-columns:1fr}
@@ -400,6 +414,13 @@ footer a{color:var(--ink)}
 </div>
 
 <div class="wrap">
+
+  <nav class="crumbs" aria-label="Site">
+    <a href="./" aria-current="page">Flight lab</a>
+    <a href="groundschool/">Ground School</a>
+    <a href="progression/">Pilot path</a>
+    <a href="posters/">Posters</a>
+  </nav>
 
   <header class="title">
     <div>
@@ -427,6 +448,25 @@ footer a{color:var(--ink)}
       <div class="btnrow">
         <a class="btn primary" href="groundschool/">Start the course &rarr;</a>
       </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="ppHead">
+    <div class="reelhead">
+      <div class="eyebrow" style="margin:0;flex:1">
+        <h2 id="ppHead">The Pilot Path</h2>
+        <span class="rule"></span>
+        <span class="hint">FPV Club badge program &middot; badges unlock the gear</span>
+      </div>
+      <div class="btnrow">
+        <a class="btn primary" href="progression/">All 28 badges &rarr;</a>
+      </div>
+    </div>
+    <div class="tiers">
+      <a class="card tier" href="progression/#t0" style="--c:var(--sky)"><span class="tn">Tier 0</span><span class="nm">Simulator</span><span class="s">The five sims in the IC. Have a name. Log 7.5 hours.</span><span class="g">7 badges &rarr; Gate 1</span></a>
+      <a class="card tier" href="progression/#t1" style="--c:var(--violet)"><span class="tn">Tier 1</span><span class="nm">Tiny Whoop</span><span class="s">Meteor 75 Pro, sub-250 g. Your first real flight.</span><span class="g">6 badges &rarr; Gate 2</span></a>
+      <a class="card tier" href="progression/#t2" style="--c:var(--rust)"><span class="tn">Tier 2</span><span class="nm">Full-size</span><span class="s">Pavo 20 Pro &middot; Cinebot 35 &middot; 5-inch.</span><span class="g">8 badges &rarr; Gate 3</span></a>
+      <a class="card tier" href="progression/#el" style="--c:var(--green)"><span class="tn">Tier 3</span><span class="nm">Event Pilot</span><span class="s">Any Tier 2 airframe at a school event, with a spotter.</span><span class="g">+ 7 electives</span></a>
     </div>
   </section>
 
@@ -465,7 +505,7 @@ footer a{color:var(--ink)}
   <footer>
     <span id="stampLine">&nbsp;</span>
     <span>Opening hours and flight time come from the club kiosk. Videos are other people&rsquo;s work, embedded from YouTube.</span>
-    <span><a href="admin/" rel="nofollow">Instructor console</a></span>
+    <span><a href="posters/">Posters</a> &middot; <a href="admin/" rel="nofollow">Instructor console</a></span>
   </footer>
 
 </div>

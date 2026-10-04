@@ -93,6 +93,37 @@ Get-Content C:\BrophyUAV-web\publish.log -Tail 20
 That is it. From then on the kiosk pushes a fresh snapshot whenever the numbers
 change, Netlify rebuilds in a few seconds, and the site is current.
 
+## The other pages
+
+| Path | What it is |
+|---|---|
+| `groundschool/` | the FPV Ground School course app, copied from the kiosk by `Publish-GroundSchool.ps1` |
+| `progression/` | **the Pilot Path** — the FPV Club badge program: four tiers (sim → Meteor → full-size → event pilot) and all 28 badges, filterable. Static; edit the `B` array in its `index.html` when the badge sheet changes |
+| `posters/` | the seven 11×17 posters above the simulators, as PDFs with PNG previews, plus a printing page. **Sources in `posters/src/`** — see below |
+| `admin/` | the instructor console (signed commands to the kiosks) |
+
+### Rebuilding the posters
+
+Everything is in `posters/src/`:
+
+```bash
+cd posters/src
+python3 gen_map.py --check     # writes 03..06 (the four Pilot Path map sheets) and reports collisions
+python3 build.py               # renders every NN-*.html to ../NN.pdf and ../preview/NN.png
+```
+
+Needs Google Chrome (headless) and, for the PNGs, macOS's `qlmanage`. Fonts are
+the kiosk's self-hosted woff2 files, served over a throwaway local HTTP server
+because Chrome refuses `@font-face` from `file://`. Posters 01, 02 and 07 are
+hand-written HTML; the map sheets are generated from the `SHEETS` data at the
+top of `gen_map.py` — move a node and the trail, the numbered pins and the
+collision-aware card placement follow. The how-to poster's screenshots are
+inlined as data URIs so the PDF never depends on image load timing.
+
+Tier numbering on the posters and the pilot-path page is the club's: **the
+simulator is Tier 0 and the Meteor is Tier 1**. The grant proposal numbers the
+same tiers 1–3, so its "Gate 1" badges are the Tier 0 badges here.
+
 ---
 
 ## How it updates
@@ -207,6 +238,7 @@ plays.
 | `data.json` | the generated snapshot. **Do not hand-edit** — the next publish overwrites it |
 | `netlify.toml` | publish dir and cache headers. No build command, on purpose |
 | `robots.txt` | crawlable; the page is meant to be found |
+| `progression/`, `posters/` | the badge program page and the printed posters — see "The other pages" |
 | `publish.log` | what the exporter did. Git-ignored |
 | `.snapshot-hash` | local change-detection marker. Git-ignored |
 | `C:\BrophyUAV\Publish-Dashboard.ps1` | the exporter |
