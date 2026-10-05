@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791158501533,
-    "generatedIso":  "2026-10-04T17:01:41-07:00",
+    "generated":  1791183726716,
+    "generatedIso":  "2026-10-05T00:02:06-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -549,17 +549,6 @@
                      "closedLabel":  "Class in session",
                      "source":  "imported 2026-08-31 09:01",
                      "days":  [
-                                  {
-                                      "date":  "2026-10-04",
-                                      "dow":  "Sun",
-                                      "dowFull":  "Sunday",
-                                      "label":  "Oct 4",
-                                      "open":  false,
-                                      "note":  "",
-                                      "windows":  [
-
-                                                  ]
-                                  },
                                   {
                                       "date":  "2026-10-05",
                                       "dow":  "Mon",
@@ -1290,6 +1279,17 @@
                                       "dow":  "Sat",
                                       "dowFull":  "Saturday",
                                       "label":  "Oct 31",
+                                      "open":  false,
+                                      "note":  "",
+                                      "windows":  [
+
+                                                  ]
+                                  },
+                                  {
+                                      "date":  "2026-11-01",
+                                      "dow":  "Sun",
+                                      "dowFull":  "Sunday",
+                                      "label":  "Nov 1",
                                       "open":  false,
                                       "note":  "",
                                       "windows":  [
