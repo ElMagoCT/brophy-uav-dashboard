@@ -58,3 +58,5 @@ button:disabled{opacity:.5;cursor:default}
 .roster .tier{display:inline-block;font:12px "Share Tech Mono",ui-monospace,monospace;background:var(--chip);border-radius:4px;padding:1px 6px;margin-left:6px;letter-spacing:.5px}
 .gap-top{margin-top:12px}
 button.primary.flush{margin-top:0}
+.btn-link{font:inherit;font-size:14px;color:var(--ink);text-decoration:none;border:1px solid var(--line);background:var(--chip);border-radius:6px;padding:7px 12px;white-space:nowrap}
+.btn-link:hover{border-color:var(--muted)}
