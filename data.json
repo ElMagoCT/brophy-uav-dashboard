@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791217956664,
-    "generatedIso":  "2026-10-05T09:32:37-07:00",
+    "generated":  1791225162558,
+    "generatedIso":  "2026-10-05T11:32:42-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  339383358,
-                   "pilots":  35,
-                   "activePilots7":  22,
+                   "clubMs":  340755930,
+                   "pilots":  36,
+                   "activePilots7":  23,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  243737319.42219982,
-                                    "microdrones":  93756740.512200445,
+                                    "liftoff":  244634873.61739969,
+                                    "microdrones":  94231759.582000434,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
                                     "picasim":  814526.99810002092
@@ -56,17 +56,17 @@
     "pilots":  [
                    {
                        "name":  "Josiah T.",
-                       "totalMs":  50206347,
+                       "totalMs":  50998802,
                        "perSimMs":  {
-                                        "liftoff":  40872456,
-                                        "microdrones":  9271861,
+                                        "liftoff":  41189892,
+                                        "microdrones":  9746880,
                                         "skydive":  0,
                                         "fpvlabs":  62030,
                                         "picasim":  0
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790982000463
+                       "lastSeen":  1791225149533
                    },
                    {
                        "name":  "Cyrus G.",
@@ -80,7 +80,7 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790982000038
+                       "lastSeen":  1791224830197
                    },
                    {
                        "name":  "Bode K.",
@@ -182,9 +182,9 @@
                    },
                    {
                        "name":  "Jameson S.",
-                       "totalMs":  15649622,
+                       "totalMs":  15994663,
                        "perSimMs":  {
-                                        "liftoff":  14072019,
+                                        "liftoff":  14417061,
                                         "microdrones":  1577602,
                                         "skydive":  0,
                                         "fpvlabs":  0,
@@ -192,7 +192,7 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790965590094
+                       "lastSeen":  1791225052653
                    },
                    {
                        "name":  "Mr. Lewkowitz",
@@ -501,6 +501,20 @@
                        "gsPct":  0,
                        "gsLessons":  0,
                        "lastSeen":  1787697776532
+                   },
+                   {
+                       "name":  "Carter.B",
+                       "totalMs":  235076,
+                       "perSimMs":  {
+                                        "liftoff":  235076,
+                                        "microdrones":  0,
+                                        "skydive":  0,
+                                        "fpvlabs":  0,
+                                        "picasim":  0
+                                    },
+                       "gsPct":  0,
+                       "gsLessons":  0,
+                       "lastSeen":  1791224693310
                    },
                    {
                        "name":  "Jack R.",
