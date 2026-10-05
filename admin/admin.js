@@ -11,9 +11,11 @@
   'use strict';
   if (window.top !== window.self) { document.body.textContent = ''; return; }   // no framing / clickjacking
 
-  var OWNER = 'ElMagoCT', REPO = 'brophy-uav-control', BRANCH = 'main';
+  // The club API (brophy-uav-api, Netlify Functions) holds the GitHub token for
+  // the private control repo. This page only ever sends signed commands to it
+  // and reads signed answers back; the instructor password never leaves here.
+  var API = 'https://brophy-uav-api.netlify.app';
   var MACHINES = ['KIOSK-A', 'KIOSK-B'];
-  var API = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/';
 
   var ACTIONS = [
     { a: 'status',            t: 'Status' },
@@ -37,7 +39,7 @@
   // know these two actions; until it does, the kiosk answers "unknown action".
   var BADGE_ACTIONS = { award: 'badge.award', revoke: 'badge.revoke' };
 
-  var S = { token: null, key: null, machine: MACHINES[0], pending: {} };
+  var S = { key: null, machine: MACHINES[0], pending: {} };
   function el(id) { return document.getElementById(id); }
 
   // ---------------------------------------------------------------- crypto
@@ -51,48 +53,33 @@
   function unb64utf8(b) { var bin = atob(b.replace(/\n/g, '')), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return dec.decode(u); }
 
   // ---------------------------------------------------------------- GitHub
-  function gh(method, path, body) {
-    var opt = { method: method, cache: 'no-store', headers: {
-      'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + S.token, 'X-GitHub-Api-Version': '2022-11-28' } };
+  function api(method, path, body) {
+    var opt = { method: method, cache: 'no-store', headers: {} };
     if (body) { opt.body = JSON.stringify(body); opt.headers['Content-Type'] = 'application/json'; }
-    var url = path.indexOf('https://') === 0 ? path : API + path + (method === 'GET' ? ('?ref=' + BRANCH + '&t=' + Date.now()) : '');
-    return fetch(url, opt).then(function (r) {
-      if (r.status === 404) return null;
-      if (!r.ok) return r.text().then(function (t) { var e = new Error('GitHub ' + r.status + ': ' + t.slice(0, 160)); e.status = r.status; throw e; });
-      return r.json();
+    return fetch(API + path, opt).then(function (r) {
+      return r.json().catch(function () { return { ok: false, error: 'HTTP ' + r.status }; }).then(function (j) {
+        if (!r.ok || j.ok === false) { var e = new Error(j.error || ('API ' + r.status)); e.status = r.status; throw e; }
+        return j;
+      });
     });
   }
-  function readJson(path) { return gh('GET', path).then(function (j) { return j && j.content ? JSON.parse(unb64utf8(j.content)) : null; }); }
+  function readStatus(m) { return api('GET', '/api/status?machine=' + encodeURIComponent(m)).then(function (j) { return j.status; }); }
+  function readResult(m, id) { return api('GET', '/api/result?machine=' + encodeURIComponent(m) + '&id=' + encodeURIComponent(id)).then(function (j) { return j.result; }); }
 
   // ---------------------------------------------------------------- sign in
   function signIn() {
-    var tok = el('tok').value.trim(), pw = el('pw').value;
+    var pw = el('pw').value;
     el('signMsg').textContent = '';
-    if (!/^(github_pat_|ghp_)[A-Za-z0-9_]{20,}$/.test(tok)) { el('signMsg').textContent = 'That does not look like a GitHub token.'; return; }
     if (pw.length < 4) { el('signMsg').textContent = 'Enter the instructor password.'; return; }
     el('go').disabled = true;
-    S.token = tok;
-    gh('GET', 'https://api.github.com/repos/' + OWNER + '/' + REPO).then(function (repo) {
-      if (!repo) throw new Error('This token cannot see ' + OWNER + '/' + REPO + '.');
-      if (!repo.private) throw new Error('Refusing: ' + REPO + ' is PUBLIC. It must be private.');
-      if (repo.permissions && !repo.permissions.push) throw new Error('This token can read but not write the control repo.');
-      return sha256Hex(pw).then(importKey);
-    }).then(function (k) {
+    sha256Hex(pw).then(importKey).then(function (k) {
       S.key = k; el('pw').value = ''; pw = null;
-      try { sessionStorage.setItem('bu.tok', tok); } catch (e) {}
-      el('tok').value = '';
       el('signin').hidden = true; el('console').hidden = false;
-      el('who').textContent = 'Signed in · token kept in this tab only';
+      el('who').textContent = 'Signed in · password kept in this tab only';
       drawTabs(); drawActions(); loadStatus(); drawApprovals(); showView();
-    }).catch(function (e) {
-      S.token = null;
-      el('signMsg').textContent = e.status === 401 ? 'GitHub rejected the token (expired or wrong).' : e.message;
-    }).then(function () { el('go').disabled = false; });
+    }).catch(function (e) { el('signMsg').textContent = e.message; }).then(function () { el('go').disabled = false; });
   }
-  function signOut() {
-    try { sessionStorage.removeItem('bu.tok'); } catch (e) {}
-    S.token = null; S.key = null; location.reload();
-  }
+  function signOut() { S.key = null; location.reload(); }
 
   // ---------------------------------------------------------------- UI
   function drawTabs() {
@@ -121,10 +108,11 @@
   function loadStatus() {
     var m = S.machine, box = el('status');
     box.textContent = ''; box.appendChild(kv('status', 'loading…')); setBadge('', '');
-    readJson('status/' + m + '.json').then(function (s) {
+    readStatus(m).then(function (s) {
       if (m !== S.machine) return;
       box.textContent = '';
       if (!s) { box.appendChild(kv('status', 'This kiosk has never reported. Is the remote agent installed?')); setBadge('warn', 'no status'); return; }
+      if (!s.sig) { box.appendChild(kv('status', JSON.stringify(s).slice(0, 200))); setBadge('warn', 'unsigned'); return; }
       return hmac('v1s\n' + m + '\n' + s.data + '\n' + s.updated).then(function (sig) {
         var okSig = sig === s.sig;
         setBadge(okSig ? 'ok' : 'bad', okSig ? 'verified · password OK' : 'NOT verified: wrong password, or forged');
@@ -152,8 +140,7 @@
     var m = S.machine, id = randId(), issuedAt = Date.now(), argsJson = JSON.stringify(args || {});
     var row = addResult(id, m, label);
     hmac('v1\n' + m + '\n' + id + '\n' + action + '\n' + argsJson + '\n' + issuedAt).then(function (sig) {
-      var body = JSON.stringify({ v: 1, id: id, machine: m, action: action, args: argsJson, issuedAt: issuedAt, sig: sig }, null, 2);
-      return gh('PUT', 'commands/' + m + '/' + id + '.json', { message: 'console: ' + m + ' ' + action, content: b64utf8(body), branch: BRANCH });
+      return api('POST', '/api/command', { id: id, machine: m, action: action, args: argsJson, issuedAt: issuedAt, sig: sig });
     }).then(function () {
       setRow(row, 'st-wait', 'sent - waiting for the kiosk (≈15 s)…');
       poll(row, m, id, Date.now());
@@ -162,7 +149,7 @@
   function poll(row, m, id, since) {
     if (Date.now() - since > 180000) { setRow(row, 'st-bad', 'no answer after 3 min - is that kiosk on and online?'); return; }
     setTimeout(function () {
-      readJson('results/' + m + '/' + id + '.json').then(function (r) {
+      readResult(m, id).then(function (r) {
         if (!r) { poll(row, m, id, since); return; }
         return hmac('v1r\n' + m + '\n' + id + '\n' + (r.ok ? '1' : '0') + '\n' + r.output + '\n' + r.finishedAt).then(function (sig) {
           var v = r.sig && sig === r.sig;
@@ -253,5 +240,4 @@
   el('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') signIn(); });
   el('refresh').onclick = loadStatus;
   el('signout').onclick = signOut;
-  try { var t = sessionStorage.getItem('bu.tok'); if (t) el('tok').value = t; } catch (e) {}
 })();

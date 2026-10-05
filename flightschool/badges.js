@@ -9,8 +9,9 @@
          'bench'      built-in instructions, step checkboxes, photo DM, instructor approval
          'witnessed'  someone watches you do it, instructor approval
          'auto'       derived by the kiosk from hours
-   lessons: v1 lesson ids that carry over (progress on them already counts)
-   planned: lessons still to be written on the kiosk
+   lessons: the badge's lessons, v2 ids ({id, t, drill}) - the kiosk's
+            gs-content.js must use these ids; each badge ends with its quiz
+   prep:    old drill ids a witnessed badge reuses as practice
    steps:   the checklist a bench badge walks through
    standard: what the examiner is watching for (witnessed) */
 (function () {
@@ -35,10 +36,10 @@
       standard: 'An examiner watches you in Liftoff: a clean orbit around a gate, a Split-S, three gaps without a crash, and a finished race.' },
     { id: 'safe-flight', tier: 't0', track: 'know', type: 'knowledge', name: 'Safe Flight',
       do: 'Know and follow the Brophy FPV safe-flight rules.', why: 'The baseline code of conduct for real hardware.',
-      lessons: ['gs-rul-01', 'gs-rul-03'], planned: ['The Brophy FPV rules sheet'] },
+      lessons: [{ id: 'gs-saf-01', t: "Who's flying, who's watching" }, { id: 'gs-saf-02', t: 'The Brophy FPV rules sheet' }, { id: 'gs-saf-03', t: 'Go / No-Go', drill: true }] },
     { id: 'battery-care', tier: 't0', track: 'build', type: 'knowledge', name: 'Battery Care',
       do: 'Balance-charge, store at storage voltage, spot a puffed pack, explain disposal.', why: 'LiPos are the biggest real fire risk in the hobby.',
-      lessons: ['gs-ele-03', 'gs-ele-04'], planned: ['Charging and storage'] },
+      lessons: [{ id: 'gs-bat-01', t: 'LiPo basics' }, { id: 'gs-bat-02', t: 'Battery math', drill: true }, { id: 'gs-bat-03', t: 'Charging, storage and disposal' }, { id: 'gs-bat-04', t: 'When a pack goes bad' }] },
     { id: 'building', tier: 't0', track: 'build', type: 'bench', name: 'Building',
       do: 'Fully build a basic drone from parts.', why: 'Members can fix what they break.',
       steps: ['Parts checklist: frame, FC/ESC stack, motors, RX, VTX, camera, antenna, props, strap', 'Frame assembled, standoffs tight', 'Motors on — right screw length, no screw touching a winding', 'Stack mounted, soft-mounted if the kit has grommets', 'Soldered (see Soldering)', 'Smoke-stopper first power-up, no smoke', DM] },
@@ -60,10 +61,10 @@
       steps: ['Iron at the right temperature, tip tinned', 'Tin the pad, tin the wire, join', 'ESC pads: shiny, no bridges', 'Motor wires: all three, trimmed', '22 AWG splice with heat-shrink', 'Continuity check with a meter', DM] },
     { id: 'electrical-components', tier: 't1', track: 'know', type: 'knowledge', name: 'Electrical Components',
       do: 'Test on choosing motors, ESCs, batteries and props for a given drone.', why: 'Why a 3-inch and a 5-inch need different parts.',
-      lessons: ['gs-ele-01', 'gs-ele-02'], planned: ['Matching parts'] },
+      lessons: [{ id: 'gs-elc-01', t: 'The six parts' }, { id: 'gs-elc-02', t: 'Motors, props and thrust', drill: true }, { id: 'gs-elc-03', t: 'Matching motor, ESC, prop and battery' }, { id: 'gs-elc-04', t: 'Why a 3-inch and a 5-inch differ' }] },
     { id: 'radio-protocol', tier: 't1', track: 'know', type: 'knowledge', name: 'Radio Protocol',
       do: 'Test on ELRS, analog and digital video, and control links.', why: 'Prevents dropouts and interference at events.',
-      lessons: ['gs-vid-01', 'gs-vid-02', 'gs-vid-03'], planned: ['Control links'] },
+      lessons: [{ id: 'gs-rad-01', t: 'Analog against digital' }, { id: 'gs-rad-02', t: 'Bands, channels and racing', drill: true }, { id: 'gs-rad-03', t: 'Antennas and diversity' }, { id: 'gs-rad-04', t: 'Control links: ELRS, Crossfire, binding, failsafe' }, { id: 'gs-rad-05', t: 'Interference at an event' }] },
     { id: 'field-repair', tier: 't1', track: 'build', type: 'bench', name: 'Field Repair',
       do: 'Swap a motor or prop in the field; diagnose a drone that won’t arm.', why: 'Keeps a shoot going instead of ending it.',
       steps: ['Prop swap, correct rotation, nut tight', 'Motor swap, direction fixed in Betaflight', '“Won’t arm”: read the arming flags, name the cause', DM] },
@@ -78,16 +79,16 @@
       standard: 'Show your TRUST certificate (PDF or photo) to an instructor. DM it to mtucker27@brophybroncos.org for the records.' },
     { id: 'airspace', tier: 't2', track: 'know', type: 'knowledge', name: 'Airspace',
       do: 'Check a location in B4UFLY and explain when LAANC authorization is needed.', why: 'Brophy is near Sky Harbor’s controlled airspace.',
-      lessons: ['gs-rul-02'], planned: ['Checking a site'] },
+      lessons: [{ id: 'gs-asp-01', t: 'Class B, 400 ft and Sky Harbor' }, { id: 'gs-asp-02', t: 'B4UFLY, LAANC and TRUST' }, { id: 'gs-asp-03', t: 'Checking a site', drill: true }] },
     { id: 'emergency-procedures', tier: 't2', track: 'know', type: 'knowledge', name: 'Emergency Procedures',
       do: 'Demonstrate failsafe setup, flyaway response, LiPo fire procedure, incident reporting.', why: 'A plan for when something goes wrong.',
-      lessons: [], planned: ['Failsafe', 'When it goes wrong', 'Incident report', 'Scenario drill'] },
+      lessons: [{ id: 'gs-emg-01', t: 'Failsafe: set it, test it' }, { id: 'gs-emg-02', t: 'Flyaway and lost video' }, { id: 'gs-emg-03', t: 'LiPo fire and injury' }, { id: 'gs-emg-04', t: 'The incident report' }, { id: 'gs-emg-05', t: 'Scenario drill', drill: true }] },
     { id: 'spotter', tier: 't2', track: 'crew', type: 'witnessed', name: 'Spotter',
       do: 'Run the pre-flight checklist; keep visual line of sight and call hazards.', why: 'FPV pilots can’t see around themselves.',
       standard: 'Spot a real flight for an examiner: run the checklist aloud, keep eyes on the aircraft the whole battery, call every person and obstacle before the pilot needs to know.' },
     { id: 'event-ops', tier: 't2', track: 'know', type: 'knowledge', name: 'Event Ops',
       do: 'Set up a flight zone, brief bystanders, keep flights away from crowds.', why: 'Ground work before flying at a game or rally.',
-      lessons: [], planned: ['The flight zone', 'Spotter and pilot'] },
+      lessons: [{ id: 'gs-evt-01', t: 'The flight zone' }, { id: 'gs-evt-02', t: 'Briefing bystanders' }, { id: 'gs-evt-03', t: 'Pilot and spotter call-outs' }] },
     { id: 'cinematography', tier: 't2', track: 'crew', type: 'witnessed', name: 'Cinematography',
       do: 'Frame a follow shot, an orbit and a reveal; deliver one usable clip.', why: 'Turns pilots into shooters for Best of Brophy. Filming.',
       standard: 'Deliver one clip with a follow, an orbit and a reveal that the editor accepts without re-shooting.' },

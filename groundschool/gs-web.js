@@ -18,6 +18,7 @@
    publishes; nothing flows back). Instructors approve badges in ../admin/. */
 (function(){
   var KEY_PILOT = 'fs.pilot.v1', KEY_ALL = 'gsWeb.profiles.v2', KEY_OLD = 'gsWebProfile.v1';
+  var API = 'https://brophy-uav-api.netlify.app';   // the club API: progress is mirrored there, monotonically, per pilot name
   var realFetch = window.fetch.bind(window);
 
   function slug(n){ return String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
@@ -72,8 +73,35 @@
     p.groundSchool.progressPct = all.length ? Math.round(done * 100 / all.length) : 0;
     p.groundSchool.updated = now; p.lastSeen = now;
     save(p);
+    push(body.lessonId, L);
     return { ok:true, profile:p };
   }
+
+  /* Mirror to the API so the kiosks (and the pilot's other devices) see it.
+     Fire-and-forget; the page never waits on it and a failure changes nothing
+     locally. Guests are not mirrored - there is no name to file it under. */
+  function push(lessonId, L){
+    var who = pilot(); if(who.slug === 'guest') return;
+    var lessons = {}; lessons[lessonId] = { status:L.status, score:L.score };
+    try{ realFetch(API + '/api/progress', { method:'POST', headers:{'Content-Type':'application/json'}, keepalive:true,
+          body: JSON.stringify({ name: who.name, lessons: lessons }) }).catch(function(){}); }catch(e){}
+  }
+  /* On load, pull what the API knows for this pilot and merge it in (forward only). */
+  function pull(){
+    var who = pilot(); if(who.slug === 'guest') return;
+    realFetch(API + '/api/progress?pilot=' + encodeURIComponent(who.name), { cache:'no-store' }).then(function(r){ return r.json(); }).then(function(j){
+      var srv = j && j.progress; if(!srv || !srv.lessons) return;
+      var p = load(), RANK = { 'not-started':0, 'in-progress':1, 'complete':2 }, changed = false;
+      Object.keys(srv.lessons).forEach(function(id){
+        var S = srv.lessons[id], L = p.groundSchool.lessons[id] || { status:'not-started', score:0, attempts:0, firstStarted:0, completed:0, timeMs:0 };
+        if((RANK[S.status] || 0) > (RANK[L.status] || 0)){ L.status = S.status; if(S.status === 'complete' && !L.completed) L.completed = S.at || Date.now(); changed = true; }
+        if((S.score || 0) > (L.score || 0)){ L.score = S.score; changed = true; }
+        p.groundSchool.lessons[id] = L;
+      });
+      if(changed){ save(p); }
+    }).catch(function(){});
+  }
+  pull();
 
   window.fetch = function(url, opts){
     /* gs-app.js prefixes its API constant (the bridge's origin on the kiosk,

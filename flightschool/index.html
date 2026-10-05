@@ -144,7 +144,7 @@ footer a{color:var(--ink)}
       <div class="picker" id="picker">
         <input id="pInput" type="text" placeholder="Type your first name and last initial, e.g. Micah T." autocomplete="off">
         <div class="names" id="pNames"></div>
-        <div class="hint">Same name you use at the kiosk, so the two line up. No password: progress only ever goes forward, so there is nothing to protect.</div>
+        <div class="hint">Same name you use at the kiosk, so the two line up. No password: progress only ever goes forward, so there is nothing to protect. Lessons and ticks you do here follow your name to the kiosk and your other devices.</div>
       </div>
     </div>
   </header>
@@ -165,7 +165,7 @@ footer a{color:var(--ink)}
   </section>
 
   <footer>
-    <span>Kiosk hours and earned badges come from the lab kiosk. Lessons and ticks you do here are saved on this device for the pilot you picked; the kiosk is the record of truth. Instructors approve badges in the <a href="../admin/#approvals" rel="nofollow">instructor console</a>.</span>
+    <span>Kiosk hours and earned badges come from the lab kiosk. Lessons and ticks you do here are saved for the pilot you picked and mirrored to the club, forward-only; the kiosk is the record of truth. Instructors approve badges in the <a href="../admin/#approvals" rel="nofollow">instructor console</a>.</span>
     <span>mtucker27@ for questions</span>
   </footer>
 </div>
@@ -179,7 +179,8 @@ footer a{color:var(--ink)}
         app's localStorage (gsWeb.profiles.v2, written by ../groundschool/gs-web.js);
      3. bench-step ticks made on this page (fs.progress.v1).
    Earned-from-kiosk always wins. Nothing here can take a badge away. */
-var FS = window.FS, DATA = null, pilot = null;
+var FS = window.FS, DATA = null, pilot = null, SERVER = null;
+var API = 'https://brophy-uav-api.netlify.app';   // the club API: per-pilot progress mirror (forward-only)
 var LS = { pilot: 'fs.pilot.v1', progress: 'fs.progress.v1', gs: 'gsWeb.profiles.v2' };
 
 function $(id) { return document.getElementById(id); }
@@ -192,7 +193,33 @@ function setPilot(name) {
   pilot = name ? { name: name.trim(), slug: FS.slug(name) } : null;
   lsSet(LS.pilot, pilot);
   $('picker').classList.remove('open');
-  render();
+  SERVER = null; render(); pullServer();
+}
+/* What the API already knows for this pilot (lessons done elsewhere, ticks from
+   another device). Merged forward-only on top of what this device has. */
+function pullServer() {
+  if (!pilot) return;
+  fetch(API + '/api/progress?pilot=' + encodeURIComponent(pilot.name), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+    SERVER = (j && j.progress) || null;
+    if (!SERVER) return;
+    var all = lsGet(LS.gs, {}), p = all[pilot.slug] || { groundSchool: { lessons: {}, progressPct: 0, updated: 0 } }, RANK = { 'not-started': 0, 'in-progress': 1, complete: 2 };
+    Object.keys(SERVER.lessons || {}).forEach(function (id) {
+      var S = SERVER.lessons[id], L = p.groundSchool.lessons[id] || { status: 'not-started', score: 0, attempts: 0, firstStarted: 0, completed: 0, timeMs: 0 };
+      if ((RANK[S.status] || 0) > (RANK[L.status] || 0)) { L.status = S.status; if (S.status === 'complete' && !L.completed) L.completed = S.at || Date.now(); }
+      if ((S.score || 0) > (L.score || 0)) L.score = S.score;
+      p.groundSchool.lessons[id] = L;
+    });
+    all[pilot.slug] = p; lsSet(LS.gs, all);
+    var pr = progress();
+    Object.keys(SERVER.steps || {}).forEach(function (b) { pr[b] = pr[b] || { steps: {} }; pr[b].steps = pr[b].steps || {}; Object.keys(SERVER.steps[b]).forEach(function (i) { pr[b].steps[i] = true; }); });
+    saveProgress(pr);
+    render();
+  }).catch(function () {});
+}
+function pushStep(badgeId, i) {
+  if (!pilot) return;
+  var steps = {}; steps[badgeId] = {}; steps[badgeId][i] = true;
+  fetch(API + '/api/progress', { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true, body: JSON.stringify({ name: pilot.name, steps: steps }) }).catch(function () {});
 }
 function kioskPilot() {
   if (!pilot || !DATA || !DATA.pilots) return null;
@@ -220,9 +247,9 @@ function status(b) {
     return out;
   }
   if (b.type === 'knowledge') {
-    var ids = b.lessons || [], done = 0;
+    var ids = (b.lessons || []).map(function (l) { return l.id; }), done = 0;
     ids.forEach(function (id) { var r = gp && gp.groundSchool && gp.groundSchool.lessons[id]; if (r && r.status === 'complete') done++; });
-    var total = ids.length + (b.planned || []).length + 1;      // + the quiz
+    var total = ids.length + 1;      // + the quiz
     out.pct = Math.round(done / total * 100);
     out.detail = done + ' of ' + total + ' parts';
     return out;
@@ -302,14 +329,13 @@ function more(b, s) {
   if (b.note) h += '<div class="why" style="margin-top:4px">' + esc(b.note) + '</div>';
   if (b.type === 'knowledge') {
     h += '<ul>';
-    (b.lessons || []).forEach(function (id) {
-      var r = gp && gp.groundSchool && gp.groundSchool.lessons[id], on = r && r.status === 'complete';
-      h += '<li><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>' + esc(FS.LESSON_TITLES[id] || id) + '</span></li>';
+    (b.lessons || []).forEach(function (l) {
+      var r = gp && gp.groundSchool && gp.groundSchool.lessons[l.id], on = r && r.status === 'complete';
+      h += '<li><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>' + esc(l.t) + (l.drill ? ' <span class="soon">drill</span>' : '') + '</span></li>';
     });
-    (b.planned || []).forEach(function (t) { h += '<li><span class="tick"></span><span>' + esc(t) + '<span class="soon">coming</span></span></li>'; });
-    h += '<li><span class="tick"></span><span>Quiz · 10 questions · ' + FS.PASS + ' % to pass<span class="soon">with Flight School v2</span></span></li></ul>';
+    h += '<li><span class="tick"></span><span>Quiz · 10 questions · ' + FS.PASS + ' % to pass</span></li></ul>';
     h += '<div class="act"><a class="btn primary" href="../groundschool/">Open the lessons &rarr;</a></div>';
-    h += '<div class="approve">Lessons you finish in Ground School tick off here for the same pilot name. The quiz runs at the kiosk (and here) once v2 ships; passing it earns the badge with no sign-off.</div>';
+    h += '<div class="approve">Lessons tick off here as you finish them for this pilot. Pass the quiz and the badge is yours, no sign-off needed.</div>';
   } else if (b.type === 'bench') {
     h += '<ul>';
     (b.steps || []).forEach(function (t, i) {
@@ -346,6 +372,7 @@ $('tiers').addEventListener('click', function (e) {
     var id = card.getAttribute('data-id'), i = +step.getAttribute('data-step');
     var p = progress(); p[id] = p[id] || { steps: {} }; p[id].steps = p[id].steps || {};
     p[id].steps[i] = !p[id].steps[i]; p[id].updated = Date.now(); saveProgress(p);
+    if (p[id].steps[i]) pushStep(id, i);     // ticks go up; unticks stay on this device only
     render(); return;
   }
   if (e.target.closest('a,button')) return;
@@ -364,7 +391,7 @@ $('pNames').addEventListener('click', function (e) { var b = e.target.closest('b
 
 /* ---------- boot ---------- */
 pilot = lsGet(LS.pilot, null);
-render();
+render(); pullServer();
 fetch('../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d; drawNames(); render(); }).catch(function () { drawNames(); });
 if (location.hash && /^#(t0|t1|t2|t3|el)$/.test(location.hash)) setTimeout(function () { var el = document.querySelector(location.hash); if (el) el.scrollIntoView(); }, 50);
 </script>

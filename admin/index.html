@@ -7,7 +7,7 @@
 <meta name="referrer" content="no-referrer">
 <!-- Everything this page may load or talk to. Nothing inline, no third-party
      script, and the only network destination is GitHub's API. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://brophy-uav-api.netlify.app; base-uri 'none'; form-action 'none'">
 <title>Instructor Console · Brophy UAV</title>
 <link rel="stylesheet" href="../groundschool/fonts.css">
 <link rel="stylesheet" href="admin.css">
@@ -26,15 +26,9 @@
   <!-- ============ sign in ============ -->
   <section class="card" id="signin">
     <h2>Sign in</h2>
-    <p class="muted">Two keys, both needed. Your GitHub token proves you may write to the
-      private <code>brophy-uav-control</code> repo; the instructor password signs every command,
-      and each kiosk refuses anything it can't verify. The password never leaves this page.</p>
-    <label>GitHub token
-      <input id="tok" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
-    </label>
-    <div class="hint">A <b>fine-grained</b> token with access to <b>only</b> <code>ElMagoCT/brophy-uav-control</code>,
-      permission <b>Contents: Read and write</b>, expiry 90 days or less.
-      It's kept in this tab only (sessionStorage) and is gone when you close the tab.</div>
+    <p class="muted">The instructor password signs every command, and each kiosk refuses anything it
+      can't verify. The password never leaves this page. The GitHub side is handled by the club's API
+      (<code>brophy-uav-api.netlify.app</code>), which holds the repo token so this page doesn't have to.</p>
     <label>Instructor password
       <input id="pw" type="password" autocomplete="current-password">
     </label>
