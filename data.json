@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791216155206,
-    "generatedIso":  "2026-10-05T09:02:35-07:00",
+    "generated":  1791217055886,
+    "generatedIso":  "2026-10-05T09:17:36-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  317769336,
+                   "clubMs":  339369336,
                    "pilots":  35,
                    "activePilots7":  22,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  223923297.24409983,
-                                    "microdrones":  91956740.512200445,
+                                    "liftoff":  243723297.24409983,
+                                    "microdrones":  93756740.512200445,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
                                     "picasim":  814526.99810002092
@@ -98,9 +98,9 @@
                    },
                    {
                        "name":  "Micah T.",
-                       "totalMs":  27006330,
+                       "totalMs":  28806330,
                        "perSimMs":  {
-                                        "liftoff":  16769696,
+                                        "liftoff":  18569696,
                                         "microdrones":  8996521,
                                         "skydive":  225289,
                                         "fpvlabs":  254749,
@@ -108,7 +108,7 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  5,
-                       "lastSeen":  1791215839234
+                       "lastSeen":  1791216624550
                    },
                    {
                        "name":  "Zane R.",
@@ -137,6 +137,20 @@
                        "gsPct":  0,
                        "gsLessons":  0,
                        "lastSeen":  1791215621582
+                   },
+                   {
+                       "name":  "Marco F.",
+                       "totalMs":  22370780,
+                       "perSimMs":  {
+                                        "liftoff":  19988745,
+                                        "microdrones":  2382036,
+                                        "skydive":  0,
+                                        "fpvlabs":  0,
+                                        "picasim":  0
+                                    },
+                       "gsPct":  0,
+                       "gsLessons":  0,
+                       "lastSeen":  1790891923178
                    },
                    {
                        "name":  "Bryson E.",
@@ -209,7 +223,7 @@
                        "lastSeen":  1790793379928
                    },
                    {
-                       "name":  "V",
+                       "name":  "V (message micah plz)",
                        "totalMs":  8097105,
                        "perSimMs":  {
                                         "liftoff":  0,
@@ -223,7 +237,7 @@
                        "lastSeen":  1790807862502
                    },
                    {
-                       "name":  "Ben.H",
+                       "name":  "Ben H.",
                        "totalMs":  7904041,
                        "perSimMs":  {
                                         "liftoff":  7181044,
@@ -279,20 +293,6 @@
                        "lastSeen":  1790966325037
                    },
                    {
-                       "name":  "Marco F.",
-                       "totalMs":  2570780,
-                       "perSimMs":  {
-                                        "liftoff":  1988745,
-                                        "microdrones":  582036,
-                                        "skydive":  0,
-                                        "fpvlabs":  0,
-                                        "picasim":  0
-                                    },
-                       "gsPct":  0,
-                       "gsLessons":  0,
-                       "lastSeen":  1790891923178
-                   },
-                   {
                        "name":  "Oscar S.",
                        "totalMs":  2561753,
                        "perSimMs":  {
@@ -321,7 +321,7 @@
                        "lastSeen":  1790701522368
                    },
                    {
-                       "name":  "Kellan K",
+                       "name":  "Kellan K.",
                        "totalMs":  1599214,
                        "perSimMs":  {
                                         "liftoff":  1599214,
@@ -349,7 +349,7 @@
                        "lastSeen":  1790204400480
                    },
                    {
-                       "name":  "miles h",
+                       "name":  "Miles H.",
                        "totalMs":  1520952,
                        "perSimMs":  {
                                         "liftoff":  1208643,
@@ -363,7 +363,7 @@
                        "lastSeen":  1790706896797
                    },
                    {
-                       "name":  "max f",
+                       "name":  "Max F.",
                        "totalMs":  1450260,
                        "perSimMs":  {
                                         "liftoff":  1450260,
@@ -433,7 +433,7 @@
                        "lastSeen":  1788994274979
                    },
                    {
-                       "name":  "Ayaan ?.",
+                       "name":  "Ayaan (message Micah plz)",
                        "totalMs":  795269,
                        "perSimMs":  {
                                         "liftoff":  795269,
