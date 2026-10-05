@@ -179,7 +179,7 @@ footer a{color:var(--ink)}
         app's localStorage (gsWeb.profiles.v2, written by ../groundschool/gs-web.js);
      3. bench-step ticks made on this page (fs.progress.v1).
    Earned-from-kiosk always wins. Nothing here can take a badge away. */
-var FS = window.FS, DATA = null, pilot = null, SERVER = null;
+var FS = window.FS, DATA = null, pilot = null, SERVER = null, AWARDS = null;
 var API = 'https://brophy-uav-api.netlify.app';   // the club API: per-pilot progress mirror (forward-only)
 var LS = { pilot: 'fs.pilot.v1', progress: 'fs.progress.v1', gs: 'gsWeb.profiles.v2' };
 
@@ -193,7 +193,13 @@ function setPilot(name) {
   pilot = name ? { name: name.trim(), slug: FS.slug(name) } : null;
   lsSet(LS.pilot, pilot);
   $('picker').classList.remove('open');
-  SERVER = null; render(); pullServer();
+  SERVER = null; AWARDS = null; render(); pullServer(); pullAwards();
+}
+function pullAwards() {
+  if (!pilot) return;
+  fetch(API + '/api/award?pilot=' + encodeURIComponent(pilot.name), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+    AWARDS = (j && j.awards) || null; render();
+  }).catch(function () {});
 }
 /* What the API already knows for this pilot (lessons done elsewhere, ticks from
    another device). Merged forward-only on top of what this device has. */
@@ -239,6 +245,9 @@ function status(b) {
   var kp = kioskPilot(), gp = gsProfile(), pr = progress()[b.id] || {};
   var out = { earned: false, source: '', pct: 0, detail: '' };
   if (kp && kp.badges && kp.badges.indexOf(b.id) >= 0) { out.earned = true; out.source = 'kiosk'; out.pct = 100; return out; }
+  var aw = AWARDS && AWARDS.badges && AWARDS.badges[b.id];
+  if (aw && aw.status === 'earned') { out.earned = true; out.source = 'instructor'; out.pct = 100; return out; }
+  if (aw && aw.status === 'revoked') { out.detail = 'revoked by an instructor'; return out; }
   if (b.type === 'auto') {
     var h = kp ? (kp.totalMs || 0) / 3600000 : 0;
     out.pct = Math.min(100, Math.round(h / FS.SIM_HOURS * 100));
@@ -315,7 +324,7 @@ function render() {
     FS.BADGES.filter(function (b) { return b.tier === t.id; }).forEach(function (b) {
       var s = status(b), col = { flight: 'var(--sky)', build: 'var(--amber)', know: 'var(--green)', crew: 'var(--violet)' }[b.track];
       var type = { knowledge: 'Quiz', bench: 'Bench', witnessed: 'Witnessed', auto: 'Automatic' }[b.type];
-      var st = s.earned ? '<span class="st earned">earned' + (s.source === 'kiosk' ? ' · kiosk' : (s.source === 'web' ? ' · quiz passed' : '')) + '</span>' : (pilot && s.pct > 0 ? '<span class="st progress">' + s.pct + '%</span>' : '');
+      var st = s.earned ? '<span class="st earned">earned' + (s.source === 'kiosk' ? ' · kiosk' : (s.source === 'web' ? ' · quiz passed' : (s.source === 'instructor' ? ' · instructor' : ''))) + '</span>' : (pilot && s.pct > 0 ? '<span class="st progress">' + s.pct + '%</span>' : '');
       html += '<div class="card badge' + (open[b.id] ? ' open' : '') + '" data-id="' + b.id + '" style="--t:' + col + '">' +
         '<div class="lab"><span class="type">' + type + '</span><span>' + esc(FS.TRACK[b.track]) + '</span></div>' +
         '<div class="nm">' + esc(b.name) + st + '</div>' +
@@ -347,7 +356,7 @@ function more(b, s) {
       h += '<li class="step" data-step="' + i + '"><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>' + esc(t) + '</span></li>';
     });
     h += '</ul>';
-    h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done — approved at the kiosk or in the instructor console.' : 'an instructor approves this badge in the instructor console once your photo has arrived, or by typing the admin password on the kiosk.') + '</div>';
+    h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done — approved at the kiosk or in the instructor console.' : 'an instructor approves this badge in the instructor console once your photo has arrived (it shows here within a minute), or by typing the admin password on the kiosk.') + '</div>';
   } else if (b.type === 'witnessed') {
     if (b.prep && b.prep.length) {
       h += '<ul>';
@@ -397,7 +406,7 @@ $('pNames').addEventListener('click', function (e) { var b = e.target.closest('b
 
 /* ---------- boot ---------- */
 pilot = lsGet(LS.pilot, null);
-render(); pullServer();
+render(); pullServer(); pullAwards();
 fetch('../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d; drawNames(); render(); }).catch(function () { drawNames(); });
 if (location.hash && /^#(t0|t1|t2|t3|el)$/.test(location.hash)) setTimeout(function () { var el = document.querySelector(location.hash); if (el) el.scrollIntoView(); }, 50);
 </script>

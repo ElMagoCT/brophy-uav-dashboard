@@ -50,12 +50,12 @@
       <div class="card">
         <h2>Approve a badge</h2>
         <p class="muted small">For bench and witnessed badges. The pilot has DM'd their photo (or you watched them do it);
-          you approve here and a signed <code>badge.award</code> command goes to the selected kiosk, which records it
-          and syncs it to the other one. Quiz badges are earned at the kiosk by passing the quiz — only use this to
-          override. Nothing here can be undone by a student; Revoke is yours alone.</p>
+          you approve here and a decision signed with your password is filed for that pilot. <b>Both kiosks pull it</b>
+          on their next sync, whichever is on. Quiz badges are earned by passing the quiz — only use this to override.
+          Nothing here can be undone by a student; Revoke is yours alone.</p>
         <div class="row wrapline">
-          <label class="inline">Kiosk <select id="apMachine"></select></label>
           <label class="inline">Pilot <input id="apPilot" list="apPilots" placeholder="Micah T." autocomplete="off"> <datalist id="apPilots"></datalist></label>
+          <span class="muted small" id="apHas"></span>
         </div>
         <label>Badge <select id="apBadge"></select></label>
         <div class="muted small" id="apBadgeInfo"></div>
@@ -63,12 +63,12 @@
         <div class="row wrapline gap-top">
           <button id="apAward" class="primary flush">Approve</button>
           <button id="apRevoke" class="danger">Revoke</button>
-          <span class="muted small">Approving a badge that is already earned is harmless.</span>
+          <span class="muted small" id="apMsg">Approving a badge that is already earned is harmless.</span>
         </div>
       </div>
       <div class="card">
         <h2>Who holds what</h2>
-        <p class="muted small" id="apRosterNote">From the kiosk's last published snapshot.</p>
+        <p class="muted small" id="apRosterNote">Kiosk snapshot plus instructor decisions on file.</p>
         <div id="apRoster" class="roster"></div>
       </div>
     </div>

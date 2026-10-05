@@ -35,9 +35,6 @@
     { a: 'dashboard.publish', t: 'Publish website' },
     { a: 'logs',              t: 'Show log', args: function () { return { name: el('logName').value, lines: 80 }; } }
   ];
-  // Flight School sign-off (admin/#approvals). The kiosk's remote agent must
-  // know these two actions; until it does, the kiosk answers "unknown action".
-  var BADGE_ACTIONS = { award: 'badge.award', revoke: 'badge.revoke' };
 
   var S = { key: null, machine: MACHINES[0], pending: {} };
   function el(id) { return document.getElementById(id); }
@@ -185,8 +182,6 @@
   window.addEventListener('hashchange', showView);
   function drawApprovals() {
     if (!window.FS) return;
-    var ms = el('apMachine'); ms.textContent = '';
-    MACHINES.forEach(function (m) { var o = document.createElement('option'); o.value = o.textContent = m; if (m === S.machine) o.selected = true; ms.appendChild(o); });
     var bs = el('apBadge'); bs.textContent = '';
     FS.TIERS.forEach(function (t) {
       var g = document.createElement('optgroup'); g.label = (t.n >= 0 ? 'Tier ' + t.n + ' · ' : '') + t.name;
@@ -198,19 +193,38 @@
       bs.appendChild(g);
     });
     bs.onchange = badgeInfo; badgeInfo();
-    el('apAward').onclick = function () { approve(BADGE_ACTIONS.award, 'Approve'); };
-    el('apRevoke').onclick = function () { if (window.confirm('Revoke this badge from the pilot? Only do this for a mistake.')) approve(BADGE_ACTIONS.revoke, 'Revoke'); };
+    el('apPilot').addEventListener('change', showHas);
+    el('apAward').onclick = function () { award('earned'); };
+    el('apRevoke').onclick = function () { if (window.confirm('Revoke this badge from the pilot? Only do this for a mistake.')) award('revoked'); };
+  }
+  // What is already on file for the typed pilot.
+  function showHas() {
+    var pilot = el('apPilot').value.trim(); el('apHas').textContent = '';
+    if (pilot.length < 2) return;
+    api('GET', '/api/award?pilot=' + encodeURIComponent(pilot)).then(function (j) {
+      var aw = j.awards && j.awards.badges ? j.awards.badges : {};
+      var earned = Object.keys(aw).filter(function (k) { return aw[k].status === 'earned'; });
+      el('apHas').textContent = earned.length ? 'On file: ' + earned.map(badgeName).join(', ') : 'No instructor decisions on file yet.';
+    }).catch(function (e) { el('apHas').textContent = e.message; });
+  }
+  function badgeName(id) { var b = FS.BADGES.filter(function (x) { return x.id === id; })[0]; return b ? b.name : id; }
+  // Sign the decision with the instructor password (same key as commands) and
+  // file it. Signature: HMAC over "v1a\n<slug>\n<badge>\n<status>\n<at>".
+  function award(status) {
+    var pilot = el('apPilot').value.trim(), badge = el('apBadge').value, note = el('apNote').value.trim(), at = Date.now();
+    if (pilot.length < 2) { el('apPilot').focus(); return; }
+    var s = FS.slug(pilot), msg = el('apMsg');
+    msg.textContent = 'signing…';
+    hmac('v1a\n' + s + '\n' + badge + '\n' + status + '\n' + at).then(function (sig) {
+      return api('POST', '/api/award', { pilot: pilot, badge: badge, status: status, at: at, note: note, evidence: ['dm'], sig: sig });
+    }).then(function () {
+      msg.textContent = (status === 'earned' ? 'Approved: ' : 'Revoked: ') + badgeName(badge) + ' for ' + pilot + ' · on file; the kiosks pick it up on their next sync.';
+      showHas(); ROSTER = null; loadRoster();
+    }).catch(function (e) { msg.textContent = 'Could not file it: ' + e.message; });
   }
   function badgeInfo() {
     var b = FS.BADGES.filter(function (x) { return x.id === el('apBadge').value; })[0];
     el('apBadgeInfo').textContent = b ? (b.do + (b.standard ? ' — Standard: ' + b.standard : '')) : '';
-  }
-  function approve(action, label) {
-    var pilot = el('apPilot').value.trim(), badge = el('apBadge').value, note = el('apNote').value.trim();
-    if (pilot.length < 2) { el('apPilot').focus(); return; }
-    S.machine = el('apMachine').value; drawTabs();
-    send(action, { pilot: pilot, badge: badge, note: note, evidence: ['dm'] }, label + ' · ' + badge + ' · ' + pilot);
-    location.hash = '#kiosks';          // results list lives on the Kiosks view
   }
   function loadRoster() {
     fetch('../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
@@ -225,12 +239,12 @@
         if (p.tier != null) { var t = document.createElement('i'); t.className = 'tier'; t.textContent = 'T' + p.tier; b.appendChild(t); }
         var badges = p.badges || [];
         if (badges.length) any = true;
-        s.textContent = badges.length ? badges.map(function (id) { var bb = FS.BADGES.filter(function (x) { return x.id === id; })[0]; return bb ? bb.name : id; }).join(' · ')
-                                      : (Math.round((p.totalMs || 0) / 360000) / 10) + ' h in the sim · no badges published';
+        s.textContent = badges.length ? badges.map(badgeName).join(' · ')
+                                      : (Math.round((p.totalMs || 0) / 360000) / 10) + ' h in the sim · no badges published by the kiosk';
         div.appendChild(b); div.appendChild(s); box.appendChild(div);
       });
-      el('apRosterNote').textContent = any ? 'From the kiosk\'s last published snapshot (' + (d.generatedIso || '').slice(0, 16).replace('T', ' ') + ').'
-        : 'The kiosk is not publishing badges yet (Flight School v2, Phase 3). Hours shown instead.';
+      el('apRosterNote').textContent = (any ? 'From the kiosk\'s last published snapshot (' + (d.generatedIso || '').slice(0, 16).replace('T', ' ') + ').'
+        : 'The kiosk is not publishing badges yet (Flight School v2, Phase 3). Hours shown instead.') + ' Type a name above to see the instructor decisions on file for them.';
     }).catch(function (e) { el('apRosterNote').textContent = 'Could not load data.json: ' + e.message; });
   }
 
