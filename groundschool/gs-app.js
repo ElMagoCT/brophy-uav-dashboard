@@ -121,7 +121,20 @@ var GSApp = (function(){
   var padPrev   = null;
   var clockTimer = 0;
 
-  function markActive(){ lastInput = Date.now(); }
+  /* The hangar signs a pilot out after two minutes without input, and input
+     inside this frame never reaches its document. So while somebody is active
+     here, relay a heartbeat to the parent - at most one every 5 s. Same
+     origin only, and harmless when nobody is listening (the website copy is
+     not framed, so it never sends one). */
+  var lastRelay = 0;
+  function markActive(){
+    lastInput = Date.now();
+    if(lastInput - lastRelay > 5000 && framed()){
+      lastRelay = lastInput;
+      try{ window.parent.postMessage({ source:'groundschool', action:'activity' }, window.location.origin); }
+      catch(e){}
+    }
+  }
 
   /* Capture phase, on window: a drill canvas or a button must not be able to
      swallow the signal before it is seen. */
