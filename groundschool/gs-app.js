@@ -70,7 +70,12 @@ var GSApp = (function(){
     return null;
   }
   function moduleLessons(code){
-    return GS_COURSE.filter(function(l){ return l.mod === code; });
+    return GS_COURSE.filter(function(l){ return l.mod === code; })
+                    .sort(function(a,b){ return (a.ord || 0) - (b.ord || 0); });
+  }
+  function moduleQuiz(code){
+    var q = GS_COURSE.filter(function(l){ return l.mod === code && l.kind === 'quiz'; });
+    return q.length ? q[0] : null;
   }
   function rec(id){
     return S.lessons[id] || { status:'not-started', score:0, attempts:0, timeMs:0 };
@@ -286,13 +291,15 @@ var GSApp = (function(){
     GS_MODULES.forEach(function(M){
       var ls = moduleLessons(M.code);
       var allDone = ls.length > 0 && ls.every(function(l){ return isDone(l.id); });
-      var isCheck = M.code === 'M6';
+      var quiz = moduleQuiz(M.code);
+      var isCheck = false;
+      var earned = !!quiz && rec(quiz.id).score >= S.passScore;
 
       var sheet = h('div','sheet' + (allDone ? ' done' : '') + (isCheck ? ' check' : '') +
                                (isCheck && allDone ? ' passed' : ''));
 
       var head = h('div','sheethead');
-      head.appendChild(h('span','mcode', M.code));
+      head.appendChild(h('span','mcode', M.badge ? ('TIER ' + M.tier) : 'PREP'));
       head.appendChild(h('h2','', M.name));
       var doneN = ls.filter(function(l){ return isDone(l.id); }).length;
       head.appendChild(h('span','mmins', doneN + '/' + ls.length + ' · ' + M.mins + ' min'));
@@ -320,8 +327,8 @@ var GSApp = (function(){
         sheet.appendChild(row);
       });
 
-      if(isCheck && rec('gs-chk-01').score >= S.passScore){
-        var seal = h('div','passseal','PASSED<small>' + Math.round(rec('gs-chk-01').score) + ' / 100</small>');
+      if(earned){
+        var seal = h('div','passseal','BADGE EARNED<small>quiz ' + Math.round(rec(quiz.id).score) + ' / 100</small>');
         sheet.appendChild(seal);
       }
 
@@ -401,7 +408,7 @@ var GSApp = (function(){
     if(step.t === 'widget') return 'Try it';
     if(step.t === 'check')  return 'Check';
     if(step.t === 'drill')  return 'Drill';
-    if(step.t === 'quiz')   return 'Checkride';
+    if(step.t === 'quiz')   return (S.lesson && S.lesson.def && S.lesson.def.pool) ? 'Badge quiz' : 'Checkride';
     if(step.t === 'end')    return 'Done';
     return '';
   }
@@ -725,13 +732,21 @@ var GSApp = (function(){
   function drawQuiz(body){
     el('lNext').style.display = 'none';
     el('lPrev').style.display = 'none';
-    el('lHint').textContent = 'Checkride';
+    /* A badge quiz (lesson.pool set) is ten questions from one pool, scored
+       out of 100 with no live drills. The old checkride shape (16 questions
+       + hover + orientation) is kept for any quiz lesson without a pool. */
+    var POOL = S.lesson && S.lesson.def && S.lesson.def.pool;
+    el('lHint').textContent = POOL ? S.lesson.def.title : 'Checkride';
 
-    var Q_N = 16, Q_PTS = 80, HOVER_PTS = 10, ORIENT_PTS = 10;
+    var Q_N = POOL ? 10 : 16, Q_PTS = POOL ? 100 : 80, HOVER_PTS = POOL ? 0 : 10, ORIENT_PTS = POOL ? 0 : 10;
 
     /* Weighted draw: three from each module, then fill at random from the
        whole pool. Guarantees no module can be skipped by luck. */
     function drawQuestions(){
+      if(POOL){
+        var pool = GSPanels._shuffle(GS_QUIZ.filter(function(q){ return q.mod === POOL; }));
+        return pool.slice(0, Math.min(Q_N, pool.length));
+      }
       var byMod = {};
       GS_QUIZ.forEach(function(q){ (byMod[q.mod] = byMod[q.mod] || []).push(q); });
       var out = [];
@@ -795,8 +810,8 @@ var GSApp = (function(){
         '<b>' + (ok ? 'Correct' : 'The answer is ' + String.fromCharCode(65+q.a)) + '</b>' + q.why));
       var nx = h('div','');
       nx.style.cssText = 'display:flex;justify-content:center;margin-top:20px';
-      var b = h('button','minibtn big go', qi === qs.length-1 ? 'On to the flying' : 'Next question');
-      b.onclick = function(){ qi++; if(qi >= qs.length) startHover(); else drawQ(); };
+      var b = h('button','minibtn big go', qi === qs.length-1 ? (POOL ? 'See your score' : 'On to the flying') : 'Next question');
+      b.onclick = function(){ qi++; if(qi >= qs.length){ if(POOL) result(); else startHover(); } else drawQ(); };
       nx.appendChild(b);
       wrap.appendChild(nx);
       b.focus();
@@ -853,17 +868,19 @@ var GSApp = (function(){
       var card = h('div','scorecard');
       card.appendChild(h('div','bigscore ' + (passed ? 'pass' : 'fail'), String(total)));
       card.appendChild(h('div','verdict ' + (passed ? 'pass' : 'fail'),
-        passed ? 'Ground school passed' : 'Not yet — ' + S.passScore + ' to pass'));
+        passed ? (POOL ? 'Badge earned' : 'Ground school passed') : 'Not yet — ' + S.passScore + ' to pass'));
 
       var tab = h('table','rtab');
       tab.innerHTML =
         '<tr><td class="k">Questions</td><td class="v">' + right + ' / ' + qs.length + '</td><td class="v">' + qPts + ' / ' + Q_PTS + '</td></tr>' +
+        (POOL ? '' :
         '<tr><td class="k">Hover hold</td><td class="v">' + hoverScore + '%</td><td class="v">' + hPts + ' / ' + HOVER_PTS + '</td></tr>' +
-        '<tr><td class="k">Orientation</td><td class="v">' + orientScore + '%</td><td class="v">' + oPts + ' / ' + ORIENT_PTS + '</td></tr>';
+        '<tr><td class="k">Orientation</td><td class="v">' + orientScore + '%</td><td class="v">' + oPts + ' / ' + ORIENT_PTS + '</td></tr>');
       card.appendChild(tab);
 
       var p = h('p','', passed
-        ? 'That mark goes on your record and shows on the hangar leaderboard. Best score is kept, so a retake can only help.'
+        ? (POOL ? 'That badge is yours - no sign-off needed. Best score is kept, so a retake can only help.'
+                : 'That mark goes on your record and shows on the hangar leaderboard. Best score is kept, so a retake can only help.')
         : 'The questions reshuffle every attempt, so go back through whichever module let you down and come again. Only your best score is kept — a retake cannot cost you anything.');
       p.style.cssText = 'margin-top:20px;font-weight:400;font-size:17px;line-height:1.55;color:var(--ink)';
       card.appendChild(p);

@@ -80,11 +80,16 @@
   /* Mirror to the API so the kiosks (and the pilot's other devices) see it.
      Fire-and-forget; the page never waits on it and a failure changes nothing
      locally. Guests are not mirrored - there is no name to file it under. */
+  var QUIZ_BADGE = { saf:'safe-flight', bat:'battery-care', elc:'electrical-components', rad:'radio-protocol',
+                     asp:'airspace', emg:'emergency-procedures', evt:'event-ops' };
   function push(lessonId, L){
     var who = pilot(); if(who.slug === 'guest') return;
     var lessons = {}; lessons[lessonId] = { status:L.status, score:L.score };
+    var body = { name: who.name, lessons: lessons };
+    var m = /^gs-([a-z]{3})-quiz$/.exec(lessonId);
+    if(m && QUIZ_BADGE[m[1]] && L.score > 0){ body.quizzes = {}; body.quizzes[QUIZ_BADGE[m[1]]] = { best: L.score }; }
     try{ realFetch(API + '/api/progress', { method:'POST', headers:{'Content-Type':'application/json'}, keepalive:true,
-          body: JSON.stringify({ name: who.name, lessons: lessons }) }).catch(function(){}); }catch(e){}
+          body: JSON.stringify(body) }).catch(function(){}); }catch(e){}
   }
   /* On load, pull what the API knows for this pilot and merge it in (forward only). */
   function pull(){

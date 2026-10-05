@@ -3,7 +3,7 @@
    ---------------------------------------------------------------------------
    Data only. No behaviour. Three exports:
 
-     GS_MODULES  the seven modules, in order (M7 Freestyle Tricks sits before
+     GS_MODULES  one module per knowledge badge, plus FLY for the flight drills (Flight School v2, 2026-10-04; was seven modules before
                  M6 Checkride on purpose - the checkride stays last on screen)
      GS_COURSE   the twenty-two lessons, in order
      GS_QUIZ     the checkride question pool (M1-M5 only - tricks are not
@@ -781,20 +781,25 @@ var GS_ART = {
    MODULES
    --------------------------------------------------------------------------- */
 var GS_MODULES = [
-  { code:'M1', name:'Ground Rules', mins:9,
-    blurb:'What the club expects of you, where the law lets you fly, and when the answer is no.' },
-  { code:'M2', name:"What's Inside", mins:13,
-    blurb:'Six parts, how thrust and yaw actually happen, and the battery - which is the part that hurts people.' },
-  { code:'M3', name:'The Video Link', mins:10,
-    blurb:'Why analog turns to snow and digital falls off a cliff, why racing uses Raceband, and why the antenna decides everything.' },
-  { code:'M4', name:'Sticks and Hover', mins:15,
-    blurb:'Four channels, rate against angle, and the two drills that fix the two faults every beginner has.' },
-  { code:'M5', name:'Line of Sight', mins:12,
-    blurb:'Orientation is the hardest thing in line-of-sight flying. Three drills, all attacking the same reversal.' },
-  { code:'M7', name:'Freestyle Tricks', mins:14,
-    blurb:'The first flip through the Matty flip - what the sticks actually do, where each one goes wrong, and video from the pilots who named them. Learn them in the sims down the hall.' },
-  { code:'M6', name:'Checkride', mins:8,
-    blurb:'One sitting, one score. Questions from the five core modules plus two live drills, so it cannot be passed on reading alone.' }
+  /* One module per knowledge badge (Flight School v2, 2026-10-04). code is the
+     lesson-id stem; badge is the catalogue id in config.json / badges.js.
+     FLY has no badge: it holds the drills the witnessed flight badges use. */
+  { code:'SAF', badge:'safe-flight',           tier:0, name:'Safe Flight',           mins:13,
+    blurb:'Who flies, who watches, the four calls, the rules sheet by the sims, and the go / no-go call. Pass the quiz, earn the badge.' },
+  { code:'BAT', badge:'battery-care',          tier:0, name:'Battery Care',          mins:14,
+    blurb:'The part that hurts people: voltages, the math, charging and storage, and what to do when a pack goes bad.' },
+  { code:'ELC', badge:'electrical-components', tier:1, name:'Electrical Components', mins:14,
+    blurb:'Six parts, how thrust and yaw happen, and how to pick a motor, ESC, prop and pack that agree with each other.' },
+  { code:'RAD', badge:'radio-protocol',        tier:1, name:'Radio Protocol',        mins:18,
+    blurb:'Why analog turns to snow and digital falls off a cliff, Raceband, antennas, the control link, failsafe, and a gym full of phones.' },
+  { code:'ASP', badge:'airspace',              tier:2, name:'Airspace',              mins:11,
+    blurb:'Class B over the campus, the 400 ft ceiling, B4UFLY, LAANC, TRUST, registration - and the five-minute site check.' },
+  { code:'EMG', badge:'emergency-procedures',  tier:2, name:'Emergency Procedures',  mins:16,
+    blurb:'Failsafe set and tested, lost video, flyaway, fire, injury, and the report that gets written the same day.' },
+  { code:'EVT', badge:'event-ops',             tier:2, name:'Event Ops',             mins:13,
+    blurb:'The flight zone, the brief, the calls and the handover - ground work before flying at a game or a rally.' },
+  { code:'FLY', badge:null,                    tier:0, name:'Flight prep',           mins:41,
+    blurb:'Sticks, hover, orientation and the tricks: the drills examiners expect you to have done before Proficient Flight, Line of Sight and Freestyle Flight. No quiz - those badges are watched, not tested.' }
 ];
 
 /* ---------------------------------------------------------------------------
@@ -805,7 +810,7 @@ var GS_COURSE = [
 
 /* ============================ M1 - GROUND RULES ========================== */
 {
-  id:'gs-rul-01', mod:'M1', title:"Who's flying, who's watching", mins:3, kind:'read',
+  id:'gs-saf-01', mod:'SAF', ord:10, title:"Who's flying, who's watching", mins:3, kind:'read',
   cards:[
     { h:'Three jobs, every flight', tab:'Three jobs',
       p:['On this kiosk you practise the pilot\'s job. In the club you will spot far more often than you fly - and a good spotter is the reason nothing goes wrong.'],
@@ -844,7 +849,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-rul-02', mod:'M1', title:'Where you may fly', mins:3, kind:'read',
+  id:'gs-asp-01', mod:'ASP', ord:10, title:'Class B, 400 ft and Sky Harbor', mins:3, kind:'read',
   cards:[
     { h:'Two ways to be legal',
       p:['Money is not what decides which one you are. <b>Purpose</b> is - a video for the club or a shot for a class project counts, paid or not.'],
@@ -897,7 +902,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-rul-03', mod:'M1', title:'Go / No-Go', mins:3, kind:'drill', drill:'goNoGo',
+  id:'gs-saf-03', mod:'SAF', ord:30, title:'Go / No-Go', mins:3, kind:'drill', drill:'goNoGo',
   cards:[
     { h:'Three answers, not two', tab:'Three piles',
       p:['The middle pile is the one people get wrong, because it is not only about broken parts. Swapping a nicked prop is "not yet". So is waiting for somebody to walk off the field. Neither ends your session; both stop you launching this second.'],
@@ -913,7 +918,7 @@ var GS_COURSE = [
 
 /* ============================ M2 - WHAT'S INSIDE ========================= */
 {
-  id:'gs-ele-01', mod:'M2', title:'The six parts', mins:3, kind:'read',
+  id:'gs-elc-01', mod:'ELC', ord:10, title:'The six parts', mins:3, kind:'read',
   cards:[
     { h:'Six parts. That is the whole aircraft.', tab:'Six parts',
       p:['A racing quad has fewer parts than a bicycle. Learn what each one does and what it looks like when it fails, and you can diagnose most problems on the bench without a laptop.'],
@@ -940,7 +945,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-ele-02', mod:'M2', title:'Motors, props and thrust', mins:3, kind:'drill', drill:'motors',
+  id:'gs-elc-02', mod:'ELC', ord:20, title:'Motors, props and thrust', mins:3, kind:'drill', drill:'motors',
   cards:[
     { h:'Diagonals spin together',
       p:['Look down at the aircraft. The two motors on <b>one diagonal</b> spin one way; the two on the other diagonal spin the opposite way.',
@@ -954,7 +959,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-ele-03', mod:'M2', title:'LiPo batteries', mins:4, kind:'read', extra:'voltage',
+  id:'gs-bat-01', mod:'BAT', ord:10, title:'LiPo basics', mins:4, kind:'read', extra:'voltage',
   cards:[
     { h:'S is how many cells',
       p:['Four numbers, <b>per cell</b>, are the whole of battery safety. The S number is how many cells are in series - a 4S pack is four of them, so <b>always divide by S</b> before you judge a pack.'],
@@ -1003,7 +1008,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-ele-04', mod:'M2', title:'Battery math', mins:3, kind:'drill', drill:'batteryMath',
+  id:'gs-bat-02', mod:'BAT', ord:20, title:'Battery math', mins:3, kind:'drill', drill:'batteryMath',
   cards:[
     { h:'Three sums you will do forever', tab:'Three sums', art:'batteryMath', cap:'work them, do not memorise them',
       p:['<b>How long will this fly?</b> Usable capacity is about 80% of the pack - you land with a reserve, you do not run it flat. Divide that by the average current and turn hours into minutes.',
@@ -1014,7 +1019,7 @@ var GS_COURSE = [
 
 /* ============================ M3 - THE VIDEO LINK ======================== */
 {
-  id:'gs-vid-01', mod:'M3', title:'Analog against digital', mins:3, kind:'read', extra:'signal',
+  id:'gs-rad-01', mod:'RAD', ord:10, title:'Analog against digital', mins:3, kind:'read', extra:'signal',
   cards:[
     { h:'One way, and nothing comes back', tab:'One way only',
       p:['A tiny transmitter on the aircraft throws a picture at your goggles on <b>5.8 GHz</b>. There is no handshake, no retry, no acknowledgement. Whatever arrives is what you fly on.',
@@ -1036,7 +1041,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-vid-02', mod:'M3', title:'Bands, channels and racing', mins:4, kind:'drill', drill:'channels',
+  id:'gs-rad-02', mod:'RAD', ord:20, title:'Bands, channels and racing', mins:4, kind:'drill', drill:'channels',
   cards:[
     { h:'Five bands, eight channels each', tab:'Bands and channels',
       p:['Your transmitter and your goggles must be on the same channel or you see nothing at all. Forty combinations sounds like plenty - it is not, because they are not all far enough apart to be used at once.'],
@@ -1059,7 +1064,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-vid-03', mod:'M3', title:'Antennas and diversity', mins:3, kind:'read', extra:'patch',
+  id:'gs-rad-03', mod:'RAD', ord:30, title:'Antennas and diversity', mins:3, kind:'read', extra:'patch',
   cards:[
     { h:'Circular, and it has a handedness', tab:'Handedness', art:'polarity', cap:'match both ends or lose most of it',
       p:['FPV antennas are <b>circularly polarised</b> - the signal corkscrews rather than waving flat. That is what makes them shrug off reflections off the ground and buildings.',
@@ -1097,7 +1102,7 @@ var GS_COURSE = [
 
 /* ============================ M4 - STICKS AND HOVER ====================== */
 {
-  id:'gs-fly-01', mod:'M4', title:'Four channels, two sticks', mins:3, kind:'drill', drill:'sticks',
+  id:'gs-fly-01', mod:'FLY', ord:10, title:'Four channels, two sticks', mins:3, kind:'drill', drill:'sticks',
   cards:[
     { h:'Mode 2',
       p:['<b>Left stick:</b> up and down is <b>throttle</b>, left and right is <b>yaw</b> - spinning in place.',
@@ -1110,7 +1115,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-fly-02', mod:'M4', title:'Rate mode against angle mode', mins:3, kind:'drill', drill:'rateAngle',
+  id:'gs-fly-02', mod:'FLY', ord:20, title:'Rate mode against angle mode', mins:3, kind:'drill', drill:'rateAngle',
   cards:[
     { h:'One toggle, two aircraft', tab:'Two modes',
       p:['The stick asks for an <b>angle</b>, or for a <b>speed</b>. That is the whole difference - and it decides everything about how the aircraft behaves when you let go.'],
@@ -1124,7 +1129,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-fly-03', mod:'M4', title:'Hover Trainer', mins:5, kind:'drill', drill:'hover',
+  id:'gs-fly-03', mod:'FLY', ord:30, title:'Hover Trainer', mins:5, kind:'drill', drill:'hover',
   cards:[
     { h:'The whole skill is small corrections', tab:'Small corrections', art:'hoverBox', cap:'hold the box, not a number',
       p:['A hover is not a thing you set, it is a thing you keep. The aircraft is always falling out of it and you are always putting it back, in inputs too small for anyone watching to see.'],
@@ -1137,7 +1142,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-fly-04', mod:'M4', title:'Throttle discipline', mins:4, kind:'drill', drill:'throttle',
+  id:'gs-fly-04', mod:'FLY', ord:40, title:'Throttle discipline', mins:4, kind:'drill', drill:'throttle',
   cards:[
     { h:'Stop using throttle like a switch', tab:'The sawtooth',
       p:['The beginner signature is full throttle, nothing, full throttle - a rising and falling sawtooth that never settles. It burns the pack, it makes the aircraft unpredictable, and it is exhausting to watch.',
@@ -1148,7 +1153,7 @@ var GS_COURSE = [
 
 /* ============================ M5 - LINE OF SIGHT ======================== */
 {
-  id:'gs-los-01', mod:'M5', title:'Which way is left?', mins:3, kind:'drill', drill:'orient',
+  id:'gs-los-01', mod:'FLY', ord:50, title:'Which way is left?', mins:3, kind:'drill', drill:'orient',
   cards:[
     { h:'The aircraft does not know where you are', tab:'Its left, not yours',
       p:['Roll right means "lean toward your own right side" - the <b>aircraft\'s</b> right, not yours.',
@@ -1160,7 +1165,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-los-02', mod:'M5', title:'Gate Run', mins:5, kind:'drill', drill:'gates',
+  id:'gs-los-02', mod:'FLY', ord:60, title:'Gate Run', mins:5, kind:'drill', drill:'gates',
   cards:[
     { h:'A course that will not let you cheat', tab:'The course', art:'gateCourse', cap:'gate 6 has the nose back at you',
       p:['Six gates, laid out so you cannot fly the whole lap nose-away. Some you take side-on. At least one you take with the nose pointed straight back at yourself.',
@@ -1169,7 +1174,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-los-03', mod:'M5', title:'Lost orientation recovery', mins:4, kind:'drill', drill:'recover',
+  id:'gs-los-03', mod:'FLY', ord:70, title:'Lost orientation recovery', mins:4, kind:'drill', drill:'recover',
   cards:[
     { h:'It happens to everybody',
       p:['Not "if you are bad at this". Everybody, usually when the aircraft is far away and small and you glanced down for a second.',
@@ -1198,7 +1203,7 @@ var GS_COURSE = [
    playing, re-scan before assuming the network is at fault. Nothing loads
    until the student taps a poster, so a filtered network costs nothing. */
 {
-  id:'gs-trk-01', mod:'M7', title:'Your first flip and roll', mins:4, kind:'read',
+  id:'gs-trk-01', mod:'FLY', ord:80, title:'Your first flip and roll', mins:4, kind:'read',
   cards:[
     { h:'Every trick is the same three beats', tab:'Three beats',
       p:['A <b>roll</b> spins you around the nose (right stick, left-right). A <b>flip</b> tumbles you over the top (right stick, up-down). Same trick, different stick - and both are rate mode only.'],
@@ -1233,7 +1238,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-trk-02', mod:'M7', title:'The Split-S', mins:3, kind:'read',
+  id:'gs-trk-02', mod:'FLY', ord:90, title:'The Split-S', mins:3, kind:'read',
   cards:[
     { h:'A U-turn that spends height', tab:'The move',
       p:['Half-roll to inverted, pull through a half loop, and leave the other way - lower, faster, and without the wide flat turn everyone can see from the ground.'],
@@ -1266,7 +1271,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-trk-03', mod:'M7', title:'The Power Loop', mins:4, kind:'read',
+  id:'gs-trk-03', mod:'FLY', ord:100, title:'The Power Loop', mins:4, kind:'read',
   cards:[
     { h:'Four beats round the clock', tab:'The move',
       p:['The signature FPV trick: a full loop, usually over something, with the world coming back the right way up exactly where you left it.'],
@@ -1299,7 +1304,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-trk-04', mod:'M7', title:'The Matty Flip', mins:3, kind:'read',
+  id:'gs-trk-04', mod:'FLY', ord:110, title:'The Matty Flip', mins:3, kind:'read',
   cards:[
     { h:'A power loop, flown backwards', tab:'The move',
       p:['Named for Matty Stuntz. Dive at the gap, pitch <b>back</b> and punch, and loop over the top in reverse - with the camera holding the object the whole way round. It films better than anything else you will learn this year.'],
@@ -1327,14 +1332,444 @@ var GS_COURSE = [
   ]
 },
 
-/* ============================ M6 - CHECKRIDE ============================ */
+/* ====================================================================== */
+/* ---- Flight School v2 lessons, written 2026-10-04 -------------------- */
+/* One course per badge. The lessons above that carried over were re-id'd */
+/* in place (gs-rul-01 -> gs-saf-01 and so on); these are the new ones.   */
+/* ====================================================================== */
 {
-  id:'gs-chk-01', mod:'M6', title:'Ground School Checkride', mins:8, kind:'quiz',
+  id:'gs-saf-02', mod:'SAF', ord:20, title:'The Brophy FPV rules sheet', mins:4, kind:'read',
   cards:[
-    { h:'One sitting, one score', tab:'How it is scored', art:'checkride', cap:'80 points of questions, 20 of flying',
-      p:['Sixteen questions drawn from the five core modules, worth 80 points. Then a <b>20-second hover hold</b> worth 10, and <b>five orientation rounds</b> worth 10.',
-         '<b>80 to pass.</b> Unlimited retakes and the questions reshuffle every time, so there is no point learning the order. Your best score is the one that is kept.'],
-      note:'You cannot pass this on reading alone, and that is on purpose.' }
+    { h:'Eight rules. Know them cold.', tab:'The sheet',
+      p:['This is the sheet on the wall by the simulators. Safe Flight is the badge that says you know it and you follow it - every flight, not just when someone is watching.'],
+      steps:[
+        { t:'Props off on the bench',      d:'any time a USB lead or a battery goes near a quad that is not on the pad' },
+        { t:'Arm only on the pad',         d:'in the flight zone, facing away, after the ARMING call' },
+        { t:'Spotter for every goggle flight', d:'eyes on the aircraft the whole battery - that is the law, not a club habit' },
+        { t:'Never over people',           d:'and never between you and the aircraft' },
+        { t:'Someone walks in - you land', d:'you do not hover, you do not fly around them' },
+        { t:'Fly what your tier allows',   d:'Tier 0 sim, Tier 1 Meteor, Tier 2 full-size, with the gear signed out' },
+        { t:'Battery out to carry it',     d:'and packs live in the bag, on the ground' },
+        { t:'The instructor\'s word ends the flight', d:'"LAND" means now' }
+      ],
+      art:'propsOff', cap:'the sheet by the sims' },
+    { h:'Who may fly what', tab:'Tiers',
+      p:['The badges are not decoration. They are the club\'s answer to <b>who may touch which drone</b>, and that answer is checked before gear comes out of the case.'],
+      cols:{ tone:'vs', ha:'You may', hb:'Only once',
+        a:['Fly any sim, any day','Fly the Meteor 75','Fly the Pavo, the Cinebot, a 5-inch','Fly at a game or rally'],
+        b:['you have a name at the kiosk','all seven Tier 0 badges are signed','all six Tier 1 badges are signed','all eight Tier 2 badges, with a spotter'] },
+      tip:'Ask before you assume. An examiner can look you up on the kiosk in ten seconds.' },
+    { h:'What breaks the rule', tab:'Edge cases',
+      p:['Most rule breaks are not rebellion, they are shortcuts. The three below are the ones the club actually sees.'],
+      cols:{ tone:'dd', ha:'Fine', hb:'Not fine',
+        a:['Hover check with props on, on the pad, after the call','Bench test with props off','Handing the goggles to a spotter to look at the feed'],
+        b:['"Quick motor test" on the bench with props on','Arming to walk it to the pad','Flying in goggles with nobody watching the aircraft'] },
+      note:'If you are not sure whether something is allowed, that uncertainty is the answer. Ask first.' }
+  ]
+},
+{
+  id:'gs-saf-quiz', mod:'SAF', ord:90, title:'Safe Flight quiz', mins:6, kind:'quiz', pool:'SAF',
+  cards:[
+    { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
+      p:['Ten questions drawn from the Safe Flight pool, reshuffled every time. <b>80 to pass</b> earns the badge on the spot - no sign-off needed. Unlimited retakes; your best score is kept.'] }
+  ]
+},
+
+{
+  id:'gs-bat-03', mod:'BAT', ord:30, title:'Charging, storage and disposal', mins:4, kind:'read',
+  cards:[
+    { h:'Charge at 1C, balanced, watched', tab:'Charging',
+      p:['The charge current is the pack capacity in amps: a <b>1300 mAh</b> pack charges at <b>1.3 A</b>, a 300 mAh whoop pack at 0.3 A. Always on the balance lead, so the charger can hold every cell within a few millivolts of the others.'],
+      facts:[
+        { n:'1C', l:'charge rate: mAh ÷ 1000 = amps' },
+        { n:'4.20 V', l:'full, per cell', c:'green' },
+        { n:'BAL', l:'balance lead in, every time', c:'sky' },
+        { n:'EYES', l:'never unattended', c:'rust' }
+      ],
+      art:'lipoSafety', cap:'hard surface, bag, somebody in the room' },
+    { h:'Storage is 3.8 volts', tab:'Storage',
+      p:['A full pack left full for a week is a pack that is dying. Within a day of flying, every pack goes to <b>storage voltage, 3.80-3.85 V per cell</b>. Most chargers have a Storage mode that charges or discharges to get there.'],
+      cols:{ tone:'dd', ha:'Do', hb:'Don\'t',
+        a:['Storage charge within a day','Keep packs in the LiPo bag, labelled','Store at room temperature'],
+        b:['Leave packs full "for next week"','Leave packs flat (below 3.5 V) for days','Keep packs in a hot car or a backpack in the sun'] },
+      tip:'Write the date on the tape when a pack goes into storage. A pack nobody has touched in three months gets checked before it flies.' },
+    { h:'When a pack is finished', tab:'Disposal',
+      p:['A pack is retired when it is puffed, has a cell that will not balance, has been in a hard crash twice, or sags so much it cannot finish a flight. Retired packs do not go in the bin.'],
+      steps:[
+        { t:'Mark it',        d:'tape across the connector, "DEAD" in marker' },
+        { t:'Discharge it',   d:'fully, with the charger\'s discharge mode or a resistive load, outside the building' },
+        { t:'Hand it in',     d:'to the instructor - the club takes them to a battery drop-off together' }
+      ],
+      note:'Never puncture, crush or burn a pack to "make it safe". Discharge, tape, hand in.' }
+  ]
+},
+{
+  id:'gs-bat-04', mod:'BAT', ord:40, title:'When a pack goes bad', mins:3, kind:'read',
+  cards:[
+    { h:'Puffed means retired', tab:'Puffing',
+      p:['Gas inside the cell pushes the pouch out. A puffed pack is not "a bit tired" - the chemistry has started breaking down and it can go from warm to on fire with no warning. It does not get charged again. Ever.'],
+      facts:[
+        { n:'PUFF', l:'any swelling at all = retire', c:'rust' },
+        { n:'HOT', l:'too hot to hold after a flight = watch it', c:'amber' },
+        { n:'SMELL', l:'sweet chemical smell = get it outside now', c:'rust' }
+      ],
+      art:'lipo', cap:'flat pouch good. pillow bad.' },
+    { h:'After a crash', tab:'Crashes',
+      p:['Impact damage is invisible from outside and can take minutes to turn into heat. A pack that has been in a hard crash sits in the <b>observation bin</b> - a metal tin on concrete, outside - for <b>thirty minutes</b> before anybody charges it or packs it.'],
+      tip:'Thirty minutes is longer than it feels. Set a timer on the kiosk clock and fly a different pack.' },
+    { h:'If it catches fire', tab:'Fire',
+      p:['A LiPo fire is hot, fast and makes its own oxygen - it cannot be smothered. You do not fight it, you <b>contain</b> it and let it burn out.'],
+      steps:[
+        { t:'People back',   d:'everyone away, upwind of the smoke' },
+        { t:'Do not touch it', d:'if it is already in the bag or the tin, leave it there' },
+        { t:'Cool, don\'t smother', d:'a bucket of water or sand from arm\'s length is fine; a blanket is not' },
+        { t:'Let it finish', d:'then nothing goes near it for an hour' },
+        { t:'Tell the instructor', d:'and write the incident report' }
+      ],
+      note:'This is why packs charge on concrete, in a bag, with someone in the room. The procedure only works if the fire starts somewhere boring.' }
+  ]
+},
+{
+  id:'gs-bat-quiz', mod:'BAT', ord:90, title:'Battery Care quiz', mins:6, kind:'quiz', pool:'BAT',
+  cards:[
+    { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
+      p:['Voltages, charge rates, storage, crashes and fire. <b>80 to pass</b> earns Battery Care on the spot. Unlimited retakes; best score kept.'] }
+  ]
+},
+
+{
+  id:'gs-elc-03', mod:'ELC', ord:30, title:'Matching motor, ESC, prop and battery', mins:5, kind:'read',
+  cards:[
+    { h:'Four numbers that have to agree', tab:'The four',
+      p:['A drone flies well when the <b>motor</b>, the <b>prop</b>, the <b>battery</b> and the <b>ESC</b> were chosen for each other. Get one wrong and the symptom is heat, sag, or a motor that cannot do what the prop asks of it.'],
+      facts:[
+        { n:'2207', l:'motor: 22 mm wide, 7 mm tall stator' },
+        { n:'KV', l:'rpm per volt, unloaded', c:'sky' },
+        { n:'5×4.3', l:'prop: diameter × pitch, inches', c:'amber' },
+        { n:'45 A', l:'ESC: continuous amps per motor', c:'green' }
+      ],
+      art:'sixParts', cap:'the stator size is the motor\'s size' },
+    { h:'KV against cell count', tab:'KV',
+      p:['Motor speed is <b>KV × volts</b>. More cells means more volts, so the same KV spins faster on 6S than on 4S. That is why a 6S build uses a <b>lower</b> KV motor than a 4S build of the same size - the goal is the same prop speed either way.'],
+      cols:{ tone:'vs', ha:'4S 5-inch', hb:'6S 5-inch',
+        a:['2207 · 2400-2750 KV','16.8 V full','higher current, thicker wires'],
+        b:['2207 · 1700-1950 KV','25.2 V full','lower current, cooler ESC'] },
+      tip:'Lower KV on more cells is the efficient direction. High KV on high voltage is how you cook a motor in one flight.' },
+    { h:'ESC amps and C rating', tab:'Current',
+      p:['Every part in the current path has a limit. The ESC rating is per motor; the battery rating is for the whole pack. <b>Current = capacity × C</b>: a 1300 mAh 100C pack can supply 130 A, more than four 30 A motors will ever draw together.'],
+      steps:[
+        { t:'Find the motor\'s max amps', d:'on its data sheet, for your prop and cells' },
+        { t:'ESC must exceed it',          d:'with margin - 45 A ESC for a 35 A motor' },
+        { t:'Pack must cover all four',    d:'capacity × C ≥ 4 × motor amps, with margin' }
+      ],
+      note:'C ratings on cheap packs are optimistic. If a pack gets hot in a two-minute flight, treat its real C as half the label.' }
+  ]
+},
+{
+  id:'gs-elc-04', mod:'ELC', ord:40, title:'Why a 3-inch and a 5-inch differ', mins:3, kind:'read',
+  cards:[
+    { h:'Same parts list, different numbers', tab:'Three sizes',
+      p:['Every quad in the club has the same six parts. What changes with size is how much air each prop moves per turn - and so how big, how fast and how hungry everything else has to be.'],
+      cols:{ tone:'vs', ha:'Meteor 75 · whoop', hb:'5-inch freestyle',
+        a:['0802 motor · ~20 000 KV · 1S','40 mm prop, ducted','5 A all-in-one board','300 mAh · flies 4 min','under 30 g'],
+        b:['2207 motor · ~1800 KV · 6S','127 mm prop, 3 blades','45-60 A ESC','1300 mAh · flies 4 min','600 g+'] },
+      art:'quadTop', cap:'the prop decides the rest' },
+    { h:'The cinewhoop in the middle', tab:'Cinewhoop',
+      p:['The Pavo 20 Pro and Cinebot 35 sit between the two: 2-3.5 inch ducted props, 3S-6S, 20-35 A, built to carry a camera smoothly rather than to race. Ducts protect people and props; they also cost efficiency, which is why cinewhoops fly short.'],
+      tip:'When you are asked to pick parts for a frame, start from the prop size. It fixes the motor size, which fixes the current, which fixes the ESC and the battery.' }
+  ]
+},
+{
+  id:'gs-elc-quiz', mod:'ELC', ord:90, title:'Electrical Components quiz', mins:6, kind:'quiz', pool:'ELC',
+  cards:[
+    { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
+      p:['Parts, thrust, KV, current and which numbers go with which frame. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
+  ]
+},
+
+{
+  id:'gs-rad-04', mod:'RAD', ord:40, title:'Control links: ELRS, Crossfire, binding, failsafe', mins:5, kind:'read',
+  cards:[
+    { h:'Two radios on every quad', tab:'Two links',
+      p:['Video comes <b>down</b> from the aircraft on 5.8 GHz. Control goes <b>up</b> on a different band: <b>2.4 GHz</b> or <b>900 MHz</b>. They are separate systems with separate antennas, and losing one does not mean losing the other.'],
+      facts:[
+        { n:'2.4 GHz', l:'ELRS 2.4: fast, small antennas, the club default', c:'sky' },
+        { n:'900 MHz', l:'ELRS 900 / Crossfire: slower, goes further and through trees', c:'amber' },
+        { n:'5.8 GHz', l:'video, down only', c:'green' }
+      ],
+      art:'videoChain', cap:'control up, video down' },
+    { h:'ELRS in one card', tab:'ELRS',
+      p:['ExpressLRS is open source and runs on nearly every club radio and receiver. Three settings matter: the <b>packet rate</b> (how many times a second your sticks are sent), the <b>bind phrase</b> (which receivers answer to your radio), and <b>telemetry</b> (the aircraft reporting back - link quality, battery).'],
+      cols:{ tone:'vs', ha:'Higher packet rate', hb:'Lower packet rate',
+        a:['250-500 Hz','less latency','shorter range, more sensitive to interference'],
+        b:['50-100 Hz','more range','fine for cinewhoops and long shots'] },
+      tip:'The club bind phrase is the same on every club receiver. Flashing a new receiver with it is part of the Betaflight badge.' },
+    { h:'Failsafe is the thing you set before you need it', tab:'Failsafe',
+      p:['When the receiver stops hearing the radio, the flight controller runs the <b>failsafe</b>. For a whoop or a freestyle quad with no GPS that means <b>drop</b>: motors off, the aircraft falls where it is. It sounds brutal. The alternative is a quad flying away under its last command.'],
+      steps:[
+        { t:'Set it',  d:'Betaflight Failsafe tab: stage 2 = Drop' },
+        { t:'Test it', d:'props OFF, arm, switch the radio off - motors must stop within two seconds' },
+        { t:'Trust it', d:'if the radio dies at the field, the quad is already on the ground' }
+      ],
+      note:'"Land" and GPS rescue modes exist for big GPS drones. Not for anything in the club case.' }
+  ]
+},
+{
+  id:'gs-rad-05', mod:'RAD', ord:50, title:'Interference at an event', mins:3, kind:'read',
+  cards:[
+    { h:'A gym full of phones', tab:'Crowds',
+      p:['2.4 GHz is also Wi-Fi and Bluetooth. A stadium or gym with a thousand phones is the noisiest place a 2.4 GHz link will ever fly. Range that was easy at the field drops, and the link quality number on your OSD is the warning.'],
+      facts:[
+        { n:'LQ', l:'link quality: below 70 %, turn back', c:'amber' },
+        { n:'RSSI', l:'signal strength: falls with distance and bodies', c:'sky' },
+        { n:'900', l:'MHz link for big outdoor events', c:'green' }
+      ],
+      art:'linkBlockers', cap:'people are made of water. water eats 2.4 GHz.' },
+    { h:'Two pilots, one room', tab:'Sharing the air',
+      p:['Control links share fine - ELRS hops channels. <b>Video does not</b>. Two pilots on the same 5.8 GHz channel see each other\'s feed, and digital systems need a channel each too. Before anyone powers up at an event, the spotter runs the channel list.'],
+      steps:[
+        { t:'Agree channels before power-up', d:'Raceband, one per pilot, written on the board' },
+        { t:'Power up one at a time',          d:'and confirm the picture is yours' },
+        { t:'Watch LQ, not just the picture',  d:'video can look fine while control is about to go' }
+      ],
+      tip:'If your link quality falls at an event, fly back toward yourself and land. Nobody will remember the shot you did not get; everyone will remember the quad in the crowd.' }
+  ]
+},
+{
+  id:'gs-rad-quiz', mod:'RAD', ord:90, title:'Radio Protocol quiz', mins:6, kind:'quiz', pool:'RAD',
+  cards:[
+    { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
+      p:['Analog against digital, channels, antennas, control links and failsafe. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
+  ]
+},
+
+{
+  id:'gs-asp-02', mod:'ASP', ord:20, title:'B4UFLY, LAANC and TRUST', mins:4, kind:'read',
+  cards:[
+    { h:'Three letters you need', tab:'The three',
+      p:['Recreational flying in the United States comes with three things every club pilot carries: a <b>TRUST</b> certificate, a <b>B4UFLY</b> check of where you are standing, and - inside controlled airspace - a <b>LAANC</b> authorization before take-off.'],
+      facts:[
+        { n:'TRUST', l:'free online test, cannot be failed, print the certificate', c:'green' },
+        { n:'B4UFLY', l:'the map that says what airspace you are in', c:'sky' },
+        { n:'LAANC', l:'near-instant permission to fly in controlled airspace, up to the grid ceiling', c:'amber' }
+      ],
+      art:'ceiling', cap:'400 ft is the ceiling in uncontrolled air. near an airport it can be 0.' },
+    { h:'Brophy sits under Sky Harbor', tab:'Our airspace',
+      p:['Phoenix Sky Harbor is Class B. The campus is inside its surface area in B4UFLY, where the UAS facility map grid shows a ceiling - in places <b>0 ft</b>, meaning no outdoor flight without a specific authorization. Indoors (the gym, the IC) the FAA rules do not apply, which is why the rally race is indoors.'],
+      tip:'Steel Indian School Park and North Mountain are the club\'s outdoor spots because the grid there allows LAANC at a usable altitude. Check anyway, every time - temporary flight restrictions appear for games and VIP visits.' },
+    { h:'Registration and Remote ID', tab:'Paperwork',
+      p:['Anything over <b>250 g</b> takes off must be registered (five dollars, three years) and broadcast Remote ID. The Meteor 75 and the Pavo 20 are under 250 g and need neither. The 5-inch and the Cinebot 35 are over, and the club registers them.'],
+      cols:{ tone:'vs', ha:'Under 250 g', hb:'Over 250 g',
+        a:['No registration','No Remote ID','TRUST still required'],
+        b:['Registered, number on the frame','Remote ID module or built in','TRUST still required'] } }
+  ]
+},
+{
+  id:'gs-asp-03', mod:'ASP', ord:30, title:'Checking a site', mins:4, kind:'read',
+  cards:[
+    { h:'Five minutes before every outdoor flight', tab:'The check',
+      p:['The habit is the badge. An examiner will hand you a place name and watch you do this on your phone.'],
+      steps:[
+        { t:'Open B4UFLY',          d:'drop the pin where you will stand' },
+        { t:'Read the airspace',    d:'uncontrolled = 400 ft; controlled = read the grid ceiling' },
+        { t:'Look for TFRs',        d:'temporary restrictions: stadiums on game day, wildfires, VIPs' },
+        { t:'LAANC if controlled',  d:'request it in Aloft or AirHub, wait for the approval, screenshot it' },
+        { t:'Check the weather',    d:'wind above the quad\'s comfort, rain, visibility' },
+        { t:'Brief the spotter',    d:'ceiling, boundaries, where people are' }
+      ],
+      art:'goNoGo', cap:'go, or no-go. decide before the battery goes in.' }
+  ],
+  check:[
+    { q:'B4UFLY shows a 100 ft grid ceiling over the park. What do you need before take-off?',
+      opts:['Nothing, 100 ft is allowed','A LAANC authorization up to 100 ft','A Part 107 certificate','To stay under 50 ft to be safe'],
+      a:1, why:'A grid ceiling in controlled airspace is the altitude LAANC can authorize. You still have to ask - the ceiling is not permission by itself.' },
+    { q:'The ceiling on the Brophy front lawn reads 0 ft. What can you do today?',
+      opts:['Fly below the trees','Fly indoors only','Fly, but keep it short','Fly after calling the tower'],
+      a:1, why:'Zero means no outdoor flight without a special authorization that takes weeks. Indoors is outside FAA airspace rules entirely.' },
+    { q:'Which drone needs FAA registration?',
+      opts:['Meteor 75 Pro','Pavo 20 Pro','A 5-inch freestyle quad','None of them, the club is exempt'],
+      a:2, why:'Over 250 g take-off weight means registration and Remote ID. The whoop and the Pavo are under; the 5-inch is well over.' }
+  ]
+},
+{
+  id:'gs-asp-quiz', mod:'ASP', ord:90, title:'Airspace quiz', mins:6, kind:'quiz', pool:'ASP',
+  cards:[
+    { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
+      p:['Where the law lets you fly, what the grid means, TRUST, LAANC and registration. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
+  ]
+},
+
+{
+  id:'gs-emg-01', mod:'EMG', ord:10, title:'Failsafe: set it, test it', mins:3, kind:'read',
+  cards:[
+    { h:'The one setting that saves a crowd', tab:'Set',
+      p:['Failsafe is what the aircraft does the moment it stops hearing you. For every quad in the club case the answer is <b>drop</b>. A dropped quad falls on the spot; a quad that keeps its last command flies into whatever was in front of it.'],
+      facts:[
+        { n:'STAGE 1', l:'a short hold, sticks centred, under a second' },
+        { n:'STAGE 2', l:'the procedure: DROP', c:'rust' },
+        { n:'1.5 s', l:'from silence to motors off, by default', c:'amber' }
+      ],
+      art:'failCurves', cap:'silence, then off' },
+    { h:'Test it on the bench, props off', tab:'Test',
+      p:['A failsafe nobody has tested is a guess. The test is thirty seconds and part of every Betaflight badge sign-off.'],
+      steps:[
+        { t:'Props off, battery in',  d:'on the bench, nowhere near the pad' },
+        { t:'Arm',                     d:'motors idle' },
+        { t:'Switch the radio off',    d:'count: one, two' },
+        { t:'Motors must stop',        d:'and the OSD must say FAILSAFE' },
+        { t:'Radio back on',           d:'the quad must stay disarmed until you re-arm' }
+      ],
+      note:'If the motors keep spinning, the quad does not fly until it is fixed. No exceptions, no "it is probably fine".' }
+  ]
+},
+{
+  id:'gs-emg-02', mod:'EMG', ord:20, title:'Flyaway and lost video', mins:4, kind:'read',
+  cards:[
+    { h:'Video gone, control still there', tab:'Lost video',
+      p:['The most common emergency. Your goggles go black or to snow, but the aircraft is still listening. You are now a line-of-sight pilot whose spotter can see the quad and you cannot.'],
+      steps:[
+        { t:'Throttle to a hover, say "VIDEO OUT"', d:'the spotter takes over the calls' },
+        { t:'Spotter calls the position',           d:'"ten metres out, head height, nose left"' },
+        { t:'Climb a little, turn toward yourself', d:'analog video usually comes back as you get closer' },
+        { t:'Still nothing? Land where it is',      d:'a slow descent on the spotter\'s calls, or disarm over grass' }
+      ],
+      art:'recoverSteps', cap:'hover. call. come home. land.' },
+    { h:'Control gone', tab:'Flyaway',
+      p:['A real flyaway - the aircraft not responding at all - is rare with a tested failsafe, because the failsafe has already dropped it. If it is still flying, it is still hearing <i>something</i>.'],
+      cols:{ tone:'dd', ha:'Do', hb:'Don\'t',
+        a:['Switch the radio off and on - a reconnect often fixes it','Watch where it goes and note the time','Say it out loud so everyone looks up'],
+        b:['Run after it in goggles','Assume it will come back on its own','Keep it quiet to avoid embarrassment'] },
+      tip:'The lost-video drill in Flight prep is this lesson with a stick in your hand. Do it until the hover is automatic.' }
+  ]
+},
+{
+  id:'gs-emg-03', mod:'EMG', ord:30, title:'LiPo fire and injury', mins:3, kind:'read',
+  cards:[
+    { h:'Fire: contain, do not fight', tab:'Fire',
+      p:['Battery Care covers the chemistry. Here is the drill, because in the moment you will not have time to remember the chemistry.'],
+      steps:[
+        { t:'"FIRE" - everyone back', d:'upwind, ten metres, nobody films from close' },
+        { t:'Leave it in the bag or tin', d:'that is what they are for' },
+        { t:'Water or sand from arm\'s length', d:'to cool the area, not to smother' },
+        { t:'Let it burn out, then an hour', d:'before anybody touches it' },
+        { t:'Report it',              d:'same day' }
+      ],
+      art:'lipoSafety', cap:'the bag is the plan' },
+    { h:'Injury: the flight is over', tab:'Injury',
+      p:['A prop cut is the club\'s most likely injury. It bleeds a lot and looks worse than it is - but the flight ends, and the person comes first.'],
+      steps:[
+        { t:'Disarm everything',   d:'every quad on the ground, radios down' },
+        { t:'Pressure on the cut', d:'clean cloth, hold it, elevate' },
+        { t:'Get an adult',        d:'instructor, coach, nurse - whoever is closest' },
+        { t:'Then the report',     d:'what happened, which quad, who saw it' }
+      ],
+      note:'A spotter who calls "STOP" for a person walking in prevents more injuries than any first-aid kit.' }
+  ]
+},
+{
+  id:'gs-emg-04', mod:'EMG', ord:40, title:'The incident report', mins:2, kind:'read',
+  cards:[
+    { h:'Written the same day, every time', tab:'Report',
+      p:['Crash with damage, injury, a fire, a flyaway, a complaint from anyone - all of them get a report, to <b>mtucker27@brophybroncos.org</b>, the same day. It is not punishment. It is how the club learns and how it keeps permission to fly on campus.'],
+      steps:[
+        { t:'When and where',   d:'date, time, place' },
+        { t:'Who',              d:'pilot, spotter, anyone involved or hurt' },
+        { t:'What',             d:'in order, plainly, no blame' },
+        { t:'Damage',           d:'to people, to gear, to anything else' },
+        { t:'Photos',           d:'the aircraft, the place, the pack if it was the pack' },
+        { t:'What would have prevented it', d:'one honest sentence' }
+      ],
+      tip:'A report that says "I armed on the bench with props on and cut my hand" is worth more to the club than a year of perfect flights. Write it.' }
+  ]
+},
+{
+  id:'gs-emg-05', mod:'EMG', ord:50, title:'Scenario drill', mins:4, kind:'read',
+  cards:[
+    { h:'Three scenarios, pick the response', tab:'Drill',
+      p:['Read each one as if it is happening. Then answer the three checks below - they are the drill.'],
+      cols:{ tone:'vs', ha:'Scenario', hb:'First move',
+        a:['Goggles go to snow 20 m out','Smoke from the charging table','A student walks onto the pad mid-flight'],
+        b:['Hover, say VIDEO OUT, spotter calls','FIRE, everyone back, leave it in the bag','LAND - now, not after the gap'] } }
+  ],
+  check:[
+    { q:'Video drops to black at 15 m. The spotter can see the quad. What do you do first?',
+      opts:['Pull the goggles off and look for it','Hover and say VIDEO OUT','Disarm immediately','Full throttle up to get signal back'],
+      a:1, why:'Hover and hand the calls to the spotter. Disarming at 15 m out is a crash; climbing blind near people is worse.' },
+    { q:'A pack in the LiPo bag starts smoking. Best action?',
+      opts:['Open the bag and pull the pack out to the floor','Throw a jacket over the bag','Move people back and leave it in the bag','Carry the bag outside'],
+      a:2, why:'The bag is the containment. Opening it, covering it or carrying it all put a person next to a fire that is about to flare.' },
+    { q:'After a crash that broke a prop and dented a wall, what gets written?',
+      opts:['Nothing, no one was hurt','A note in the group chat','An incident report to the instructor, same day','A report only if the wall owner complains'],
+      a:2, why:'Damage to anything other than the aircraft is an incident. Same day, plainly, with photos.' }
+  ]
+},
+{
+  id:'gs-emg-quiz', mod:'EMG', ord:90, title:'Emergency Procedures quiz', mins:6, kind:'quiz', pool:'EMG',
+  cards:[
+    { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
+      p:['Failsafe, lost video, flyaway, fire, injury and the report. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
+  ]
+},
+
+{
+  id:'gs-evt-01', mod:'EVT', ord:10, title:'The flight zone', mins:4, kind:'read',
+  cards:[
+    { h:'Draw the box before the battery goes in', tab:'The box',
+      p:['At a game, a dance or a rally the club does not fly "around". It flies inside a <b>zone</b> that was agreed, marked and briefed before anyone powered up - and the zone never contains a person who is not crew.'],
+      facts:[
+        { n:'LINE', l:'a rope, cones or tape between crew and crowd', c:'rust' },
+        { n:'8 m', l:'minimum from the line to any flight path', c:'amber' },
+        { n:'PAD', l:'one take-off spot, marked, facing away from people', c:'sky' },
+        { n:'OUT', l:'an abort direction that is always empty', c:'green' }
+      ],
+      art:'ceiling', cap:'crew inside, crowd outside, nothing above anyone' },
+    { h:'Who stands where', tab:'Positions',
+      p:['The pilot stands where the spotter can touch their shoulder. The spotter stands where they can see the whole zone and the crowd line. Batteries, chargers and spare quads live on a table <b>behind</b> the pilot, never in the zone.'],
+      cols:{ tone:'dd', ha:'In the zone', hb:'Never in the zone',
+        a:['The aircraft','A marked pad','Gates or props for the shot'],
+        b:['Spectators, even "just one"','The charging table','A second pilot\'s quad, powered'] },
+      tip:'If the organiser wants the drone closer to the crowd than the line allows, the answer is no, and the shot changes. That is what the Event Ops badge means.' }
+  ]
+},
+{
+  id:'gs-evt-02', mod:'EVT', ord:20, title:'Briefing bystanders', mins:3, kind:'read',
+  cards:[
+    { h:'Thirty seconds, out loud', tab:'The brief',
+      p:['Before the first flight, the spotter briefs whoever is near the line: organisers, the nearest spectators, the photographer. It is short, friendly and specific.'],
+      steps:[
+        { t:'"We are flying a drone in this box for the next ten minutes"', d:'point at the line' },
+        { t:'"Please stay behind the tape"', d:'and do not walk toward it, even for a photo' },
+        { t:'"If I say LAND, we are landing"', d:'nothing is wrong, it is just the rule' },
+        { t:'"Questions? Ask me, not the pilot"', d:'the pilot is in goggles and cannot hear you' }
+      ],
+      art:'threeJobs', cap:'the spotter talks. the pilot flies.' },
+    { h:'People who do not listen', tab:'When it goes wrong',
+      p:['Someone will step over the line - a kid, a photographer, a coach with a question. The response is the same one from Safe Flight: the pilot <b>lands</b>, the spotter walks the person back, and the flight resumes when the zone is clear.'],
+      note:'Never argue with someone inside the zone while the aircraft is up. Land first. Everything else can wait four seconds.' }
+  ]
+},
+{
+  id:'gs-evt-03', mod:'EVT', ord:30, title:'Pilot and spotter call-outs', mins:3, kind:'read',
+  cards:[
+    { h:'The same four calls, louder', tab:'Calls',
+      p:['ARMING, UP, LANDING, DOWN - the four calls from Safe Flight - at an event, said loudly enough for the crew table to hear over a crowd. Plus three the spotter owns.'],
+      steps:[
+        { t:'"CLEAR"',      d:'spotter: the zone is empty, you may arm' },
+        { t:'"PERSON"',     d:'spotter: someone is near or over the line - pilot holds or lands' },
+        { t:'"LAND LAND LAND"', d:'anyone: the flight ends now, no questions' },
+        { t:'"BATTERY"',    d:'pilot: thirty seconds left, coming home' }
+      ],
+      art:'callouts', cap:'words, not hand signals - the pilot cannot see you' },
+    { h:'The handover', tab:'Handover',
+      p:['Two pilots sharing a zone swap on the ground, never in the air. DOWN from the first, pack out, CLEAR from the spotter, then ARMING from the second. One aircraft in the zone at a time unless the event was planned as a race with its own gates and marshals.'],
+      tip:'Practise the calls at the field until they are boring. At the rally there will be a thousand people and a PA system, and the only thing that will cut through is a habit.' }
+  ]
+},
+{
+  id:'gs-evt-quiz', mod:'EVT', ord:90, title:'Event Ops quiz', mins:6, kind:'quiz', pool:'EVT',
+  cards:[
+    { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
+      p:['The zone, the brief, the calls and the handover. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
   ]
 }
 ];
@@ -1345,127 +1780,300 @@ var GS_COURSE = [
    'mod' is used for that weighting - keep it accurate when adding questions.
    --------------------------------------------------------------------------- */
 var GS_QUIZ = [
-/* --- M1 --- */
-{ mod:'M1', q:'Somebody walks into the flying area while you are up. What do you do?',
+/* --- SAF / BAT / ASP (from the old M1) --- */
+{ mod:'SAF', q:'Somebody walks into the flying area while you are up. What do you do?',
   opts:['Fly around them and keep going','Hover in place until they leave','Land','Climb above them'], a:2,
   why:'You land. Flying around a person keeps a moving aircraft near them, and hovering just makes the decision later.' },
-{ mod:'M1', q:'When may somebody walk downrange?',
+{ mod:'SAF', q:'When may somebody walk downrange?',
   opts:['When the aircraft looks like it has landed','After they hear the DOWN call','When the pilot takes their goggles off','As soon as it touches the ground'], a:1,
   why:'The DOWN call means props stopped. Anything you infer by looking is a guess, and props are still turning for a while after touchdown.' },
-{ mod:'M1', q:'You need to change a Betaflight setting at the field. What comes off first?',
+{ mod:'SAF', q:'You need to change a Betaflight setting at the field. What comes off first?',
   opts:['The battery','The props','The antenna','Nothing, it is only a setting'], a:1,
   why:'Props off for every configuration change. A quad on a bench with props on is a loaded tool.' },
-{ mod:'M1', q:'Your aircraft weighs 620 g with the battery in. What does the FAA need?',
+{ mod:'ASP', q:'Your aircraft weighs 620 g with the battery in. What does the FAA need?',
   opts:['Nothing, it is under 1 kg','It registered, with the number visible outside','A Part 107 certificate regardless of purpose','A LAANC authorisation for every flight'], a:1,
   why:'250 g and up gets registered, with the registration marked on the outside where you can read it without tools.' },
-{ mod:'M1', q:'A pack was in a hard crash ten minutes ago and looks fine. What now?',
+{ mod:'BAT', q:'A pack was in a hard crash ten minutes ago and looks fine. What now?',
   opts:['Charge it, it looks fine','Fly it again to use it up','Quarantine it and watch it for half an hour','Straight in the household bin'], a:2,
   why:'Crash damage inside a cell can start a fire minutes later. It goes in the observation bin before it goes anywhere near a charger.' },
-{ mod:'M1', q:'Which of these makes a flight Part 107 rather than recreational?',
+{ mod:'ASP', q:'Which of these makes a flight Part 107 rather than recreational?',
   opts:['Flying above 200 ft','Shooting footage for a class assignment','Flying with a spotter','Flying a quad over 250 g'], a:1,
   why:'Purpose decides it. If the flight exists to produce something for someone else it is 107, paid or not.' },
-{ mod:'M1', q:'A crewed helicopter comes low over the field. What is the priority?',
+{ mod:'ASP', q:'A crewed helicopter comes low over the field. What is the priority?',
   opts:['Hold position so it can see you','Land or descend immediately and give way','Climb to be more visible','Continue, they must give way to you'], a:1,
   why:'You always give way to crewed aircraft, immediately. They very likely cannot see you and could not dodge if they did.' },
 
-/* --- M2 --- */
-{ mod:'M2', q:'A 6S pack reads 25.2 V. What state is it in?',
+/* --- BAT / ELC / RAD (from the old M2) --- */
+{ mod:'BAT', q:'A 6S pack reads 25.2 V. What state is it in?',
   opts:['Storage charge','Fully charged','Land-now','Over-discharged'], a:1,
   why:'25.2 divided by 6 is 4.20 V per cell, which is full. Storage would be 22.8 V.' },
-{ mod:'M2', q:'A 3S pack reads 10.5 V at rest. What now?',
+{ mod:'BAT', q:'A 3S pack reads 10.5 V at rest. What now?',
   opts:['Normal, fly it','Land-now territory - charge it, do not fly it','Perfect storage charge','It is ruined, bin it'], a:1,
   why:'10.5 over 3 is 3.50 V a cell - the land-now number. Not ruined, but it does not fly again before charging.' },
-{ mod:'M2', q:'How much current can a 1300 mAh 75C pack deliver?',
+{ mod:'BAT', q:'How much current can a 1300 mAh 75C pack deliver?',
   opts:['about 9.75 A','about 97.5 A','about 975 A','about 75 A'], a:1,
   why:'1300 divided by 1000 is 1.3 Ah, times 75C is 97.5 A.' },
-{ mod:'M2', q:'You want to roll to the right. Which motors speed up?',
+{ mod:'ELC', q:'You want to roll to the right. Which motors speed up?',
   opts:['The two on the right','The two on the left','The two at the back','One diagonal pair'], a:1,
   why:'More thrust on the left tips the aircraft to the right. Same logic as pitch, rotated ninety degrees.' },
-{ mod:'M2', q:'Why do diagonal props spin in the same direction as each other?',
+{ mod:'ELC', q:'Why do diagonal props spin in the same direction as each other?',
   opts:['So the motors wear evenly','So the twisting forces cancel and it does not spin on its own','So all four props can be identical','To reduce noise'], a:1,
   why:'Each spinning prop tries to twist the airframe the opposite way. Pairing them off cancels it, and deliberately unbalancing it is how yaw works.' },
-{ mod:'M2', q:'A motor is too hot to hold right after landing. Most likely?',
+{ mod:'ELC', q:'A motor is too hot to hold right after landing. Most likely?',
   opts:['Normal for brushless motors','A bent shaft, a dry bearing, or something wound round it','The battery C rating is too high','The ESC is undersized for the pack'], a:1,
   why:'Warm is normal, too-hot-to-hold is not. It means something is binding, and it will get worse.' },
-{ mod:'M2', q:'The receiver stops hearing the transmitter. What is supposed to happen?',
+{ mod:'RAD', q:'The receiver stops hearing the transmitter. What is supposed to happen?',
   opts:['It holds its last input','Failsafe fires and it cuts throttle','It flies a straight line until the battery dies','It switches to angle mode'], a:1,
   why:'Failsafe cuts throttle and brings it down. A quad that keeps flying with nobody controlling it is a far worse outcome.' },
-{ mod:'M2', q:'Which part is designed to break in a crash?',
+{ mod:'ELC', q:'Which part is designed to break in a crash?',
   opts:['The frame arms','The flight controller','The motors','The ESCs'], a:0,
   why:'Arms snap on purpose. They are the cheapest part on the aircraft and they break instead of the expensive ones.' },
 
-/* --- M3 --- */
-{ mod:'M3', q:'Your goggles show heavy static that clears as you fly back toward yourself. Which system, and what does it tell you?',
+/* --- RAD --- */
+{ mod:'RAD', q:'Your goggles show heavy static that clears as you fly back toward yourself. Which system, and what does it tell you?',
   opts:['Digital, and the link is about to cut','Analog, and you are at the edge of range - turn back','Digital, and the antenna is mismatched','Analog, and the VTX is failing'], a:1,
   why:'That gradual grain-to-snow slide is analog. It is a distance gauge, and it is telling you this is as far as you go.' },
-{ mod:'M3', q:'A digital link goes from a perfect picture to a frozen block of pixels to black. What is the lesson?',
+{ mod:'RAD', q:'A digital link goes from a perfect picture to a frozen block of pixels to black. What is the lesson?',
   opts:['The goggles are faulty','Digital gives almost no warning, so watch link quality instead','Digital has more range than analog','You should raise the VTX power'], a:1,
   why:'Compressed video is fine until it is not. With no gradient to read, the number in the OSD is your only early warning.' },
-{ mod:'M3', q:'Two pilots power up on the same 5.8 GHz channel. What do they see?',
+{ mod:'RAD', q:'Two pilots power up on the same 5.8 GHz channel. What do they see?',
   opts:['They take turns, both pictures flicker','Both pictures tear each other apart and neither can fly','The stronger transmitter wins cleanly','Nothing changes if they are far apart'], a:1,
   why:'Video transmitters do not share a frequency. Both feeds are destroyed, and anyone in goggles is blind.' },
-{ mod:'M3', q:'Why does Raceband exist?',
+{ mod:'RAD', q:'Why does Raceband exist?',
   opts:['It is legal in more countries','Its channels are spaced further apart, so more pilots can fly at once','It has lower latency','It carries more power'], a:1,
   why:'The other bands pack channels too close together to run several aircraft simultaneously. R spreads them out.' },
-{ mod:'M3', q:'What must never happen to a video transmitter?',
+{ mod:'RAD', q:'What must never happen to a video transmitter?',
   opts:['Being run at 25 mW','Being powered up with no antenna fitted','Being used on Raceband','Being mounted near the flight controller'], a:1,
   why:'With no antenna the output reflects back into the amplifier and cooks it within seconds. Antenna first, battery second.' },
-{ mod:'M3', q:'Your VTX antenna is RHCP. What goes on the goggles?',
+{ mod:'RAD', q:'Your VTX antenna is RHCP. What goes on the goggles?',
   opts:['LHCP, so they complement each other','RHCP - handedness must match','Either, it makes no difference','A linear antenna'], a:1,
   why:'Mismatched handedness throws away most of the signal before you even take off.' },
-{ mod:'M3', q:'What does a diversity receiver actually do?',
+{ mod:'RAD', q:'What does a diversity receiver actually do?',
   opts:['Doubles the transmit power','Runs two receivers with different antennas and plays whichever picture is better','Receives two channels at once','Splits the video to two pairs of goggles'], a:1,
   why:'Two receivers, usually an omni and a patch, and the goggles switch between them frame by frame.' },
-{ mod:'M3', q:'Same distance, but the aircraft is low over grass instead of high up, and the video is much worse. Why?',
+{ mod:'RAD', q:'Same distance, but the aircraft is low over grass instead of high up, and the video is much worse. Why?',
   opts:['Ground effect from the props','The ground and everything on it is in the signal path','Cold air absorbs 5.8 GHz','The VTX heats up near the ground'], a:1,
   why:'Height is the cheapest range upgrade there is, because it clears the path.' },
 
-/* --- M4 --- */
-{ mod:'M4', q:'In Mode 2, what is the left stick left and right?',
+/* --- FLY (not quizzed) --- */
+{ mod:'FLY', q:'In Mode 2, what is the left stick left and right?',
   opts:['Roll','Yaw','Pitch','Trim'], a:1,
   why:'Left stick: throttle up and down, yaw left and right. Roll is the right stick.' },
-{ mod:'M4', q:'Which channel does NOT spring back to centre?',
+{ mod:'FLY', q:'Which channel does NOT spring back to centre?',
   opts:['Roll','Pitch','Yaw','Throttle'], a:3,
   why:'Throttle stays where you put it, because that is the one setting you want held.' },
-{ mod:'M4', q:'You centre the sticks in rate mode while banked over. What happens?',
+{ mod:'FLY', q:'You centre the sticks in rate mode while banked over. What happens?',
   opts:['It levels itself','It stops rotating but stays banked over','It continues rolling','It drops to angle mode'], a:1,
   why:'In rate mode the stick commands rotation speed. Centre means "stop rotating", not "return to level".' },
-{ mod:'M4', q:'You centre the sticks in angle mode while banked over. What happens?',
+{ mod:'FLY', q:'You centre the sticks in angle mode while banked over. What happens?',
   opts:['It stays banked','It returns to level by itself','It keeps rolling','It descends'], a:1,
   why:'In angle mode the stick asks for a lean angle. Zero stick means zero lean, so it levels.' },
-{ mod:'M4', q:'Which mode can fly inverted?',
+{ mod:'FLY', q:'Which mode can fly inverted?',
   opts:['Angle','Rate','Both','Neither'], a:1,
   why:'Angle mode has a hard lean limit, so it cannot go past it. Every flip and roll in FPV is rate mode.' },
-{ mod:'M4', q:'What is the sign of a beginner on the throttle?',
+{ mod:'FLY', q:'What is the sign of a beginner on the throttle?',
   opts:['Holding a constant mid-throttle','Large, late, on-off corrections','Using the throttle trim','Flying in angle mode'], a:1,
   why:'Full-nothing-full is the beginner sawtooth. Good throttle work is small, early and continuous.' },
-{ mod:'M4', q:'Best way to hold a hover?',
+{ mod:'FLY', q:'Best way to hold a hover?',
   opts:['Set the throttle exactly right and leave it','Constant small corrections, made early','Large corrections when it drifts far enough to see','Switch to angle mode and let go'], a:1,
   why:'A hover is kept, not set. The aircraft is always leaving it and you are always putting it back.' },
 
-/* --- M5 --- */
-{ mod:'M5', q:'The aircraft is 30 m out with the nose pointed at you. You push the right stick left. Which way does it go?',
+/* --- FLY (not quizzed) --- */
+{ mod:'FLY', q:'The aircraft is 30 m out with the nose pointed at you. You push the right stick left. Which way does it go?',
   opts:['To your left','To your right','Straight toward you','It yaws left'], a:1,
   why:'Nose-in reverses roll. Its left is your right, so it tracks to your right.' },
-{ mod:'M5', q:'Nose pointing away from you. Push the right stick left. Which way?',
+{ mod:'FLY', q:'Nose pointing away from you. Push the right stick left. Which way?',
   opts:['To your left','To your right','Toward you','Away from you'], a:0,
   why:'Nose away is the easy case: the aircraft and you agree, so left is left.' },
-{ mod:'M5', q:'First step when you have lost orientation?',
+{ mod:'FLY', q:'First step when you have lost orientation?',
   opts:['Yaw until it looks right','Centre pitch and roll to level it','Cut the throttle','Climb hard'], a:1,
   why:'LEVEL first. Stop making it worse, then buy time, then work out which way it is facing.' },
-{ mod:'M5', q:'What are the four recovery steps, in order?',
+{ mod:'FLY', q:'What are the four recovery steps, in order?',
   opts:['Yaw, level, hold, go','Level, hold, yaw, go','Hold, yaw, level, go','Level, yaw, go, hold'], a:1,
   why:'LEVEL, HOLD, YAW, GO. Level it, gain a little height for thinking time, turn the nose away, then move.' },
-{ mod:'M5', q:'You cannot get your orientation back and it is drifting. Best option?',
+{ mod:'FLY', q:'You cannot get your orientation back and it is drifting. Best option?',
   opts:['Guess and hope','Full throttle and climb out of trouble','Throttle down, over grass, now','Yaw hard until it snaps into place'], a:2,
   why:'A controlled descent into grass costs props. Guessing costs the aircraft or somebody\'s window.' },
-{ mod:'M5', q:'The video cuts out completely while you are in goggles. What do you do?',
+{ mod:'FLY', q:'The video cuts out completely while you are in goggles. What do you do?',
   opts:['Pull the goggles off immediately','Level, ease the throttle down, and let it land','Hold your last input and wait','Full throttle to climb clear'], a:1,
   why:'Ripping the goggles off loses every reference you had. Level and descend smoothly - a landing you cannot see beats a crash you caused.' },
-{ mod:'M5', q:'On analog, the picture flickers back for a second and dies again. Which way do you fly?',
+{ mod:'FLY', q:'On analog, the picture flickers back for a second and dies again. Which way do you fly?',
   opts:['Toward yourself','Straight on, and climb for a clearer line of sight','Left, to change the angle','Hold your position and wait for it to come back'], a:0,
   why:'Signal improves as it gets closer, so toward you is the only direction that helps. It is also the only clue you have.' },
-{ mod:'M5', q:'Why practise nose-in deliberately instead of avoiding it?',
+{ mod:'FLY', q:'Why practise nose-in deliberately instead of avoiding it?',
   opts:['It looks better','It is the only way it stops being a calculation','It uses less battery','It is required for Part 107'], a:1,
-  why:'The trick of imagining yourself in the aircraft works, slowly. Slowly is no use at speed. Repetition is what makes it instant.' }
+  why:'The trick of imagining yourself in the aircraft works, slowly. Slowly is no use at speed. Repetition is what makes it instant.' },
+
+/* --- SAF: the rules sheet (2026-10-04) --- */
+{ mod:'SAF', q:'You want to check that a motor spins the right way. Where do the props go?',
+  opts:['On, but on low throttle','Off - every motor test is props off','On, if the quad is strapped down','On, if someone is holding it'], a:1,
+  why:'A bench test with props on is the club\'s most likely injury. Props come off for every motor test, flash and configuration change.' },
+{ mod:'SAF', q:'Where is the only place you arm?',
+  opts:['Anywhere the props are clear','On the pad, in the flight zone, after the ARMING call','On the bench, to walk it to the pad','Wherever the spotter is standing'], a:1,
+  why:'Arm on the pad, facing away, after the call. Arming anywhere else puts a spinning quad next to people.' },
+{ mod:'SAF', q:'A pilot holds every Tier 0 badge. What may they fly?',
+  opts:['Anything in the club case','The Meteor 75, with the gear signed out','The Pavo 20 Pro at an event','Only the simulator until an instructor says otherwise'], a:1,
+  why:'All seven Tier 0 badges open Gate 1: the Meteor. Full-size needs the six Tier 1 badges; events need Tier 2 and a spotter.' },
+{ mod:'SAF', q:'The instructor says "LAND" while you are halfway through a line. You:',
+  opts:['Finish the line, then land','Ask why over the noise','Land now','Hover and wait for a second call'], a:2,
+  why:'LAND means now. The reason comes after the props stop.' },
+{ mod:'SAF', q:'How do you carry a quad from the bench to the pad?',
+  opts:['Armed, at idle','Battery in, disarmed','Battery out','Props off'], a:2,
+  why:'Battery out to carry it. A disarmed quad with a battery in is one switch away from spinning.' },
+{ mod:'SAF', q:'Flying in goggles with no spotter is:',
+  opts:['Fine if the area is clear','Fine for short flights','Not allowed - a visual observer is required','Fine indoors'], a:2,
+  why:'Goggles mean you cannot see the aircraft. A spotter watching it is a legal requirement and a club rule.' },
+{ mod:'SAF', q:'Where do batteries live while people are flying?',
+  opts:['In a pocket, so they stay warm','On the charging table, charging','In the LiPo bag, on the ground','Plugged into the spare quad, ready'], a:2,
+  why:'Packs live in the bag on the ground. Charging happens with someone watching, on a hard surface, never in the zone.' },
+{ mod:'SAF', q:'You are not sure whether something is allowed. What is the rule?',
+  opts:['If nobody says no, it is fine','Ask first','Try it once and see','Check the website later'], a:1,
+  why:'Not being sure is the answer. Ask an instructor or an examiner before you do it.' },
+
+/* --- BAT: charging, storage, bad packs --- */
+{ mod:'BAT', q:'What is the 1C charge current for a 1300 mAh pack?',
+  opts:['13 A','1.3 A','0.13 A','130 A'], a:1,
+  why:'Capacity in amp-hours is the 1C rate: 1300 mAh = 1.3 Ah = 1.3 A.' },
+{ mod:'BAT', q:'A pack you will not fly for a week should be left at:',
+  opts:['4.20 V per cell, full','3.80-3.85 V per cell, storage','3.50 V per cell, landing voltage','Whatever it landed at'], a:1,
+  why:'Storage voltage, within a day of flying. Full or flat for days is how packs die early.' },
+{ mod:'BAT', q:'Why does the balance lead go in for every charge?',
+  opts:['It charges faster','So the charger can keep every cell at the same voltage','It is only needed the first time','So the charger can read the capacity'], a:1,
+  why:'Cells drift apart. The balance lead lets the charger hold them within millivolts of each other; a cell left behind is a cell that will fail.' },
+{ mod:'BAT', q:'A pack is slightly puffed but still holds a charge. What now?',
+  opts:['Fly it gently','Store it at storage voltage and watch it','Retire it: tape, discharge, hand in','Charge it at half rate'], a:2,
+  why:'Any swelling means the chemistry is breaking down. It never gets charged again.' },
+{ mod:'BAT', q:'A LiPo on the charging table catches fire. First move?',
+  opts:['Pick up the bag and run outside','Throw a jacket over it','Everyone back, upwind','Pour water directly on the pack from close up'], a:2,
+  why:'People back first. Then cool from arm\'s length if you can. Never carry a burning pack and never smother it - it makes its own oxygen.' },
+{ mod:'BAT', q:'How is a dead pack disposed of?',
+  opts:['In the bin, taped','Fully discharged, taped, handed to the instructor','Burned outside','Left in the LiPo bag indefinitely'], a:1,
+  why:'Discharge fully, tape the connector, hand it in for the battery drop-off. Never in the bin, never punctured.' },
+
+/* --- ELC: matching parts --- */
+{ mod:'ELC', q:'What do the numbers in a "2207" motor mean?',
+  opts:['22 mm stator width, 7 mm stator height','2200 KV, 7 poles','22 A, 7 V','2.2 inch prop, 7 pitch'], a:0,
+  why:'Stator width and height in millimetres. Bigger stator, bigger prop.' },
+{ mod:'ELC', q:'A 6S build of a 5-inch frame uses, compared with a 4S build:',
+  opts:['Higher KV motors','Lower KV motors','The same KV, a bigger ESC','Smaller props'], a:1,
+  why:'Motor speed is KV × volts. More cells means more volts, so the same prop speed needs lower KV.' },
+{ mod:'ELC', q:'A motor can draw 35 A at full throttle. Which ESC?',
+  opts:['30 A, it will rarely be full throttle','35 A exactly','45 A or more','Any ESC - the battery limits current'], a:2,
+  why:'The ESC rating must exceed the motor\'s real draw with margin. An ESC at its limit cooks.' },
+{ mod:'ELC', q:'Which pack can supply four motors drawing 30 A each?',
+  opts:['1300 mAh 50C','850 mAh 100C','1300 mAh 100C','450 mAh 75C'], a:2,
+  why:'Four × 30 A = 120 A. 1300 mAh × 100C = 130 A, with a little margin. 1300 × 50C is 65 A; 850 × 100C is 85 A; 450 × 75C is 34 A.' },
+{ mod:'ELC', q:'What decides the motor size for a new frame?',
+  opts:['The battery you own','The prop size the frame takes','The flight controller','The camera weight'], a:1,
+  why:'Start from the prop. It fixes the motor size, which fixes the current, which fixes the ESC and the pack.' },
+{ mod:'ELC', q:'Why does the Meteor 75 use a 1S battery and 20 000 KV motors?',
+  opts:['1S is safer indoors','A 40 mm prop needs very high rpm, and 1S keeps the quad under 30 g','Higher KV is always better','Because whoops cannot use ESCs'], a:1,
+  why:'A tiny prop moves little air per turn, so it needs rpm; one cell at 4.2 V with 20 000 KV gets there, and the pack weighs 8 g.' },
+
+/* --- RAD: control links --- */
+{ mod:'RAD', q:'Which band carries control on the club\'s ELRS radios?',
+  opts:['5.8 GHz','2.4 GHz','900 MHz only','1.3 GHz'], a:1,
+  why:'Club receivers are ELRS 2.4 GHz. Video is on 5.8 GHz. 900 MHz is the long-range option for big outdoor events.' },
+{ mod:'RAD', q:'What does raising the ELRS packet rate from 100 Hz to 500 Hz do?',
+  opts:['More range, more latency','Less latency, less range','No change in flight, only in telemetry','Lets two radios share one receiver'], a:1,
+  why:'More packets a second means your sticks arrive sooner, but each packet has less power behind it, so range and interference margin drop.' },
+{ mod:'RAD', q:'What is the bind phrase for?',
+  opts:['Encrypting the video feed','Deciding which receivers answer to your radio','Setting the channel for the VTX','Naming the quad on the OSD'], a:1,
+  why:'A receiver flashed with your bind phrase binds to your radio automatically. The club uses one phrase on every club receiver.' },
+{ mod:'RAD', q:'What should a club quad do when the receiver loses the radio?',
+  opts:['Hold its last stick position','Return to home','Drop: motors off','Land slowly'], a:2,
+  why:'No GPS, no return-to-home. Drop puts it on the ground where it is instead of flying on under its last command.' },
+{ mod:'RAD', q:'How do you test failsafe?',
+  opts:['Fly far away until it triggers','Props off, arm, switch the radio off, watch the motors stop','Unplug the receiver in flight','Read the Betaflight tab and trust it'], a:1,
+  why:'On the bench, props off, radio off. Motors must stop within two seconds and the OSD must say FAILSAFE.' },
+{ mod:'RAD', q:'Your link quality drops to 55 % flying over the crowd at the rally. You:',
+  opts:['Keep going, the picture looks fine','Fly back toward yourself and land','Switch to a higher packet rate in flight','Climb for a better signal'], a:1,
+  why:'LQ is the early warning. Come home while you still have control; the picture is the last thing to go, not the first.' },
+
+/* --- ASP: airspace --- */
+{ mod:'ASP', q:'Which of these must every club pilot complete before flying a real drone?',
+  opts:['Part 107','TRUST','A LAANC authorization','Drone registration'], a:1,
+  why:'TRUST is the free recreational test, required of every recreational flyer. Part 107 is the commercial licence; LAANC and registration depend on where and what you fly.' },
+{ mod:'ASP', q:'What is LAANC?',
+  opts:['A drone registration number','Near-instant authorization to fly in controlled airspace up to the grid ceiling','The app that shows airspace','A no-fly zone'], a:1,
+  why:'LAANC is the system that grants recreational and 107 pilots authorization in controlled airspace, through apps like Aloft and AirHub.' },
+{ mod:'ASP', q:'Why is the campus outdoor ceiling so low in B4UFLY?',
+  opts:['Because of the school\'s own rule','Because Brophy is inside Sky Harbor\'s Class B airspace','Because of the mountains','It is not - 400 ft applies everywhere'], a:1,
+  why:'Phoenix Sky Harbor is Class B and the campus is in its surface area. The facility map grid there can read 0 ft.' },
+{ mod:'ASP', q:'Which club drone needs FAA registration and Remote ID?',
+  opts:['Meteor 75 Pro','Pavo 20 Pro','Cinebot 35','All of them'], a:2,
+  why:'Over 250 g take-off weight. The Cinebot 35 and the 5-inch are over; the whoop and the Pavo 20 are under.' },
+{ mod:'ASP', q:'Do FAA airspace rules apply to the rally race in the gym?',
+  opts:['Yes, the gym is under Class B','No - indoors is not FAA airspace','Only above 100 ft','Only if the doors are open'], a:1,
+  why:'Enclosed spaces are not airspace. The club rules still apply in full.' },
+{ mod:'ASP', q:'B4UFLY shows a TFR over the park this afternoon. What is a TFR?',
+  opts:['A permanent no-fly zone','A temporary flight restriction - no flying while it is active','A weather warning','A reminder to register'], a:1,
+  why:'Temporary restrictions appear for stadium events, fires and VIP movements. They override the grid ceiling while active.' },
+{ mod:'ASP', q:'How high may a recreational pilot fly in uncontrolled airspace?',
+  opts:['100 ft','250 ft','400 ft','As high as the drone can go'], a:2,
+  why:'400 ft above ground in uncontrolled airspace, and always within sight.' },
+
+/* --- EMG: emergencies --- */
+{ mod:'EMG', q:'What is the failsafe procedure on every quad in the club case?',
+  opts:['Return to home','Land','Drop','Hold position'], a:2,
+  why:'No GPS means no return and no reliable land. Drop stops the motors where it is.' },
+{ mod:'EMG', q:'How long after the radio goes silent should the motors stop?',
+  opts:['Instantly','About 1.5 seconds','10 seconds','They should not stop - it should hover'], a:1,
+  why:'Stage 1 holds briefly in case it is a blip; stage 2 drops. By default that is about a second and a half.' },
+{ mod:'EMG', q:'Goggles go black at 20 m. Spotter can see the quad. First move?',
+  opts:['Disarm','Hover and say VIDEO OUT','Climb to full height','Pull the goggles off and look'], a:1,
+  why:'Hover, hand the calls to the spotter, come home on their calls. Disarming at 20 m out is a crash.' },
+{ mod:'EMG', q:'The quad stops responding but is still flying. What do you try first?',
+  opts:['Run after it','Switch the radio off and on','Shout at the spotter to catch it','Nothing - wait for failsafe'], a:1,
+  why:'A radio power cycle forces a reconnect and fixes most "not responding" cases. Say it out loud so everyone looks up.' },
+{ mod:'EMG', q:'A pack in the LiPo bag is smoking. Best response?',
+  opts:['Open the bag to check','Carry the bag outside','Everyone back, leave it in the bag, cool from arm\'s length','Smother it with a towel'], a:2,
+  why:'The bag is the containment. Opening, carrying or covering it puts a person next to a fire that is about to flare.' },
+{ mod:'EMG', q:'A spectator gets a prop cut. Order of actions?',
+  opts:['Report, then first aid','Disarm everything, pressure on the cut, get an adult, then the report','Keep flying, the spotter handles it','Photograph it first'], a:1,
+  why:'Every quad on the ground, person first, adult next, paperwork last - but the same day.' },
+{ mod:'EMG', q:'Which of these needs an incident report?',
+  opts:['A crash that broke a prop and dented a wall','A clean landing after lost video','A pack that reached storage voltage','A spotter calling PERSON'], a:0,
+  why:'Damage to anything other than the aircraft, any injury, any fire, any complaint: report, same day, to the instructor.' },
+{ mod:'EMG', q:'Where does the incident report go?',
+  opts:['The group chat','mtucker27@brophybroncos.org, the same day','The kiosk','Nowhere, unless someone asks'], a:1,
+  why:'Written, same day, to the instructor. It is how the club keeps its permission to fly on campus.' },
+{ mod:'EMG', q:'After a pack fire has burned out, when may someone touch what is left?',
+  opts:['As soon as the flames stop','After it has cooled for an hour','After it has been doused','Immediately, with gloves'], a:1,
+  why:'Cells next to the one that burned can still go. An hour, untouched.' },
+{ mod:'EMG', q:'The failsafe test: props off, armed, radio switched off - and the motors keep spinning. The quad:',
+  opts:['Flies, but only line of sight','Flies if the pilot is careful','Does not fly until it is fixed','Flies at the field but not at events'], a:2,
+  why:'No failsafe, no flight. There is no careful enough.' },
+
+/* --- EVT: event ops --- */
+{ mod:'EVT', q:'What separates the crew from the crowd at an event?',
+  opts:['The spotter\'s voice','A rope, cones or tape line','Nothing - the pilot keeps distance','The organiser'], a:1,
+  why:'A physical line that people can see. The flight path stays at least eight metres inside it.' },
+{ mod:'EVT', q:'The organiser asks for the drone to pass right over the front row. You:',
+  opts:['Do it once, slowly','Do it with a spotter','Say no and change the shot','Do it at the end'], a:2,
+  why:'Never over people. The shot changes; the rule does not. That is what the Event Ops badge means.' },
+{ mod:'EVT', q:'Where does the charging table go?',
+  opts:['In the flight zone, near the pad','Behind the pilot, outside the zone','At the crowd line so spectators can see','Wherever there is a socket'], a:1,
+  why:'Behind the pilot, outside the zone. Nothing powered but the aircraft inside the box.' },
+{ mod:'EVT', q:'Who gives the brief to the people near the line?',
+  opts:['The pilot','The spotter','The organiser','Nobody - the tape is enough'], a:1,
+  why:'The spotter talks; the pilot is in goggles and cannot hear questions. Thirty seconds, out loud, before the first flight.' },
+{ mod:'EVT', q:'A photographer steps over the tape for a better angle mid-flight. The pilot:',
+  opts:['Keeps flying away from them','Lands','Asks the spotter to decide','Hovers until they leave'], a:1,
+  why:'Land. The spotter walks the person back. The flight resumes when the zone is clear.' },
+{ mod:'EVT', q:'What does "CLEAR" from the spotter mean?',
+  opts:['The battery is charged','The zone is empty, the pilot may arm','The flight is over','The video is clear'], a:1,
+  why:'CLEAR is the spotter\'s permission to arm. Without it the pilot waits.' },
+{ mod:'EVT', q:'Who may call "LAND LAND LAND"?',
+  opts:['Only the instructor','Only the spotter','Anyone','Only the pilot'], a:2,
+  why:'Anyone who sees a problem ends the flight. No questions until the props stop.' },
+{ mod:'EVT', q:'Two pilots share a zone. How do they swap?',
+  opts:['Second pilot takes off as the first lands','First lands, DOWN, packs out, CLEAR, then the second arms','Both fly, one high one low','The spotter decides in the air'], a:1,
+  why:'One aircraft in the zone at a time. Swap on the ground, through the calls.' },
+{ mod:'EVT', q:'Before power-up at an event with three pilots, what is agreed first?',
+  opts:['Who flies longest','Video channels, one per pilot, written down','Who holds the goggles','The music'], a:1,
+  why:'Control links share; video does not. Channels agreed and written before anyone powers up.' },
+{ mod:'EVT', q:'What does the pilot call with thirty seconds of battery left?',
+  opts:['LANDING','BATTERY','DOWN','CLEAR'], a:1,
+  why:'BATTERY tells the spotter the quad is coming home now, before LANDING and DOWN.' }
 ];

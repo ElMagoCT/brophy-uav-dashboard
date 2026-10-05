@@ -249,9 +249,12 @@ function status(b) {
   if (b.type === 'knowledge') {
     var ids = (b.lessons || []).map(function (l) { return l.id; }), done = 0;
     ids.forEach(function (id) { var r = gp && gp.groundSchool && gp.groundSchool.lessons[id]; if (r && r.status === 'complete') done++; });
+    var q = gp && gp.groundSchool && b.quiz && gp.groundSchool.lessons[b.quiz];
+    var best = Math.max(q ? (q.score || 0) : 0, (SERVER && SERVER.quizzes && SERVER.quizzes[b.id]) ? (SERVER.quizzes[b.id].best || 0) : 0);
+    if (best >= FS.PASS) { out.earned = true; out.source = 'web'; out.pct = 100; out.detail = 'quiz ' + best; return out; }
     var total = ids.length + 1;      // + the quiz
-    out.pct = Math.round(done / total * 100);
-    out.detail = done + ' of ' + total + ' parts';
+    out.pct = Math.round((done + (best > 0 ? 0.5 : 0)) / total * 100);
+    out.detail = done + ' of ' + total + ' parts' + (best > 0 ? ' · best quiz ' + best : '');
     return out;
   }
   if (b.type === 'bench') {
@@ -312,7 +315,7 @@ function render() {
     FS.BADGES.filter(function (b) { return b.tier === t.id; }).forEach(function (b) {
       var s = status(b), col = { flight: 'var(--sky)', build: 'var(--amber)', know: 'var(--green)', crew: 'var(--violet)' }[b.track];
       var type = { knowledge: 'Quiz', bench: 'Bench', witnessed: 'Witnessed', auto: 'Automatic' }[b.type];
-      var st = s.earned ? '<span class="st earned">earned' + (s.source === 'kiosk' ? ' · kiosk' : '') + '</span>' : (pilot && s.pct > 0 ? '<span class="st progress">' + s.pct + '%</span>' : '');
+      var st = s.earned ? '<span class="st earned">earned' + (s.source === 'kiosk' ? ' · kiosk' : (s.source === 'web' ? ' · quiz passed' : '')) + '</span>' : (pilot && s.pct > 0 ? '<span class="st progress">' + s.pct + '%</span>' : '');
       html += '<div class="card badge' + (open[b.id] ? ' open' : '') + '" data-id="' + b.id + '" style="--t:' + col + '">' +
         '<div class="lab"><span class="type">' + type + '</span><span>' + esc(FS.TRACK[b.track]) + '</span></div>' +
         '<div class="nm">' + esc(b.name) + st + '</div>' +
@@ -333,7 +336,8 @@ function more(b, s) {
       var r = gp && gp.groundSchool && gp.groundSchool.lessons[l.id], on = r && r.status === 'complete';
       h += '<li><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>' + esc(l.t) + (l.drill ? ' <span class="soon">drill</span>' : '') + '</span></li>';
     });
-    h += '<li><span class="tick"></span><span>Quiz · 10 questions · ' + FS.PASS + ' % to pass</span></li></ul>';
+    var qrec = gp && gp.groundSchool && b.quiz && gp.groundSchool.lessons[b.quiz], qbest = qrec ? (qrec.score || 0) : 0;
+    h += '<li><span class="tick' + (qbest >= FS.PASS ? ' on' : '') + '">' + (qbest >= FS.PASS ? '✓' : '') + '</span><span>Quiz · 10 questions · ' + FS.PASS + ' % to pass' + (qbest > 0 ? ' · best ' + qbest : '') + '</span></li></ul>';
     h += '<div class="act"><a class="btn primary" href="../groundschool/">Open the lessons &rarr;</a></div>';
     h += '<div class="approve">Lessons tick off here as you finish them for this pilot. Pass the quiz and the badge is yours, no sign-off needed.</div>';
   } else if (b.type === 'bench') {
@@ -376,7 +380,9 @@ $('tiers').addEventListener('click', function (e) {
     render(); return;
   }
   if (e.target.closest('a,button')) return;
-  card.classList.toggle('open');
+  // open or close the whole visual row, not just the card that was tapped
+  var want = !card.classList.contains('open'), top = card.offsetTop, sib = card.parentNode.children;
+  for (var k = 0; k < sib.length; k++) if (sib[k].offsetTop === top) sib[k].classList.toggle('open', want);
 });
 $('pChange').onclick = function () { $('picker').classList.toggle('open'); if ($('picker').classList.contains('open')) $('pInput').focus(); };
 $('pInput').addEventListener('keydown', function (e) { if (e.key === 'Enter' && this.value.trim().length >= 2) setPilot(this.value); });
