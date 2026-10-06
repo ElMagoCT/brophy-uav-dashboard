@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791324006245,
-    "generatedIso":  "2026-10-06T15:00:06-07:00",
+    "generated":  1791324671422,
+    "generatedIso":  "2026-10-06T15:11:11-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -430,7 +430,7 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790891913931
+                       "lastSeen":  1791324662237
                    },
                    {
                        "name":  "Mr. Reasy",
