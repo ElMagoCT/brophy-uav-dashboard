@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791316918958,
-    "generatedIso":  "2026-10-06T13:01:59-07:00",
+    "generated":  1791317411830,
+    "generatedIso":  "2026-10-06T13:10:12-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  343527062,
+                   "clubMs":  344009194,
                    "pilots":  36,
                    "activePilots7":  21,
                    "sims":  5,
                    "perSimMs":  {
                                     "liftoff":  247159126.01289967,
-                                    "microdrones":  94478639.454800442,
+                                    "microdrones":  94960771.317400441,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
                                     "picasim":  814526.99810002092
@@ -70,17 +70,17 @@
                    },
                    {
                        "name":  "Cyrus G.",
-                       "totalMs":  38191377,
+                       "totalMs":  38673509,
                        "perSimMs":  {
                                         "liftoff":  22407496,
-                                        "microdrones":  15767653,
+                                        "microdrones":  16249785,
                                         "skydive":  0,
                                         "fpvlabs":  0,
                                         "picasim":  16228
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791316910334
+                       "lastSeen":  1791317400456
                    },
                    {
                        "name":  "Bode K.",
