@@ -3,7 +3,7 @@
    ---------------------------------------------------------------------------
    Data only. No behaviour. Three exports:
 
-     GS_MODULES  one module per knowledge badge, plus FLY for the flight drills (Flight School v2, 2026-10-04; was seven modules before
+     GS_MODULES  one module per knowledge badge (five since 2026-10-06: Airspace folded into Safe Flight, Emergency Procedures into Event Ops, Video Systems into Radio Protocol), plus FLY for the flight drills (Flight School v2, 2026-10-04; was seven modules before
                  M6 Checkride on purpose - the checkride stays last on screen)
      GS_COURSE   the twenty-two lessons, in order
      GS_QUIZ     the checkride question pool (M1-M5 only - tricks are not
@@ -784,20 +784,16 @@ var GS_MODULES = [
   /* One module per knowledge badge (Flight School v2, 2026-10-04). code is the
      lesson-id stem; badge is the catalogue id in config.json / badges.js.
      FLY has no badge: it holds the drills the witnessed flight badges use. */
-  { code:'SAF', badge:'safe-flight',           tier:0, name:'Safe Flight',           mins:13,
-    blurb:'Who flies, who watches, the four calls, the rules sheet by the sims, and the go / no-go call. Pass the quiz, earn the badge.' },
+  { code:'SAF', badge:'safe-flight',           tier:0, name:'Safe Flight',           mins:23,
+    blurb:'Who flies, who watches, the four calls, the rules sheet by the sims, the basics of the airspace over Brophy, and the go / no-go call. Pass the quiz, earn the badge.' },
   { code:'BAT', badge:'battery-care',          tier:0, name:'Battery Care',          mins:14,
     blurb:'The part that hurts people: voltages, the math, charging and storage, and what to do when a pack goes bad.' },
   { code:'ELC', badge:'electrical-components', tier:1, name:'Electrical Components', mins:14,
     blurb:'Six parts, how thrust and yaw happen, and how to pick a motor, ESC, prop and pack that agree with each other.' },
-  { code:'RAD', badge:'radio-protocol',        tier:1, name:'Radio Protocol',        mins:18,
-    blurb:'Why analog turns to snow and digital falls off a cliff, Raceband, antennas, the control link, failsafe, and a gym full of phones.' },
-  { code:'ASP', badge:'airspace',              tier:2, name:'Airspace',              mins:11,
-    blurb:'Class B over the campus, the 400 ft ceiling, B4UFLY, LAANC, TRUST, registration - and the five-minute site check.' },
-  { code:'EMG', badge:'emergency-procedures',  tier:2, name:'Emergency Procedures',  mins:16,
-    blurb:'Failsafe set and tested, lost video, flyaway, fire, injury, and the report that gets written the same day.' },
-  { code:'EVT', badge:'event-ops',             tier:2, name:'Event Ops',             mins:13,
-    blurb:'The flight zone, the brief, the calls and the handover - ground work before flying at a game or a rally.' },
+  { code:'RAD', badge:'radio-protocol',        tier:1, name:'Radio Protocol',        mins:28,
+    blurb:'Why analog turns to snow and digital falls off a cliff, Raceband, antennas, the control link, failsafe, a gym full of phones, and setting up a digital video system to record.' },
+  { code:'EVT', badge:'event-ops',             tier:2, name:'Event Ops',             mins:32,
+    blurb:'The flight zone, the brief, the calls and the handover, then what to do when it goes wrong: failsafe, lost video, flyaway, fire, injury, and the report written the same day.' },
   { code:'FLY', badge:null,                    tier:0, name:'Flight prep',           mins:41,
     blurb:'Sticks, hover, orientation and the tricks: the drills examiners expect you to have done before Proficient Flight, Line of Sight and Freestyle Flight. No quiz - those badges are watched, not tested.' }
 ];
@@ -849,7 +845,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-asp-01', mod:'ASP', ord:10, title:'Class B, 400 ft and Sky Harbor', mins:3, kind:'read',
+  id:'gs-asp-01', mod:'SAF', ord:22, title:'Class B, 400 ft and Sky Harbor', mins:3, kind:'read',
   cards:[
     { h:'Two ways to be legal',
       p:['Money is not what decides which one you are. <b>Purpose</b> is - a video for the club or a shot for a class project counts, paid or not.'],
@@ -915,8 +911,6 @@ var GS_COURSE = [
       art:'goNoGo', cap:'three piles. everything lands in one.' }
   ]
 },
-
-/* ============================ M2 - WHAT'S INSIDE ========================= */
 {
   id:'gs-elc-01', mod:'ELC', ord:10, title:'The six parts', mins:3, kind:'read',
   cards:[
@@ -1016,8 +1010,6 @@ var GS_COURSE = [
          'The numbers change every attempt, so there is nothing to memorise. Work them.'] }
   ]
 },
-
-/* ============================ M3 - THE VIDEO LINK ======================== */
 {
   id:'gs-rad-01', mod:'RAD', ord:10, title:'Analog against digital', mins:3, kind:'read', extra:'signal',
   cards:[
@@ -1099,8 +1091,6 @@ var GS_COURSE = [
       a:2, why:'Same distance, different path. Low down, the earth and everything standing on it is between you and the aircraft. Height is the cheapest range upgrade there is.' }
   ]
 },
-
-/* ============================ M4 - STICKS AND HOVER ====================== */
 {
   id:'gs-fly-01', mod:'FLY', ord:10, title:'Four channels, two sticks', mins:3, kind:'drill', drill:'sticks',
   cards:[
@@ -1150,8 +1140,6 @@ var GS_COURSE = [
       art:'throttleTrace', cap:'same altitude. completely different pilot.' }
   ]
 },
-
-/* ============================ M5 - LINE OF SIGHT ======================== */
 {
   id:'gs-los-01', mod:'FLY', ord:50, title:'Which way is left?', mins:3, kind:'drill', drill:'orient',
   cards:[
@@ -1196,12 +1184,6 @@ var GS_COURSE = [
       note:'Now do it. You get dropped in disoriented and you run the four steps in order.' }
   ]
 },
-
-/* ============================ M7 - FREESTYLE TRICKS ======================
-   Video lessons. The yt ids were scanned embeddable on 2026-08-21 with the
-   concepts/_yt-scan.html method (same scan the reel uses) - if one ever stops
-   playing, re-scan before assuming the network is at fault. Nothing loads
-   until the student taps a poster, so a filtered network costs nothing. */
 {
   id:'gs-trk-01', mod:'FLY', ord:80, title:'Your first flip and roll', mins:4, kind:'read',
   cards:[
@@ -1331,12 +1313,6 @@ var GS_COURSE = [
       tip:'Every trick in this module is sitting in Liftoff and FPV.SkyDive on this machine, one tile away. Read, watch, then go crash where it is free.' }
   ]
 },
-
-/* ====================================================================== */
-/* ---- Flight School v2 lessons, written 2026-10-04 -------------------- */
-/* One course per badge. The lessons above that carried over were re-id'd */
-/* in place (gs-rul-01 -> gs-saf-01 and so on); these are the new ones.   */
-/* ====================================================================== */
 {
   id:'gs-saf-02', mod:'SAF', ord:20, title:'The Brophy FPV rules sheet', mins:4, kind:'read',
   cards:[
@@ -1371,10 +1347,9 @@ var GS_COURSE = [
   id:'gs-saf-quiz', mod:'SAF', ord:90, title:'Safe Flight quiz', mins:6, kind:'quiz', pool:'SAF',
   cards:[
     { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
-      p:['Ten questions drawn from the Safe Flight pool, reshuffled every time. <b>80 to pass</b> earns the badge on the spot - no sign-off needed. Unlimited retakes; your best score is kept.'] }
+      p:['Ten questions drawn from the Safe Flight pool - the rules, the calls, and the basics of the airspace over Brophy - reshuffled every time. <b>80 to pass</b> earns the badge on the spot - no sign-off needed. Unlimited retakes; your best score is kept.'] }
   ]
 },
-
 {
   id:'gs-bat-03', mod:'BAT', ord:30, title:'Charging, storage and disposal', mins:4, kind:'read',
   cards:[
@@ -1436,7 +1411,6 @@ var GS_COURSE = [
       p:['Voltages, charge rates, storage, crashes and fire. <b>80 to pass</b> earns Battery Care on the spot. Unlimited retakes; best score kept.'] }
   ]
 },
-
 {
   id:'gs-elc-03', mod:'ELC', ord:30, title:'Matching motor, ESC, prop and battery', mins:5, kind:'read',
   cards:[
@@ -1486,7 +1460,6 @@ var GS_COURSE = [
       p:['Parts, thrust, KV, current and which numbers go with which frame. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
   ]
 },
-
 {
   id:'gs-rad-04', mod:'RAD', ord:40, title:'Control links: ELRS, Crossfire, binding, failsafe', mins:5, kind:'read',
   cards:[
@@ -1536,15 +1509,38 @@ var GS_COURSE = [
   ]
 },
 {
+  id:'gs-rad-06', mod:'RAD', ord:60, title:'Digital video: goggles, recording and D-log', mins:4, kind:'read',
+  cards:[
+    { h:'Bind once, fly all day', tab:'Binding',
+      p:['A digital video unit (the O4 on the Meteor and the Pavo) pairs to one set of goggles like a phone to headphones. Power the quad, put the goggles in pairing mode, press the bind button on the air unit, wait for the picture. It stays bound until you bind something else - so if your picture is gone, ask who flew the goggles last.'],
+      steps:[
+        { t:'Props off, battery in',           d:'binding is a bench job' },
+        { t:'Goggles: link / pair',            d:'from the goggles menu' },
+        { t:'Air unit: hold the bind button',  d:'until the LED blinks' },
+        { t:'Picture, then OSD',               d:'no OSD means the flight controller is not talking to the unit' }
+      ],
+      tip:'Two pilots in one room each need their own goggles and their own air unit. Digital does not share a channel the way analog does.' },
+    { h:'Recording for the editor', tab:'Recording',
+      p:['The air unit records to its own card. Set the resolution and frame rate <b>before</b> the shoot, not at the field: 4K at 60 for footage that will be slowed down, 1080 at 120 for racing. <b>D-log</b> records a flat, grey-looking picture that holds more light and shadow so the editor can grade it; normal mode looks finished straight away and cannot be pushed as far.'],
+      facts:[
+        { n:'D-LOG', l:'flat profile, grade it later - for Best of Brophy', c:'green' },
+        { n:'NORMAL', l:'looks done now - for quick clips and the kiosk reel', c:'sky' },
+        { n:'ND', l:'a sunglasses filter for the lens: slower shutter, smoother motion outdoors', c:'amber' }
+      ],
+      cols:{ tone:'vs', ha:'Bright day outside', hb:'Gym or indoors',
+        a:['ND8 or ND16 on the lens','D-log if it will be graded','Shutter about twice the frame rate'],
+        b:['No ND','Normal unless the editor asks','Watch for flicker under LED lights'] } }
+  ]
+},
+{
   id:'gs-rad-quiz', mod:'RAD', ord:90, title:'Radio Protocol quiz', mins:6, kind:'quiz', pool:'RAD',
   cards:[
     { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
-      p:['Analog against digital, channels, antennas, control links and failsafe. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
+      p:['Analog against digital, channels, antennas, control links, failsafe, and setting up a digital video system. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
   ]
 },
-
 {
-  id:'gs-asp-02', mod:'ASP', ord:20, title:'B4UFLY, LAANC and TRUST', mins:4, kind:'read',
+  id:'gs-asp-02', mod:'SAF', ord:24, title:'B4UFLY, LAANC and TRUST', mins:4, kind:'read',
   cards:[
     { h:'Three letters you need', tab:'The three',
       p:['Recreational flying in the United States comes with three things every club pilot carries: a <b>TRUST</b> certificate, a <b>B4UFLY</b> check of where you are standing, and - inside controlled airspace - a <b>LAANC</b> authorization before take-off.'],
@@ -1565,42 +1561,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-asp-03', mod:'ASP', ord:30, title:'Checking a site', mins:4, kind:'read',
-  cards:[
-    { h:'Five minutes before every outdoor flight', tab:'The check',
-      p:['The habit is the badge. An examiner will hand you a place name and watch you do this on your phone.'],
-      steps:[
-        { t:'Open B4UFLY',          d:'drop the pin where you will stand' },
-        { t:'Read the airspace',    d:'uncontrolled = 400 ft; controlled = read the grid ceiling' },
-        { t:'Look for TFRs',        d:'temporary restrictions: stadiums on game day, wildfires, VIPs' },
-        { t:'LAANC if controlled',  d:'request it in Aloft or AirHub, wait for the approval, screenshot it' },
-        { t:'Check the weather',    d:'wind above the quad\'s comfort, rain, visibility' },
-        { t:'Brief the spotter',    d:'ceiling, boundaries, where people are' }
-      ],
-      art:'goNoGo', cap:'go, or no-go. decide before the battery goes in.' }
-  ],
-  check:[
-    { q:'B4UFLY shows a 100 ft grid ceiling over the park. What do you need before take-off?',
-      opts:['Nothing, 100 ft is allowed','A LAANC authorization up to 100 ft','A Part 107 certificate','To stay under 50 ft to be safe'],
-      a:1, why:'A grid ceiling in controlled airspace is the altitude LAANC can authorize. You still have to ask - the ceiling is not permission by itself.' },
-    { q:'The ceiling on the Brophy front lawn reads 0 ft. What can you do today?',
-      opts:['Fly below the trees','Fly indoors only','Fly, but keep it short','Fly after calling the tower'],
-      a:1, why:'Zero means no outdoor flight without a special authorization that takes weeks. Indoors is outside FAA airspace rules entirely.' },
-    { q:'Which drone needs FAA registration?',
-      opts:['Meteor 75 Pro','Pavo 20 Pro','A 5-inch freestyle quad','None of them, the club is exempt'],
-      a:2, why:'Over 250 g take-off weight means registration and Remote ID. The whoop and the Pavo are under; the 5-inch is well over.' }
-  ]
-},
-{
-  id:'gs-asp-quiz', mod:'ASP', ord:90, title:'Airspace quiz', mins:6, kind:'quiz', pool:'ASP',
-  cards:[
-    { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
-      p:['Where the law lets you fly, what the grid means, TRUST, LAANC and registration. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
-  ]
-},
-
-{
-  id:'gs-emg-01', mod:'EMG', ord:10, title:'Failsafe: set it, test it', mins:3, kind:'read',
+  id:'gs-emg-01', mod:'EVT', ord:40, title:'Failsafe: set it, test it', mins:3, kind:'read',
   cards:[
     { h:'The one setting that saves a crowd', tab:'Set',
       p:['Failsafe is what the aircraft does the moment it stops hearing you. For every quad in the club case the answer is <b>drop</b>. A dropped quad falls on the spot; a quad that keeps its last command flies into whatever was in front of it.'],
@@ -1623,7 +1584,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-emg-02', mod:'EMG', ord:20, title:'Flyaway and lost video', mins:4, kind:'read',
+  id:'gs-emg-02', mod:'EVT', ord:50, title:'Flyaway and lost video', mins:4, kind:'read',
   cards:[
     { h:'Video gone, control still there', tab:'Lost video',
       p:['The most common emergency. Your goggles go black or to snow, but the aircraft is still listening. You are now a line-of-sight pilot whose spotter can see the quad and you cannot.'],
@@ -1643,7 +1604,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-emg-03', mod:'EMG', ord:30, title:'LiPo fire and injury', mins:3, kind:'read',
+  id:'gs-emg-03', mod:'EVT', ord:60, title:'LiPo fire and injury', mins:3, kind:'read',
   cards:[
     { h:'Fire: contain, do not fight', tab:'Fire',
       p:['Battery Care covers the chemistry. Here is the drill, because in the moment you will not have time to remember the chemistry.'],
@@ -1667,7 +1628,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-emg-04', mod:'EMG', ord:40, title:'The incident report', mins:2, kind:'read',
+  id:'gs-emg-04', mod:'EVT', ord:70, title:'The incident report', mins:2, kind:'read',
   cards:[
     { h:'Written the same day, every time', tab:'Report',
       p:['Crash with damage, injury, a fire, a flyaway, a complaint from anyone - all of them get a report, to <b>mtucker27@brophybroncos.org</b>, the same day. It is not punishment. It is how the club learns and how it keeps permission to fly on campus.'],
@@ -1683,7 +1644,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-emg-05', mod:'EMG', ord:50, title:'Scenario drill', mins:4, kind:'read',
+  id:'gs-emg-05', mod:'EVT', ord:80, title:'Scenario drill', mins:4, kind:'read',
   cards:[
     { h:'Three scenarios, pick the response', tab:'Drill',
       p:['Read each one as if it is happening. Then answer the three checks below - they are the drill.'],
@@ -1703,14 +1664,6 @@ var GS_COURSE = [
       a:2, why:'Damage to anything other than the aircraft is an incident. Same day, plainly, with photos.' }
   ]
 },
-{
-  id:'gs-emg-quiz', mod:'EMG', ord:90, title:'Emergency Procedures quiz', mins:6, kind:'quiz', pool:'EMG',
-  cards:[
-    { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
-      p:['Failsafe, lost video, flyaway, fire, injury and the report. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
-  ]
-},
-
 {
   id:'gs-evt-01', mod:'EVT', ord:10, title:'The flight zone', mins:4, kind:'read',
   cards:[
@@ -1769,7 +1722,7 @@ var GS_COURSE = [
   id:'gs-evt-quiz', mod:'EVT', ord:90, title:'Event Ops quiz', mins:6, kind:'quiz', pool:'EVT',
   cards:[
     { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
-      p:['The zone, the brief, the calls and the handover. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
+      p:['The zone, the brief, the calls and the handover, plus failsafe, flyaway, fire and the incident report. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
   ]
 }
 ];
@@ -1781,6 +1734,15 @@ var GS_COURSE = [
    --------------------------------------------------------------------------- */
 var GS_QUIZ = [
 /* --- SAF / BAT / ASP (from the old M1) --- */
+{ mod:'RAD', q:'Your goggles show no picture from the quad you just powered up. Most likely cause?',
+  opts:['The battery is low','The air unit is bound to a different set of goggles','The props are on backwards','The quad is too far away'], a:1,
+  why:'Digital units stay bound to the last goggles that paired with them. On a shared fleet, "no picture on the bench" is almost always somebody else\'s binding.' },
+{ mod:'RAD', q:'You are shooting a clip for Best of Brophy that the editor will colour-grade. Which recording setting?',
+  opts:['Normal, so it looks finished','D-log, the flat profile','The lowest resolution to save card space','It does not matter, grading fixes anything'], a:1,
+  why:'D-log keeps more light and shadow for the grade. Normal looks done straight away but cannot be pushed as far.' },
+{ mod:'RAD', q:'Outdoors on a bright day the footage looks jittery and over-sharp. What goes on the lens?',
+  opts:['A wider lens','An ND filter','Nothing, raise the frame rate','A polariser only'], a:1,
+  why:'An ND filter is sunglasses for the camera: it lets the shutter slow down so motion blurs naturally.' },
 { mod:'SAF', q:'Somebody walks into the flying area while you are up. What do you do?',
   opts:['Fly around them and keep going','Hover in place until they leave','Land','Climb above them'], a:2,
   why:'You land. Flying around a person keeps a moving aircraft near them, and hovering just makes the decision later.' },
@@ -1790,20 +1752,15 @@ var GS_QUIZ = [
 { mod:'SAF', q:'You need to change a Betaflight setting at the field. What comes off first?',
   opts:['The battery','The props','The antenna','Nothing, it is only a setting'], a:1,
   why:'Props off for every configuration change. A quad on a bench with props on is a loaded tool.' },
-{ mod:'ASP', q:'Your aircraft weighs 620 g with the battery in. What does the FAA need?',
+{ mod:'SAF', q:'Your aircraft weighs 620 g with the battery in. What does the FAA need?',
   opts:['Nothing, it is under 1 kg','It registered, with the number visible outside','A Part 107 certificate regardless of purpose','A LAANC authorisation for every flight'], a:1,
   why:'250 g and up gets registered, with the registration marked on the outside where you can read it without tools.' },
 { mod:'BAT', q:'A pack was in a hard crash ten minutes ago and looks fine. What now?',
   opts:['Charge it, it looks fine','Fly it again to use it up','Quarantine it and watch it for half an hour','Straight in the household bin'], a:2,
   why:'Crash damage inside a cell can start a fire minutes later. It goes in the observation bin before it goes anywhere near a charger.' },
-{ mod:'ASP', q:'Which of these makes a flight Part 107 rather than recreational?',
-  opts:['Flying above 200 ft','Shooting footage for a class assignment','Flying with a spotter','Flying a quad over 250 g'], a:1,
-  why:'Purpose decides it. If the flight exists to produce something for someone else it is 107, paid or not.' },
-{ mod:'ASP', q:'A crewed helicopter comes low over the field. What is the priority?',
+{ mod:'SAF', q:'A crewed helicopter comes low over the field. What is the priority?',
   opts:['Hold position so it can see you','Land or descend immediately and give way','Climb to be more visible','Continue, they must give way to you'], a:1,
   why:'You always give way to crewed aircraft, immediately. They very likely cannot see you and could not dodge if they did.' },
-
-/* --- BAT / ELC / RAD (from the old M2) --- */
 { mod:'BAT', q:'A 6S pack reads 25.2 V. What state is it in?',
   opts:['Storage charge','Fully charged','Land-now','Over-discharged'], a:1,
   why:'25.2 divided by 6 is 4.20 V per cell, which is full. Storage would be 22.8 V.' },
@@ -1828,8 +1785,6 @@ var GS_QUIZ = [
 { mod:'ELC', q:'Which part is designed to break in a crash?',
   opts:['The frame arms','The flight controller','The motors','The ESCs'], a:0,
   why:'Arms snap on purpose. They are the cheapest part on the aircraft and they break instead of the expensive ones.' },
-
-/* --- RAD --- */
 { mod:'RAD', q:'Your goggles show heavy static that clears as you fly back toward yourself. Which system, and what does it tell you?',
   opts:['Digital, and the link is about to cut','Analog, and you are at the edge of range - turn back','Digital, and the antenna is mismatched','Analog, and the VTX is failing'], a:1,
   why:'That gradual grain-to-snow slide is analog. It is a distance gauge, and it is telling you this is as far as you go.' },
@@ -1854,8 +1809,6 @@ var GS_QUIZ = [
 { mod:'RAD', q:'Same distance, but the aircraft is low over grass instead of high up, and the video is much worse. Why?',
   opts:['Ground effect from the props','The ground and everything on it is in the signal path','Cold air absorbs 5.8 GHz','The VTX heats up near the ground'], a:1,
   why:'Height is the cheapest range upgrade there is, because it clears the path.' },
-
-/* --- FLY (not quizzed) --- */
 { mod:'FLY', q:'In Mode 2, what is the left stick left and right?',
   opts:['Roll','Yaw','Pitch','Trim'], a:1,
   why:'Left stick: throttle up and down, yaw left and right. Roll is the right stick.' },
@@ -1877,8 +1830,6 @@ var GS_QUIZ = [
 { mod:'FLY', q:'Best way to hold a hover?',
   opts:['Set the throttle exactly right and leave it','Constant small corrections, made early','Large corrections when it drifts far enough to see','Switch to angle mode and let go'], a:1,
   why:'A hover is kept, not set. The aircraft is always leaving it and you are always putting it back.' },
-
-/* --- FLY (not quizzed) --- */
 { mod:'FLY', q:'The aircraft is 30 m out with the nose pointed at you. You push the right stick left. Which way does it go?',
   opts:['To your left','To your right','Straight toward you','It yaws left'], a:1,
   why:'Nose-in reverses roll. Its left is your right, so it tracks to your right.' },
@@ -1903,8 +1854,6 @@ var GS_QUIZ = [
 { mod:'FLY', q:'Why practise nose-in deliberately instead of avoiding it?',
   opts:['It looks better','It is the only way it stops being a calculation','It uses less battery','It is required for Part 107'], a:1,
   why:'The trick of imagining yourself in the aircraft works, slowly. Slowly is no use at speed. Repetition is what makes it instant.' },
-
-/* --- SAF: the rules sheet (2026-10-04) --- */
 { mod:'SAF', q:'You want to check that a motor spins the right way. Where do the props go?',
   opts:['On, but on low throttle','Off - every motor test is props off','On, if the quad is strapped down','On, if someone is holding it'], a:1,
   why:'A bench test with props on is the club\'s most likely injury. Props come off for every motor test, flash and configuration change.' },
@@ -1929,8 +1878,6 @@ var GS_QUIZ = [
 { mod:'SAF', q:'You are not sure whether something is allowed. What is the rule?',
   opts:['If nobody says no, it is fine','Ask first','Try it once and see','Check the website later'], a:1,
   why:'Not being sure is the answer. Ask an instructor or an examiner before you do it.' },
-
-/* --- BAT: charging, storage, bad packs --- */
 { mod:'BAT', q:'What is the 1C charge current for a 1300 mAh pack?',
   opts:['13 A','1.3 A','0.13 A','130 A'], a:1,
   why:'Capacity in amp-hours is the 1C rate: 1300 mAh = 1.3 Ah = 1.3 A.' },
@@ -1949,8 +1896,6 @@ var GS_QUIZ = [
 { mod:'BAT', q:'How is a dead pack disposed of?',
   opts:['In the bin, taped','Fully discharged, taped, handed to the instructor','Burned outside','Left in the LiPo bag indefinitely'], a:1,
   why:'Discharge fully, tape the connector, hand it in for the battery drop-off. Never in the bin, never punctured.' },
-
-/* --- ELC: matching parts --- */
 { mod:'ELC', q:'What do the numbers in a "2207" motor mean?',
   opts:['22 mm stator width, 7 mm stator height','2200 KV, 7 poles','22 A, 7 V','2.2 inch prop, 7 pitch'], a:0,
   why:'Stator width and height in millimetres. Bigger stator, bigger prop.' },
@@ -1969,8 +1914,6 @@ var GS_QUIZ = [
 { mod:'ELC', q:'Why does the Meteor 75 use a 1S battery and 20 000 KV motors?',
   opts:['1S is safer indoors','A 40 mm prop needs very high rpm, and 1S keeps the quad under 30 g','Higher KV is always better','Because whoops cannot use ESCs'], a:1,
   why:'A tiny prop moves little air per turn, so it needs rpm; one cell at 4.2 V with 20 000 KV gets there, and the pack weighs 8 g.' },
-
-/* --- RAD: control links --- */
 { mod:'RAD', q:'Which band carries control on the club\'s ELRS radios?',
   opts:['5.8 GHz','2.4 GHz','900 MHz only','1.3 GHz'], a:1,
   why:'Club receivers are ELRS 2.4 GHz. Video is on 5.8 GHz. 900 MHz is the long-range option for big outdoor events.' },
@@ -1989,63 +1932,48 @@ var GS_QUIZ = [
 { mod:'RAD', q:'Your link quality drops to 55 % flying over the crowd at the rally. You:',
   opts:['Keep going, the picture looks fine','Fly back toward yourself and land','Switch to a higher packet rate in flight','Climb for a better signal'], a:1,
   why:'LQ is the early warning. Come home while you still have control; the picture is the last thing to go, not the first.' },
-
-/* --- ASP: airspace --- */
-{ mod:'ASP', q:'Which of these must every club pilot complete before flying a real drone?',
+{ mod:'SAF', q:'Which of these must every club pilot complete before flying a real drone?',
   opts:['Part 107','TRUST','A LAANC authorization','Drone registration'], a:1,
   why:'TRUST is the free recreational test, required of every recreational flyer. Part 107 is the commercial licence; LAANC and registration depend on where and what you fly.' },
-{ mod:'ASP', q:'What is LAANC?',
+{ mod:'SAF', q:'What is LAANC?',
   opts:['A drone registration number','Near-instant authorization to fly in controlled airspace up to the grid ceiling','The app that shows airspace','A no-fly zone'], a:1,
   why:'LAANC is the system that grants recreational and 107 pilots authorization in controlled airspace, through apps like Aloft and AirHub.' },
-{ mod:'ASP', q:'Why is the campus outdoor ceiling so low in B4UFLY?',
+{ mod:'SAF', q:'Why is the campus outdoor ceiling so low in B4UFLY?',
   opts:['Because of the school\'s own rule','Because Brophy is inside Sky Harbor\'s Class B airspace','Because of the mountains','It is not - 400 ft applies everywhere'], a:1,
   why:'Phoenix Sky Harbor is Class B and the campus is in its surface area. The facility map grid there can read 0 ft.' },
-{ mod:'ASP', q:'Which club drone needs FAA registration and Remote ID?',
-  opts:['Meteor 75 Pro','Pavo 20 Pro','Cinebot 35','All of them'], a:2,
-  why:'Over 250 g take-off weight. The Cinebot 35 and the 5-inch are over; the whoop and the Pavo 20 are under.' },
-{ mod:'ASP', q:'Do FAA airspace rules apply to the rally race in the gym?',
+{ mod:'SAF', q:'Do FAA airspace rules apply to the rally race in the gym?',
   opts:['Yes, the gym is under Class B','No - indoors is not FAA airspace','Only above 100 ft','Only if the doors are open'], a:1,
   why:'Enclosed spaces are not airspace. The club rules still apply in full.' },
-{ mod:'ASP', q:'B4UFLY shows a TFR over the park this afternoon. What is a TFR?',
-  opts:['A permanent no-fly zone','A temporary flight restriction - no flying while it is active','A weather warning','A reminder to register'], a:1,
-  why:'Temporary restrictions appear for stadium events, fires and VIP movements. They override the grid ceiling while active.' },
-{ mod:'ASP', q:'How high may a recreational pilot fly in uncontrolled airspace?',
-  opts:['100 ft','250 ft','400 ft','As high as the drone can go'], a:2,
-  why:'400 ft above ground in uncontrolled airspace, and always within sight.' },
-
-/* --- EMG: emergencies --- */
-{ mod:'EMG', q:'What is the failsafe procedure on every quad in the club case?',
+{ mod:'EVT', q:'What is the failsafe procedure on every quad in the club case?',
   opts:['Return to home','Land','Drop','Hold position'], a:2,
   why:'No GPS means no return and no reliable land. Drop stops the motors where it is.' },
-{ mod:'EMG', q:'How long after the radio goes silent should the motors stop?',
+{ mod:'EVT', q:'How long after the radio goes silent should the motors stop?',
   opts:['Instantly','About 1.5 seconds','10 seconds','They should not stop - it should hover'], a:1,
   why:'Stage 1 holds briefly in case it is a blip; stage 2 drops. By default that is about a second and a half.' },
-{ mod:'EMG', q:'Goggles go black at 20 m. Spotter can see the quad. First move?',
+{ mod:'EVT', q:'Goggles go black at 20 m. Spotter can see the quad. First move?',
   opts:['Disarm','Hover and say VIDEO OUT','Climb to full height','Pull the goggles off and look'], a:1,
   why:'Hover, hand the calls to the spotter, come home on their calls. Disarming at 20 m out is a crash.' },
-{ mod:'EMG', q:'The quad stops responding but is still flying. What do you try first?',
+{ mod:'EVT', q:'The quad stops responding but is still flying. What do you try first?',
   opts:['Run after it','Switch the radio off and on','Shout at the spotter to catch it','Nothing - wait for failsafe'], a:1,
   why:'A radio power cycle forces a reconnect and fixes most "not responding" cases. Say it out loud so everyone looks up.' },
-{ mod:'EMG', q:'A pack in the LiPo bag is smoking. Best response?',
+{ mod:'EVT', q:'A pack in the LiPo bag is smoking. Best response?',
   opts:['Open the bag to check','Carry the bag outside','Everyone back, leave it in the bag, cool from arm\'s length','Smother it with a towel'], a:2,
   why:'The bag is the containment. Opening, carrying or covering it puts a person next to a fire that is about to flare.' },
-{ mod:'EMG', q:'A spectator gets a prop cut. Order of actions?',
+{ mod:'EVT', q:'A spectator gets a prop cut. Order of actions?',
   opts:['Report, then first aid','Disarm everything, pressure on the cut, get an adult, then the report','Keep flying, the spotter handles it','Photograph it first'], a:1,
   why:'Every quad on the ground, person first, adult next, paperwork last - but the same day.' },
-{ mod:'EMG', q:'Which of these needs an incident report?',
+{ mod:'EVT', q:'Which of these needs an incident report?',
   opts:['A crash that broke a prop and dented a wall','A clean landing after lost video','A pack that reached storage voltage','A spotter calling PERSON'], a:0,
   why:'Damage to anything other than the aircraft, any injury, any fire, any complaint: report, same day, to the instructor.' },
-{ mod:'EMG', q:'Where does the incident report go?',
+{ mod:'EVT', q:'Where does the incident report go?',
   opts:['The group chat','mtucker27@brophybroncos.org, the same day','The kiosk','Nowhere, unless someone asks'], a:1,
   why:'Written, same day, to the instructor. It is how the club keeps its permission to fly on campus.' },
-{ mod:'EMG', q:'After a pack fire has burned out, when may someone touch what is left?',
+{ mod:'EVT', q:'After a pack fire has burned out, when may someone touch what is left?',
   opts:['As soon as the flames stop','After it has cooled for an hour','After it has been doused','Immediately, with gloves'], a:1,
   why:'Cells next to the one that burned can still go. An hour, untouched.' },
-{ mod:'EMG', q:'The failsafe test: props off, armed, radio switched off - and the motors keep spinning. The quad:',
+{ mod:'EVT', q:'The failsafe test: props off, armed, radio switched off - and the motors keep spinning. The quad:',
   opts:['Flies, but only line of sight','Flies if the pilot is careful','Does not fly until it is fixed','Flies at the field but not at events'], a:2,
   why:'No failsafe, no flight. There is no careful enough.' },
-
-/* --- EVT: event ops --- */
 { mod:'EVT', q:'What separates the crew from the crowd at an event?',
   opts:['The spotter\'s voice','A rope, cones or tape line','Nothing - the pilot keeps distance','The organiser'], a:1,
   why:'A physical line that people can see. The flight path stays at least eight metres inside it.' },
