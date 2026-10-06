@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791310526816,
-    "generatedIso":  "2026-10-06T11:15:27-07:00",
+    "generated":  1791311427180,
+    "generatedIso":  "2026-10-06T11:30:27-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  342363247,
+                   "clubMs":  343191751,
                    "pilots":  36,
                    "activePilots7":  22,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  246065051.79039967,
-                                    "microdrones":  94408898.856400445,
+                                    "liftoff":  246823814.50529966,
+                                    "microdrones":  94478639.454800442,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
                                     "picasim":  814526.99810002092
@@ -182,17 +182,17 @@
                    },
                    {
                        "name":  "Jameson S.",
-                       "totalMs":  16134787,
+                       "totalMs":  16963291,
                        "perSimMs":  {
-                                        "liftoff":  14557185,
-                                        "microdrones":  1577602,
+                                        "liftoff":  15315948,
+                                        "microdrones":  1647343,
                                         "skydive":  0,
                                         "fpvlabs":  0,
                                         "picasim":  0
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791310516839
+                       "lastSeen":  1791311419658
                    },
                    {
                        "name":  "Mr. Lewkowitz",
