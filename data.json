@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791297509663,
-    "generatedIso":  "2026-10-06T07:38:29-07:00",
+    "generated":  1791298409944,
+    "generatedIso":  "2026-10-06T07:53:30-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  341168848,
+                   "clubMs":  341995004,
                    "pilots":  36,
                    "activePilots7":  23,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  245006482.25229967,
-                                    "microdrones":  94273069.850700438,
+                                    "liftoff":  245696809.38249967,
+                                    "microdrones":  94408898.856400445,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
                                     "picasim":  814526.99810002092
@@ -252,17 +252,17 @@
                    },
                    {
                        "name":  "Bruno A.",
-                       "totalMs":  3974884,
+                       "totalMs":  4801040,
                        "perSimMs":  {
-                                        "liftoff":  3668622,
-                                        "microdrones":  306262,
+                                        "liftoff":  4358949,
+                                        "microdrones":  442091,
                                         "skydive":  0,
                                         "fpvlabs":  0,
                                         "picasim":  0
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791297501165
+                       "lastSeen":  1791298381342
                    },
                    {
                        "name":  "Aled L.",
