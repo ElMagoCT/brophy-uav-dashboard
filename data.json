@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791327613168,
-    "generatedIso":  "2026-10-06T16:00:13-07:00",
+    "generated":  1791327674621,
+    "generatedIso":  "2026-10-06T16:01:15-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  352842411,
+                   "clubMs":  352922883,
                    "pilots":  37,
                    "activePilots7":  23,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  251800066.9828997,
-                                    "microdrones":  99153045.079100326,
+                                    "liftoff":  251830912.9828997,
+                                    "microdrones":  99202671.600300327,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
                                     "picasim":  814526.99810002092
@@ -210,17 +210,17 @@
                    },
                    {
                        "name":  "Ben H.",
-                       "totalMs":  8248578,
+                       "totalMs":  8298204,
                        "perSimMs":  {
                                         "liftoff":  7181044,
-                                        "microdrones":  1067533,
+                                        "microdrones":  1117160,
                                         "skydive":  0,
                                         "fpvlabs":  0,
                                         "picasim":  0
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791327600370
+                       "lastSeen":  1791327672050
                    },
                    {
                        "name":  "Asher B.",
@@ -280,9 +280,9 @@
                    },
                    {
                        "name":  "Micah T",
-                       "totalMs":  2876734,
+                       "totalMs":  2907580,
                        "perSimMs":  {
-                                        "liftoff":  2876734,
+                                        "liftoff":  2907580,
                                         "microdrones":  0,
                                         "skydive":  0,
                                         "fpvlabs":  0,
@@ -290,7 +290,7 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791327569992
+                       "lastSeen":  1791327600839
                    },
                    {
                        "name":  "Loic B.",
