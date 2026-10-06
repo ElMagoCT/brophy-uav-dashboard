@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791311427180,
-    "generatedIso":  "2026-10-06T11:30:27-07:00",
+    "generated":  1791311885475,
+    "generatedIso":  "2026-10-06T11:38:05-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,12 +9,12 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  343191751,
+                   "clubMs":  343527062,
                    "pilots":  36,
-                   "activePilots7":  22,
+                   "activePilots7":  21,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  246823814.50529966,
+                                    "liftoff":  247159126.01289967,
                                     "microdrones":  94478639.454800442,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
@@ -182,9 +182,9 @@
                    },
                    {
                        "name":  "Jameson S.",
-                       "totalMs":  16963291,
+                       "totalMs":  17298602,
                        "perSimMs":  {
-                                        "liftoff":  15315948,
+                                        "liftoff":  15651259,
                                         "microdrones":  1647343,
                                         "skydive":  0,
                                         "fpvlabs":  0,
@@ -192,7 +192,7 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791311419658
+                       "lastSeen":  1791311754982
                    },
                    {
                        "name":  "Mr. Lewkowitz",
