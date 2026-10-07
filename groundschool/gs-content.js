@@ -795,7 +795,7 @@ var GS_MODULES = [
   { code:'EVT', badge:'event-ops',             tier:2, name:'Event Ops',             mins:32,
     blurb:'The flight zone, the brief, the calls and the handover, then what to do when it goes wrong: failsafe, lost video, flyaway, fire, injury, and the report written the same day.' },
   { code:'FLY', badge:null,                    tier:0, name:'Flight prep',           mins:41,
-    blurb:'Sticks, hover, orientation and the tricks: the drills examiners expect you to have done before Proficient Flight, Line of Sight and Freestyle Flight. No quiz - those badges are watched, not tested.' }
+    blurb:'Sticks, hover, orientation and the tricks: the drills mentors expect you to have done before Proficient Flight, Line of Sight and Freestyle Flight. No quiz - those badges are watched, not tested.' }
 ];
 
 /* ---------------------------------------------------------------------------
@@ -1334,7 +1334,7 @@ var GS_COURSE = [
       cols:{ tone:'vs', ha:'You may', hb:'Only once',
         a:['Fly any sim, any day','Fly the Meteor 75','Fly the Pavo, the Cinebot, a 5-inch','Fly at a game or rally'],
         b:['you have a name at the kiosk','all seven Tier 0 badges are signed','all six Tier 1 badges are signed','all eight Tier 2 badges, with a spotter'] },
-      tip:'Ask before you assume. An examiner can look you up on the kiosk in ten seconds.' },
+      tip:'Ask before you assume. A mentor can look you up on the kiosk in ten seconds.' },
     { h:'What breaks the rule', tab:'Edge cases',
       p:['Most rule breaks are not rebellion, they are shortcuts. The three below are the ones the club actually sees.'],
       cols:{ tone:'dd', ha:'Fine', hb:'Not fine',
@@ -1877,7 +1877,7 @@ var GS_QUIZ = [
   why:'Packs live in the bag on the ground. Charging happens with someone watching, on a hard surface, never in the zone.' },
 { mod:'SAF', q:'You are not sure whether something is allowed. What is the rule?',
   opts:['If nobody says no, it is fine','Ask first','Try it once and see','Check the website later'], a:1,
-  why:'Not being sure is the answer. Ask an instructor or an examiner before you do it.' },
+  why:'Not being sure is the answer. Ask an instructor or a mentor before you do it.' },
 { mod:'BAT', q:'What is the 1C charge current for a 1300 mAh pack?',
   opts:['13 A','1.3 A','0.13 A','130 A'], a:1,
   why:'Capacity in amp-hours is the 1C rate: 1300 mAh = 1.3 Ah = 1.3 A.' },

@@ -153,9 +153,9 @@ footer a{color:var(--ink)}
     <div class="eyebrow"><h2 id="hHead">How it works</h2><span class="rule"></span></div>
     <div class="how">
       <div class="card h"><div class="k">Quiz badges</div><div class="v">Short lessons, then a 10-question quiz. <b>80 % passes.</b> Retake as often as you like; your best score counts. The kiosk awards these by itself.</div></div>
-      <div class="card h"><div class="k">Bench badges</div><div class="v">Step-by-step instructions on the kiosk or here. Tick the boxes as you go, <b>DM a photo</b> of your work to mtucker27@brophybroncos.org, then an instructor approves.</div></div>
-      <div class="card h"><div class="k">Witnessed badges</div><div class="v">Someone who holds the badge watches you do it against <b>the standard</b> written on the card. Prep drills are in Ground School.</div></div>
-      <div class="card h"><div class="k">Gates</div><div class="v">Earn every badge in a tier and the gate opens: <b>the next drone is yours to fly.</b> Electives are side quests, any time.</div></div>
+      <div class="card h"><div class="k">Bench badges</div><div class="v">Step-by-step instructions on the kiosk or here. Tick the boxes as you go, <b>DM a photo</b> of your work to mtucker27@brophybroncos.org, then a mentor signs it off.</div></div>
+      <div class="card h"><div class="k">Witnessed badges</div><div class="v">A mentor who holds the badge watches you do it against <b>the standard</b> written on the card. Prep drills are in Ground School.</div></div>
+      <div class="card h"><div class="k">Gates</div><div class="v">Earn every badge in a tier and the gate opens: <b>the next drone is yours to fly.</b> Electives are side quests, any time &mdash; except <b>Mentor</b>, which is for Tier 2 pilots.</div></div>
     </div>
   </section>
 
@@ -241,13 +241,37 @@ function progress() { var all = lsGet(LS.progress, {}); return pilot ? (all[pilo
 function saveProgress(p) { var all = lsGet(LS.progress, {}); if (pilot) { all[pilot.slug] = p; lsSet(LS.progress, all); } }
 
 /* ---------- status per badge ---------- */
+/* The tier the picked pilot is ON: the first of Tier 0..2 with a badge not yet
+   earned, 3 once Tier 2 is done. Same rule as the kiosk dash and the kiosk's
+   published `tier`. Only tiered badges count, so a badge with minTier (an
+   elective) can ask for it without going round in a circle. */
+function pilotTier() {
+  var order = ['t0', 't1', 't2'];
+  for (var i = 0; i < order.length; i++) {
+    var bs = FS.BADGES.filter(function (b) { return b.tier === order[i]; });
+    if (bs.some(function (b) { return !status(b).earned; })) return i;
+  }
+  return 3;
+}
 function status(b) {
   var kp = kioskPilot(), gp = gsProfile(), pr = progress()[b.id] || {};
   var out = { earned: false, source: '', pct: 0, detail: '' };
+  /* minTier (2026-10-06, Mentor = Tier 2 pilots): below it the badge does not
+     count, even if a mentor already approved it - say which, and stop. */
+  if (b.minTier != null && pilot) {
+    var pt = pilotTier();
+    if (pt < b.minTier) {
+      var aw0 = AWARDS && AWARDS.badges && AWARDS.badges[b.id];
+      var approved = (kp && kp.badges && kp.badges.indexOf(b.id) >= 0) || (aw0 && aw0.status === 'earned');
+      out.detail = approved ? ('approved · counts once you are a Tier ' + b.minTier + ' pilot (you are on Tier ' + pt + ')')
+                            : ('Tier ' + b.minTier + ' pilots only · you are on Tier ' + pt);
+      return out;
+    }
+  }
   if (kp && kp.badges && kp.badges.indexOf(b.id) >= 0) { out.earned = true; out.source = 'kiosk'; out.pct = 100; return out; }
   var aw = AWARDS && AWARDS.badges && AWARDS.badges[b.id];
   if (aw && aw.status === 'earned') { out.earned = true; out.source = 'instructor'; out.pct = 100; return out; }
-  if (aw && aw.status === 'revoked') { out.detail = 'revoked by an instructor'; return out; }
+  if (aw && aw.status === 'revoked') { out.detail = 'revoked'; return out; }
   if (b.type === 'auto') {
     var h = kp ? (kp.totalMs || 0) / 3600000 : 0;
     out.pct = Math.min(100, Math.round(h / FS.SIM_HOURS * 100));
@@ -277,7 +301,7 @@ function status(b) {
     var prep = b.prep || [], pd = 0;
     prep.forEach(function (id) { var r = gp && gp.groundSchool && gp.groundSchool.lessons[id]; if (r && r.status === 'complete') pd++; });
     out.pct = prep.length ? Math.round(pd / prep.length * 90) : 0;
-    out.detail = prep.length ? (pd + ' of ' + prep.length + ' prep drills') : 'waiting for an instructor';
+    out.detail = prep.length ? (pd + ' of ' + prep.length + ' prep drills') : 'waiting for a mentor';
     return out;
   }
   return out;
@@ -295,7 +319,7 @@ function nextStep() {
     var open = bs.filter(function (b) { return !status(b).earned; });
     if (!open.length) continue;
     var pick = open.filter(function (b) { return b.type === 'knowledge' || b.type === 'bench'; })[0] || open[0];
-    var verb = { knowledge: 'do the lessons and pass the quiz', bench: 'work through the steps at the kiosk', witnessed: 'ask an examiner to watch you', auto: 'keep flying the sim' }[pick.type];
+    var verb = { knowledge: 'do the lessons and pass the quiz', bench: 'work through the steps at the kiosk', witnessed: 'ask a mentor to watch you', auto: 'keep flying the sim' }[pick.type];
     return '<b>Tier ' + t.n + ' · ' + (bs.length - open.length) + ' of ' + bs.length + '</b> · next: <b>' + esc(pick.name) + '</b> — ' + verb + '.';
   }
   return '<b>Event Pilot.</b> Every gate is open. Side quests remain.';
@@ -324,7 +348,7 @@ function render() {
     FS.BADGES.filter(function (b) { return b.tier === t.id; }).forEach(function (b) {
       var s = status(b), col = { flight: 'var(--sky)', build: 'var(--amber)', know: 'var(--green)', crew: 'var(--violet)' }[b.track];
       var type = { knowledge: 'Quiz', bench: 'Bench', witnessed: 'Witnessed', auto: 'Automatic' }[b.type];
-      var st = s.earned ? '<span class="st earned">earned' + (s.source === 'kiosk' ? ' · kiosk' : (s.source === 'web' ? ' · quiz passed' : (s.source === 'instructor' ? ' · instructor' : ''))) + '</span>' : (pilot && s.pct > 0 ? '<span class="st progress">' + s.pct + '%</span>' : '');
+      var st = s.earned ? '<span class="st earned">earned' + (s.source === 'kiosk' ? ' · kiosk' : (s.source === 'web' ? ' · quiz passed' : (s.source === 'instructor' ? ' · signed off' : ''))) + '</span>' : (pilot && s.pct > 0 ? '<span class="st progress">' + s.pct + '%</span>' : '');
       html += '<div class="card badge' + (open[b.id] ? ' open' : '') + '" data-id="' + b.id + '" style="--t:' + col + '">' +
         '<div class="lab"><span class="type">' + type + '</span><span>' + esc(FS.TRACK[b.track]) + '</span></div>' +
         '<div class="nm">' + esc(b.name) + st + '</div>' +
@@ -356,7 +380,7 @@ function more(b, s) {
       h += '<li class="step" data-step="' + i + '"><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>' + esc(t) + '</span></li>';
     });
     h += '</ul>';
-    h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done — approved at the kiosk or in the instructor console.' : 'an instructor approves this badge in the instructor console once your photo has arrived (it shows here within a minute), or by typing the admin password on the kiosk.') + '</div>';
+    h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done — signed off by a mentor.' : 'a mentor signs this badge off in the instructor console once your photo has arrived; it shows here within a minute.') + '</div>';
   } else if (b.type === 'witnessed') {
     if (b.prep && b.prep.length) {
       h += '<ul>';
@@ -367,7 +391,7 @@ function more(b, s) {
       h += '</ul><div class="act"><a class="btn" href="../groundschool/">Prep drills &rarr;</a></div>';
     }
     h += '<div class="std"><b>The standard</b>' + esc(b.standard || '') + '</div>';
-    h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done.' : 'an examiner watches you, then approves in the instructor console or with the admin password at the kiosk.') + '</div>';
+    h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done.' : ((b.minTier != null && s.detail) ? esc(s.detail) + '. ' : '') + 'a mentor who holds this badge watches you, then signs it off in the instructor console.') + '</div>';
   } else if (b.type === 'auto') {
     h += '<div class="std"><b>Automatic</b>' + esc(b.standard) + (s.detail ? ' · ' + esc(s.detail) : '') + '</div>';
     h += '<div class="act"><a class="btn" href="../">Lab hours &amp; leaderboard &rarr;</a></div>';

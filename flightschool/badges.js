@@ -10,14 +10,19 @@
    Ops; Field Repair renamed Field Diagnostics (id unchanged).
 
    type: 'knowledge'  lessons + quiz at 80 %, earned by the kiosk itself
-         'bench'      built-in instructions, step checkboxes, photo DM, instructor approval
-         'witnessed'  someone watches you do it, instructor approval
+         'bench'      built-in instructions, step checkboxes, photo DM, a mentor signs it off
+         'witnessed'  a mentor watches you do it and signs it off
+   minTier: the tier a pilot must be ON to hold the badge (Mentor: 2 - a
+            Tier 2 pilot, i.e. every Tier 0 and Tier 1 badge earned). Until
+            then the badge does not count, even if it was approved.
          'auto'       derived by the kiosk from hours
    lessons: the badge's lessons, v2 ids ({id, t, drill}) - the kiosk's
             gs-content.js uses these ids; quiz: the quiz lesson id (gs-<code>-quiz)
    prep:    old drill ids a witnessed badge reuses as practice
    steps:   the checklist a bench badge walks through
-   standard: what the examiner is watching for (witnessed) */
+   standard: what the mentor is watching for (witnessed)
+   2026-10-06: "mentor" everywhere a badge is signed off - the Mentor badge is
+   who signs badges off; there is no separate examiner. */
 (function () {
   var TIERS = [
     { id: 't0', n: 0, name: 'Simulator',   gear: 'The five FPV sims in the IC',                     color: 'var(--sky)',    gate: 'Gate 1 · unlocks the Meteor 75 Pro' },
@@ -27,7 +32,7 @@
     { id: 'el', n: -1, name: 'Electives',  gear: 'Any order, any time',                              color: 'var(--amber)',  gate: '' }
   ];
   var TRACK = { flight: 'Flight', build: 'Build & tech', know: 'Knowledge & safety', crew: 'Crew & leadership' };
-  var DM = 'DM a photo of your work to mtucker27@brophybroncos.org, then have an instructor approve it.';
+  var DM = 'DM a photo of your work to mtucker27@brophybroncos.org, then have a mentor sign it off.';
 
   var B = [
     // ---------------- Tier 0 · Simulator (Gate 1)
@@ -37,7 +42,7 @@
     { id: 'proficient-flight', tier: 't0', track: 'flight', type: 'witnessed', name: 'Proficient Flight',
       do: 'In the sim: orbit, Split-S, gaps, and finish a race.', why: 'Real control, not just hovering. Sim-only, so it can gate the first real flight.',
       prep: ['gs-fly-01', 'gs-fly-02', 'gs-fly-03', 'gs-fly-04'],
-      standard: 'An examiner watches you in Liftoff: a clean orbit around a gate, a Split-S, three gaps without a crash, and a finished race.' },
+      standard: 'A mentor watches you in Liftoff: a clean orbit around a gate, a Split-S, three gaps without a crash, and a finished race.' },
     { id: 'safe-flight', quiz: 'gs-saf-quiz', tier: 't0', track: 'know', type: 'knowledge', name: 'Safe Flight',
       do: 'Know and follow the Brophy FPV safe-flight rules, and the basics of the airspace over Brophy.', why: 'The baseline code of conduct for real hardware, and why the campus sits under Sky Harbor’s Class B.',
       lessons: [{ id: 'gs-saf-01', t: "Who's flying, who's watching" }, { id: 'gs-saf-02', t: 'The Brophy FPV rules sheet' }, { id: 'gs-asp-01', t: 'Class B, 400 ft and Sky Harbor' }, { id: 'gs-asp-02', t: 'B4UFLY, LAANC and TRUST' }, { id: 'gs-saf-03', t: 'Go / No-Go', drill: true }] },
@@ -54,7 +59,7 @@
     { id: 'line-of-sight', tier: 't0', track: 'flight', type: 'witnessed', name: 'Line of Sight',
       do: 'Without goggles: take off, hover and land a whoop in angle mode. Level flying only, supervised.', why: 'If video cuts out, the pilot can still level out and land.',
       prep: ['gs-los-01', 'gs-los-02', 'gs-los-03'],
-      standard: 'Examiner stands beside you: a controlled take-off to head height, a 20-second hover inside a two-metre box, a slow nose-in turn, and a landing on the pad.' },
+      standard: 'A mentor stands beside you: a controlled take-off to head height, a 20-second hover inside a two-metre box, a slow nose-in turn, and a landing on the pad.' },
 
     // ---------------- Tier 1 · Tiny Whoop (Gate 2)
     { id: 'tiny-whoop', tier: 't1', track: 'flight', type: 'witnessed', name: 'Tiny Whoop',
@@ -75,15 +80,15 @@
     { id: 'freestyle-flight', tier: 't1', track: 'flight', type: 'witnessed', name: 'Freestyle Flight',
       do: 'Powerloop, trippy spin, tiny gaps.', why: 'Advanced control before flying expensive airframes.',
       prep: ['gs-trk-01', 'gs-trk-02', 'gs-trk-03', 'gs-trk-04'],
-      standard: 'Examiner watches in the sim or on the whoop: a powerloop, a trippy spin, and three tiny gaps in one battery.' },
+      standard: 'A mentor watches in the sim or on the whoop: a powerloop, a trippy spin, and three tiny gaps in one battery.' },
 
     // ---------------- Tier 2 · Full-size (Gate 3)
     { id: 'faa-trust', tier: 't2', track: 'know', type: 'witnessed', name: 'FAA TRUST',
       do: 'Complete the free FAA TRUST certificate online (~20 min, cannot be failed).', why: 'Federal requirement for recreational flyers. Official.',
-      standard: 'Show your TRUST certificate (PDF or photo) to an instructor. DM it to mtucker27@brophybroncos.org for the records.' },
+      standard: 'Show your TRUST certificate (PDF or photo) to a mentor. DM it to mtucker27@brophybroncos.org for the records.' },
     { id: 'spotter', tier: 't2', track: 'crew', type: 'witnessed', name: 'Spotter',
       do: 'Run the pre-flight checklist; keep visual line of sight and call hazards.', why: 'FPV pilots can’t see around themselves.',
-      standard: 'Spot a real flight for an examiner: run the checklist aloud, keep eyes on the aircraft the whole battery, call every person and obstacle before the pilot needs to know.' },
+      standard: 'Spot a real flight for a mentor: run the checklist aloud, keep eyes on the aircraft the whole battery, call every person and obstacle before the pilot needs to know.' },
     { id: 'event-ops', quiz: 'gs-evt-quiz', tier: 't2', track: 'know', type: 'knowledge', name: 'Event Ops',
       do: 'Set up a flight zone, brief bystanders, keep flights away from crowds; demonstrate failsafe setup, flyaway response, LiPo fire procedure and incident reporting.', why: 'Ground work before flying at a game or rally, and a plan for when something goes wrong.',
       lessons: [{ id: 'gs-evt-01', t: 'The flight zone' }, { id: 'gs-evt-02', t: 'Briefing bystanders' }, { id: 'gs-evt-03', t: 'Pilot and spotter call-outs' }, { id: 'gs-emg-01', t: 'Failsafe: set it, test it' }, { id: 'gs-emg-02', t: 'Flyaway and lost video' }, { id: 'gs-emg-03', t: 'LiPo fire and injury' }, { id: 'gs-emg-04', t: 'The incident report' }, { id: 'gs-emg-05', t: 'Scenario drill', drill: true }] },
@@ -92,10 +97,10 @@
       standard: 'A written shot list agreed with the coach or moderator and used on the day, and one clip with a follow, an orbit and a reveal that the editor accepts without re-shooting.' },
     { id: 'indoor-proximity', tier: 't2', track: 'flight', type: 'witnessed', name: 'Indoor Proximity',
       do: 'Fly a whoop through a hallway or doorway course without touching walls.', why: 'Precision in tight spaces — what an indoor rally race demands. Racing.',
-      standard: 'The club hallway course, one battery, zero wall contact, examiner counting.' },
+      standard: 'The club hallway course, one battery, zero wall contact, a mentor counting.' },
     { id: 'racing', tier: 't2', track: 'flight', type: 'witnessed', name: 'Racing',
       do: '3 clean laps of the club course under a target time.', why: 'Gate discipline under pressure; qualifies a pilot for the rally race. Racing.',
-      standard: 'Three consecutive clean laps under the posted target time, timed by an examiner.' },
+      standard: 'Three consecutive clean laps under the posted target time, timed by a mentor.' },
 
     // ---------------- Electives
     { id: 'editing', tier: 'el', track: 'crew', type: 'witnessed', name: 'Editing',
@@ -106,10 +111,10 @@
       steps: ['Before footage showing the oscillation', 'Blackbox or reasoning: P, D or filters?', 'One change at a time, test flight', 'After footage, clean', DM] },
     { id: 'fleet-steward', tier: 'el', track: 'crew', type: 'witnessed', name: 'Fleet Steward',
       do: 'Run equipment check-in/out and a maintenance log for one semester.', why: 'Accountability for school-funded gear.',
-      standard: 'A semester of the check-in/out sheet and maintenance log, reviewed by an instructor.' },
-    { id: 'mentor', tier: 'el', track: 'crew', type: 'witnessed', name: 'Mentor',
-      do: 'Coach a new member through their first two badges. A mentor who holds a badge may sign it off for others, with officer approval.', why: 'The program trains its own replacements, and defines who may sign badges off.',
-      standard: 'Two badges earned by someone you coached, confirmed by them and an instructor. With an officer’s approval, mentors become examiners for the badges they hold and are given the instructor password.' }
+      standard: 'A semester of the check-in/out sheet and maintenance log, reviewed by a mentor.' },
+    { id: 'mentor', tier: 'el', track: 'crew', type: 'witnessed', name: 'Mentor', minTier: 2,
+      do: 'Be a Tier 2 pilot, then coach a new member through their first two badges. A mentor who holds a badge may sign it off for others, with officer approval.', why: 'The program trains its own replacements, and defines who may sign badges off.',
+      standard: 'Tier 2 pilots only: every Tier 0 and Tier 1 badge earned. Then two badges earned by someone you coached, confirmed by them and an officer. With an officer’s approval, a mentor signs off the badges they hold and is given the instructor password.' }
   ];
 
   var LESSON_TITLES = {

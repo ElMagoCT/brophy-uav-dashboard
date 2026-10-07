@@ -204,7 +204,7 @@
     api('GET', '/api/award?pilot=' + encodeURIComponent(pilot)).then(function (j) {
       var aw = j.awards && j.awards.badges ? j.awards.badges : {};
       var earned = Object.keys(aw).filter(function (k) { return aw[k].status === 'earned'; });
-      el('apHas').textContent = earned.length ? 'On file: ' + earned.map(badgeName).join(', ') : 'No instructor decisions on file yet.';
+      el('apHas').textContent = earned.length ? 'On file: ' + earned.map(badgeName).join(', ') : 'No sign-offs on file yet.';
     }).catch(function (e) { el('apHas').textContent = e.message; });
   }
   function badgeName(id) { var b = FS.BADGES.filter(function (x) { return x.id === id; })[0]; return b ? b.name : id; }
@@ -214,6 +214,21 @@
     var pilot = el('apPilot').value.trim(), badge = el('apBadge').value, note = el('apNote').value.trim(), at = Date.now();
     if (pilot.length < 2) { el('apPilot').focus(); return; }
     var s = FS.slug(pilot), msg = el('apMsg');
+    // minTier (2026-10-06): Mentor is for Tier 2 pilots. The tier comes from
+    // the kiosk snapshot (data.json `tier`, the tier the pilot is ON). Below it:
+    // refuse. Not published yet: ask, because the kiosks would not count the
+    // badge anyway until the pilot gets there.
+    var bd = FS.BADGES.filter(function (x) { return x.id === badge; })[0];
+    if (status === 'earned' && bd && bd.minTier != null) {
+      var rp = (ROSTER && ROSTER.pilots || []).filter(function (p) { return FS.slug(p.name) === s; })[0];
+      if (rp && rp.tier != null && rp.tier < bd.minTier) {
+        msg.textContent = bd.name + ' is for Tier ' + bd.minTier + ' pilots - ' + pilot + ' is on Tier ' + rp.tier + '. Not filed.';
+        return;
+      }
+      if (!rp || rp.tier == null) {
+        if (!window.confirm('The kiosk has not published ' + pilot + '\u2019s tier. ' + bd.name + ' is for Tier ' + bd.minTier + ' pilots, and it will not count until they are one. File it anyway?')) { msg.textContent = 'Not filed.'; return; }
+      }
+    }
     msg.textContent = 'signing…';
     hmac('v1a\n' + s + '\n' + badge + '\n' + status + '\n' + at).then(function (sig) {
       return api('POST', '/api/award', { pilot: pilot, badge: badge, status: status, at: at, note: note, evidence: ['dm'], sig: sig });
@@ -224,7 +239,7 @@
   }
   function badgeInfo() {
     var b = FS.BADGES.filter(function (x) { return x.id === el('apBadge').value; })[0];
-    el('apBadgeInfo').textContent = b ? (b.do + (b.standard ? ' — Standard: ' + b.standard : '')) : '';
+    el('apBadgeInfo').textContent = b ? ((b.minTier != null ? 'Tier ' + b.minTier + ' pilots only. ' : '') + b.do + (b.standard ? ' — Standard: ' + b.standard : '')) : '';
   }
   function loadRoster() {
     fetch('../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
