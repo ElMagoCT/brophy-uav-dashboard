@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791387404539,
-    "generatedIso":  "2026-10-07T08:36:44-07:00",
+    "generated":  1791388306250,
+    "generatedIso":  "2026-10-07T08:51:46-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,12 +9,12 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  356565967,
+                   "clubMs":  357467127,
                    "pilots":  37,
                    "activePilots7":  23,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  252974118.3817997,
+                                    "liftoff":  253875278.69599971,
                                     "microdrones":  101702550.00740032,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
@@ -266,9 +266,9 @@
                    },
                    {
                        "name":  "Micah T",
-                       "totalMs":  3770265,
+                       "totalMs":  4671425,
                        "perSimMs":  {
-                                        "liftoff":  3770265,
+                                        "liftoff":  4671425,
                                         "microdrones":  0,
                                         "skydive":  0,
                                         "fpvlabs":  0,
@@ -276,7 +276,7 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791387380154
+                       "lastSeen":  1791388281342
                    },
                    {
                        "name":  "Aled L.",
