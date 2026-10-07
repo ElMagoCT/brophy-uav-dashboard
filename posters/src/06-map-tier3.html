@@ -6,41 +6,98 @@
 </head>
 <body>
 <div class="bg"><div class="grid"></div><div class="fine"></div><div class="vig"></div></div>
-<div class="sheet" style="--tier:var(--green)">
+<div class="sheet electives" style="--tier:var(--green)">
   <div class="stamp"><b>BROPHY</b>UAV PROGRAM<br>FPV CLUB</div>
   <div class="eyebrow"><h2>The pilot path &middot; sheet 4 of 4 &middot; badges unlock the gear</h2><span class="rule"></span></div>
-  <div class="tierhead">
-    <div class="tn">TIER 3</div>
-    <div class="tname">EVENT PILOT</div>
-  </div>
+  <div class="tierhead"><div class="tn">TIER 3</div><div class="tname">EVENT PILOT</div></div>
   <div class="facts">
-    <div class="f"><div class="k">You fly</div><div class="v">Any Tier 2 airframe at a school event · with a spotter</div></div>
+    <div class="f"><div class="k">You fly</div><div class="v">Any Tier 2 airframe at a school event · always with a spotter</div></div>
     <div class="f"><div class="k">To get here</div><div class="v">Gate 3 — all six Tier 2 badges</div></div>
-    <div class="f"><div class="k">On this sheet</div><div class="v">The top · plus 4 electives, any order</div></div>
+    <div class="f"><div class="k">On this sheet</div><div class="v">The top · plus 4 electives, any order<small>1 bench · 3 witnessed</small></div></div>
   </div>
 
-  <div class="map">
-<svg class="trail" viewBox="0 0 1056 1190" width="1056" height="1190">
-<path class="trail-shadow" d="M -20.0 120.0 C 46.7 128.3, 263.3 123.3, 380.0 170.0 C 496.7 216.7, 596.7 311.7, 680.0 400.0 C 763.3 488.3, 900.0 598.3, 880.0 700.0 C 860.0 801.7, 671.7 1000.0, 560.0 1010.0 C 448.3 1020.0, 268.3 801.7, 210.0 760.0"/>
-<path class="trail-line" d="M -20.0 120.0 C 46.7 128.3, 263.3 123.3, 380.0 170.0 C 496.7 216.7, 596.7 311.7, 680.0 400.0 C 763.3 488.3, 900.0 598.3, 880.0 700.0 C 860.0 801.7, 671.7 1000.0, 560.0 1010.0 C 448.3 1020.0, 268.3 801.7, 210.0 760.0"/>
-<g class="node"><circle class="halo" cx="680" cy="400" r="30"/><circle class="pin" cx="680" cy="400" r="22" style="stroke:var(--amber)"/><text x="680" y="408">★</text></g>
-<g class="node"><circle class="halo" cx="880" cy="700" r="30"/><circle class="pin" cx="880" cy="700" r="22" style="stroke:var(--violet)"/><text x="880" y="708">★</text></g>
-<g class="node"><circle class="halo" cx="560" cy="1010" r="30"/><circle class="pin" cx="560" cy="1010" r="22" style="stroke:var(--violet)"/><text x="560" y="1018">★</text></g>
-<g class="node"><circle class="halo" cx="210" cy="760" r="30"/><circle class="pin" cx="210" cy="760" r="22" style="stroke:var(--violet)"/><text x="210" y="768">★</text></g>
-<g class="summitpin"><polygon points="320,206 380,106 440,206"/><circle cx="380" cy="106" r="9"/></g>
-</svg>
-<div class="card" style="left:432px;top:434px;width:236px;--t:var(--amber)"><div class="lab">ELECTIVE</div><div class="nm">Tuning</div><div class="ds">Fix an oscillation with PID or filter changes · before/after footage</div><div class="tr"><i></i>Build & tech</div></div>
-<div class="card" style="left:610px;top:641px;width:236px;--t:var(--violet)"><div class="lab">ELECTIVE</div><div class="nm">Fleet Steward</div><div class="ds">Run check-in/out and a maintenance log for one semester</div><div class="tr"><i></i>Crew & leadership</div></div>
-<div class="card" style="left:442px;top:808px;width:236px;--t:var(--violet)"><div class="lab">ELECTIVE</div><div class="nm">Mentor</div><div class="ds">Coach a new member through two badges · then sign badges off, with officer approval</div><div class="tr"><i></i>Crew & leadership</div></div>
-<div class="card" style="left:92px;top:608px;width:236px;--t:var(--violet)"><div class="lab">ELECTIVE</div><div class="nm">Editing</div><div class="ds">Cut and colour-grade a 30–60 s clip from D-log footage</div><div class="tr"><i></i>Crew & leadership</div></div>
-<div class="edge in" style="top:50px">&larr; From Tier 2</div>
-<div class="summit" style="left:470px;top:110px"><div class="lab">TIER 3 · THE TOP</div><div class="nm">EVENT PILOT</div><div class="ds">Cleared to fly in front of a crowd, with a spotter</div><div class="req"><em>Needs</em><span>Tier 2</span><span>Spotter</span><span>Cinematography</span><span>FAA TRUST</span></div></div>
-<div class="sidequest" style="left:470px;top:336px">SIDE QUESTS &middot; electives &middot; any order, any time</div>
-<div class="p107" style="left:400px;top:1056px"><b>PART 107</b>Want the real commercial licence? The club runs a study group. You pay the exam; we supply the prep.</div>
+  <div class="map" id="map">
+    <svg class="trail" id="trail"></svg>
+    <div class="band"><div class="entry">&larr; From Tier 2</div></div>
+    <div class="summit"><span class="peak"></span><div class="sc"><div class="lab">Tier 3 · the top</div><div class="nm">EVENT PILOT</div><div class="ds">Cleared to fly in front of a crowd, with a spotter. Every Tier 2 badge earned, including Spotter, Cinematography and FAA TRUST.</div></div></div><div class="sidequest">Side quests &middot; electives &middot; any order, any time</div>
+    <div class="cols">
+      <div class="col left"><div class="card" data-i="1" data-id="editing" style="--t:var(--violet)"><span class="pin"><span>★</span></span><div class="lab"><span>Elective</span><span class="ty ty-witnessed">Witnessed</span></div><div class="nm">Editing</div><div class="ds">Cut and colour-grade a 30–60 second clip from D-log footage.</div><div class="how"><b>The standard</b><div class="seq">A finished 30–60 s clip from D-log, graded, delivered to the editor.</div></div><div class="why"><b>Why</b> Best of Brophy doesn’t depend on one editor.</div></div><div class="card" data-i="2" data-id="tuning" style="--t:var(--amber)"><span class="pin"><span>★</span></span><div class="lab"><span>Elective</span><span class="ty ty-bench">Bench</span></div><div class="nm">Tuning</div><div class="ds">Fix an oscillation with PID or filter changes, with before/after footage.</div><div class="how"><b>At the bench · 4 steps</b><div class="seq">Before footage showing the oscillation <i>›</i> Blackbox or reasoning <i>›</i> One change at a time <i>›</i> After footage</div><div class="ft">Photo DM’d to mtucker27@ · a mentor signs it off</div></div><div class="why"><b>Why</b> The skill behind smooth cinematic footage.</div></div><div class="card" data-i="3" data-id="fleet-steward" style="--t:var(--violet)"><span class="pin"><span>★</span></span><div class="lab"><span>Elective</span><span class="ty ty-witnessed">Witnessed</span></div><div class="nm">Fleet Steward</div><div class="ds">Run equipment check-in/out and a maintenance log for one semester.</div><div class="how"><b>The standard</b><div class="seq">A semester of the check-in/out sheet and maintenance log, reviewed by a mentor.</div></div><div class="why"><b>Why</b> Accountability for school-funded gear.</div></div><div class="card" data-i="4" data-id="mentor" style="--t:var(--violet)"><span class="pin"><span>★</span></span><div class="lab"><span>Elective · Tier 2 pilots</span><span class="ty ty-witnessed">Witnessed</span></div><div class="nm">Mentor</div><div class="ds">Be a Tier 2 pilot, then coach a new member through their first two badges. A mentor who holds a badge may sign it off for others, with officer approval.</div><div class="how"><b>The standard</b><div class="seq">Tier 2 pilots only: every Tier 0 and Tier 1 badge earned. Then two badges earned by someone you coached, confirmed by them and an officer. With an officer’s approval, a mentor signs off the badges they hold and is given the instructor password.</div></div><div class="why"><b>Why</b> The program trains its own replacements, and defines who may sign badges off.</div></div></div>
+      <div class="col right"><div class="p107"><b>PART 107</b>Want the real commercial licence? The club runs a study group. You pay the exam; we supply the prep.</div></div>
+    </div>
   </div>
 
-  <div class="legend"><span><i style="background:var(--sky)"></i>Flight</span><span><i style="background:var(--amber)"></i>Build & tech</span><span><i style="background:var(--green)"></i>Knowledge & safety</span><span><i style="background:var(--violet)"></i>Crew & leadership</span><span class="how"><b>How a badge is earned:</b> do the skill in front of a certified member &middot; they sign it off on the board &middot; demonstration, not attendance</span></div>
+  <div class="legend"><span><i style="background:var(--sky)"></i>Flight</span><span><i style="background:var(--amber)"></i>Build &amp; tech</span><span><i style="background:var(--green)"></i>Knowledge &amp; safety</span><span><i style="background:var(--violet)"></i>Crew &amp; leadership</span><span class="how"><b>Quiz</b> badges: pass at 80 %, no sign-off &middot; <b>Bench</b> and <b>witnessed</b> badges: a mentor who holds the badge signs it off &middot; demonstration, not attendance</span></div>
   <div class="qrmini qr"><svg viewBox="0 0 370 370"><use href="qr-path.svg#q"/></svg><div class="say"><b>Full badge list</b>scan</div></div>
   <div class="foot"><span><b>Brophy UAV Program</b> &middot; FPV Club pilot path &middot; Tier 3 of 3</span><span>mtucker27@ for questions</span></div>
 </div>
+<script>
+/* Draw the trail through the checkpoint pins once fonts and layout are final.
+   Entry/exit both sit at Y_EDGE so adjacent sheets join. */
+(function () {
+  var Y_EDGE = 44, EXIT = false, SUMMIT = true;
+  function cr(p) {               // Catmull-Rom -> cubic Bezier path
+    if (p.length < 2) return '';
+    var d = 'M' + p[0][0] + ' ' + p[0][1], q = [p[0]].concat(p, [p[p.length - 1]]);
+    for (var i = 1; i < q.length - 2; i++) {
+      var a = q[i - 1], b = q[i], c = q[i + 1], e = q[i + 2], k = 1 / 6;
+      d += ' C' + (b[0] + (c[0] - a[0]) * k) + ' ' + (b[1] + (c[1] - a[1]) * k) + ',' +
+           (c[0] - (e[0] - b[0]) * k) + ' ' + (c[1] - (e[1] - b[1]) * k) + ',' + c[0] + ' ' + c[1];
+    }
+    return d;
+  }
+  /* Move the tail of the card list into the right column so both columns
+     are as close to the same height as possible. Order is kept: the left
+     column runs pt 1.. top to bottom, the right climbs from the bottom. */
+  function balance() {                 // idempotent: safe to run more than once
+    var left = document.querySelector('.col.left'), right = document.querySelector('.col.right');
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.col .card'))
+                  .sort(function (a, b) { return a.getAttribute('data-i') - b.getAttribute('data-i'); });
+    cards.forEach(function (c) { left.appendChild(c); });
+    var extra = right.querySelector('.p107'), gap = 10;
+    var h = cards.map(function (c) { return c.getBoundingClientRect().height + gap; });
+    var tot = h.reduce(function (a, b) { return a + b; }, 0), xh = extra ? extra.getBoundingClientRect().height + gap : 0;
+    var best = 1, bestv = 1e9, acc = 0;
+    for (var k = 1; k < cards.length; k++) {
+      acc += h[k - 1];
+      var v = Math.max(acc, tot - acc + xh);
+      if (v < bestv) { bestv = v; best = k; }
+    }
+    for (var j = best; j < cards.length; j++) right.insertBefore(cards[j], extra);
+  }
+  function draw() {
+    balance();
+    var map = document.getElementById('map'), m = map.getBoundingClientRect();
+    var W = m.width, H = m.height, svg = document.getElementById('trail');
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('width', W); svg.setAttribute('height', H);
+    function c(el) { var r = el.getBoundingClientRect(); return [r.left - m.left + r.width / 2, r.top - m.top + r.height / 2]; }
+    var L = document.querySelectorAll('.col.left .pin'), R = document.querySelectorAll('.col.right .pin');
+    var xl = L.length ? c(L[0])[0] : 70, xr = R.length ? c(R[0])[0] : W - 70, pts = [];
+    var go = document.querySelector('.go'), peak = document.querySelector('.peak');
+    if (go) pts.push(c(go)); else pts.push([-30, Y_EDGE], [xl - 10, Y_EDGE + 6]);
+    if (peak) { pts.push(c(peak)); }
+    var wig = 1;
+    function along(list) {
+      for (var i = 0; i < list.length; i++) {
+        var p = c(list[i]);
+        if (pts.length) { var a = pts[pts.length - 1]; pts.push([(a[0] + p[0]) / 2 + 16 * wig, (a[1] + p[1]) / 2]); wig = -wig; }
+        pts.push(p);
+      }
+    }
+    along(L);
+    var bottom = 0; document.querySelectorAll('.col .card, .p107').forEach(function (e) { var r = e.getBoundingClientRect(); bottom = Math.max(bottom, r.bottom - m.top); });
+    var yb = Math.min(H - 16, bottom + 34);
+    pts.push([xl, yb - 20], [(xl + xr) / 2, yb + 8], [xr, yb - 20]);
+    along(R);                       // column-reverse: DOM order is already bottom-to-top
+    if (EXIT) pts.push([xr + 4, Y_EDGE + 16], [W + 30, Y_EDGE]);
+    var d = cr(pts);
+    svg.innerHTML = '<path class="trail-shadow" d="' + d + '"/><path class="trail-line" d="' + d + '"/>';
+    var colsR = document.querySelector('.cols').getBoundingClientRect(), over = 0;
+    document.querySelectorAll('.col .card, .col .p107').forEach(function (c) {
+      var r = c.getBoundingClientRect(); over = Math.max(over, colsR.top - r.top, r.bottom - colsR.bottom); });
+    document.body.setAttribute('data-trail', over > 1 ? 'overflow ' + Math.round(over) + 'px' : 'ok');
+  }
+  draw();                                   // now, so a fast print never sees one long column
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);   // and again with final metrics
+})();
+</script>
 </body></html>
