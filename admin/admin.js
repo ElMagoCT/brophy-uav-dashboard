@@ -242,7 +242,7 @@
     el('apBadgeInfo').textContent = b ? ((b.minTier != null ? 'Tier ' + b.minTier + ' pilots only. ' : '') + b.do + (b.standard ? ' — Standard: ' + b.standard : '')) : '';
   }
   function loadRoster() {
-    fetch('../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+    fetch('../data.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
       ROSTER = d;
       var dl = el('apPilots'); dl.textContent = '';
       (d.pilots || []).forEach(function (p) { var o = document.createElement('option'); o.value = p.name; dl.appendChild(o); });

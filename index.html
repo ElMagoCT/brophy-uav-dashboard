@@ -952,7 +952,7 @@ function fail(msg){
   $('hours').innerHTML = '<div class="msg bad">' + esc(msg) + '</div>';
 }
 
-function load(){
+function load(refresh){
   /* cache-bust so a CDN edge cache can never pin an old leaderboard */
   fetch('data.json?t=' + Date.now(), { cache: 'no-store' })
     .then(function(r){
@@ -960,11 +960,16 @@ function load(){
       return r.json();
     })
     .then(function(json){
+      var first = !DATA;
       DATA = json;
-      pickReel();
-      renderAll();
+      /* The minute refresh redraws the numbers but not the reel: rebuilding
+         the iframes every minute would restart whatever video is playing. */
+      if (first || !refresh){ pickReel(); renderAll(); return; }
+      renderStatus(); renderStats(); renderBoard(); renderHours(); renderFooter();
     })
     .catch(function(err){
+      /* a failed background refresh keeps the last good snapshot on screen */
+      if (refresh && DATA) return;
       fail('Could not load the lab snapshot. ' + (err && err.message ? err.message : ''));
     });
 }
@@ -979,7 +984,7 @@ $('shuffle').addEventListener('click', function(){
    snapshot itself is worth re-checking now and then for anyone who leaves the
    page open on a wall display. */
 setInterval(function(){ if (DATA) { renderStatus(); } }, 30000);
-setInterval(load, 60 * 1000);   // every minute (2026-10-06): the kiosk publishes every minute too
+setInterval(function(){ if (!document.hidden) load(true); }, 60 * 1000);   // every minute (2026-10-06): the kiosk publishes every minute too
 document.addEventListener('visibilitychange', function(){
   if (!document.hidden && DATA) { renderStatus(); }
 });
