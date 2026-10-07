@@ -8,16 +8,20 @@ Every word on a badge card comes from ../../flightschool/badges.js (read with
 node), so the posters can never drift from the website again. Change a badge
 there, rerun this, rebuild.
 
-Layout (2026-10-06): a switchback trail. It enters at the top-left (where the
-previous sheet's trail left off), runs DOWN the left edge past the left column
-of cards, crosses the bottom, climbs UP the right edge past the right column,
-and leaves through the gate at the top-right at the same height it came in,
-so the four sheets still join into one trail when hung side by side.
+Layout (2026-10-07): an organic winding trail. Sheets alternate direction so
+they join when hung side by side: Tier 0 and Tier 2 run DOWN from the top-left
+to a gate at the bottom-right; Tier 1 and the Event Pilot sheet climb UP from
+the bottom-left (Tier 1 to a gate at the top-right, Tier 3 to the summit).
+Cards hang off the trail on alternating sides, staggered, varied in width,
+drifted outward and slightly tilted (fixed pseudo-random per sheet, so every
+rebuild looks the same). The trail S-curves through a clear centre channel
+and makes one loop in the biggest gap.
 
-Cards are laid out by the browser (two flex columns), not by guesswork, so a
-long badge just makes its card taller. A small script in each sheet then
-measures where the checkpoint pins ended up and draws the trail through them;
-headless Chrome runs it before printing (build.py's virtual time budget).
+The sheet's own script does the layout with real card heights: it keeps
+cards clear of every label, spreads spare height between cards, scales the
+card text down a step if a sheet is crowded, draws the trail through the
+pins, and sets <body data-trail> to "ok k=..." or "overflow Npx". Headless
+Chrome runs it before printing (build.py's virtual time budget).
 """
 import html, json, os, shutil, subprocess, sys
 
@@ -41,19 +45,19 @@ WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
 
 # Poster-only text (the website has its own shorter versions).
 SHEETS = [
-  dict(file='03-map-tier0', sheet=1, tier='t0', name='SIMULATOR', color='var(--sky)',
+  dict(file='03-map-tier0', sheet=1, tier='t0', name='SIMULATOR', color='var(--sky)', dir='down',
        gear='FPV sim rigs in the IC · Liftoff · Micro Drones · SkyDive · FPV Labs · PicaSim',
        start=('START', 'Add your name at the kiosk'),
        gate=('GATE 1', 'Meteor 75 Pro unlocked', 'Tier 1 · Tiny Whoop')),
-  dict(file='04-map-tier1', sheet=2, tier='t1', name='TINY WHOOP', color='var(--violet)',
+  dict(file='04-map-tier1', sheet=2, tier='t1', name='TINY WHOOP', color='var(--violet)', dir='up',
        gear='Meteor 75 Pro · sub-250 g · safe indoors',
        entry='From Tier 0', first_flight=True,
        gate=('GATE 2', 'Full-size unlocked', 'Tier 2 · Pavo 20 Pro · Cinebot 35 · 5-inch')),
-  dict(file='05-map-tier2', sheet=3, tier='t2', name='FULL-SIZE', color='var(--rust)',
+  dict(file='05-map-tier2', sheet=3, tier='t2', name='FULL-SIZE', color='var(--rust)', dir='down',
        gear='Pavo 20 Pro · Cinebot 35 · 5-inch',
        entry='From Tier 1',
        gate=('GATE 3', 'Event Pilot', 'Tier 3 · the top')),
-  dict(file='06-map-tier3', sheet=4, tier='el', name='EVENT PILOT', color='var(--green)',
+  dict(file='06-map-tier3', sheet=4, tier='el', name='EVENT PILOT', color='var(--green)', dir='up',
        gear='Any Tier 2 airframe at a school event · always with a spotter',
        entry='From Tier 2',
        summit=('EVENT PILOT', 'Cleared to fly in front of a crowd, with a spotter. Every Tier 2 badge earned, including Spotter, Cinematography and FAA TRUST.')),
@@ -113,31 +117,27 @@ def render(s, fs, prev_count):
         if b['id'] in TAGS: label += ' · ' + TAGS[b['id']]
         if b.get('minTier'): label += ' · Tier %d pilots' % b['minTier']
         cards.append(card_html(b, label, fs, '★' if electives else str(i)).replace('<div class="card" ', '<div class="card" data-i="%d" ' % i, 1))
-    left, right = cards, []          # the sheet's script balances the columns by height
-
+    d = s['dir']
     gate = ''
     if s.get('gate'):
         g, big, sub = s['gate']
-        gate = ('<div class="gate"><div class="txt"><div class="g">%s</div><div class="b">%s</div>'
-                '<div class="s">%s &rarr;</div></div><div class="arch"></div></div>' % (g, big, sub))
-    top_left = ''
+        gate = ('<div class="gate gate-%s"><div class="txt"><div class="g">%s</div><div class="b">%s</div>'
+                '<div class="s">%s &rarr;</div></div><div class="arch"></div></div>' % (d, g, big, sub))
+    lead = ''
     if s.get('start'):
-        top_left = '<div class="start"><span class="go">GO</span><div><b>%s</b>%s</div></div>' % s['start']
+        lead = '<div class="start"><span class="go">GO</span><div><b>%s</b>%s</div></div>' % s['start']
     elif s.get('entry'):
-        top_left = '<div class="entry">&larr; %s</div>' % esc(s['entry'])
+        lead = '<div class="entry entry-%s">&larr; %s</div>' % ('top' if d == 'down' else 'bottom', esc(s['entry']))
     summit = ''
     if s.get('summit'):
         t, sub = s['summit']
-        summit = ('<div class="summit"><span class="peak"></span><div class="sc"><div class="lab">Tier 3 · the top</div>'
-                  '<div class="nm">%s</div><div class="ds">%s</div></div></div>'
+        summit = ('<div class="summit"><div class="sc"><div class="lab">Tier 3 · the top</div>'
+                  '<div class="nm">%s</div><div class="ds">%s</div></div><span class="peak"></span></div>'
                   '<div class="sidequest">Side quests &middot; electives &middot; any order, any time</div>' % (esc(t), esc(sub)))
-    extra_right = ''
+    extra = ''
     if electives:
-        extra_right = ('<div class="p107"><b>PART 107</b>Want the real commercial licence? The club runs a study group. '
-                       'You pay the exam; we supply the prep.</div>')
-    if s.get('first_flight'):
-        top_left += '<div class="note1">your first real flight is checkpoint 1</div>'
-
+        extra = ('<div class="p107"><b>PART 107</b>Want the real commercial licence? The club runs a study group. '
+                 'You pay the exam; we supply the prep.</div>')
     if s['tier'] == 't0':
         prereq = 'Have a name'
     elif electives:
@@ -160,7 +160,7 @@ def render(s, fs, prev_count):
 </head>
 <body>
 <div class="bg"><div class="grid"></div><div class="fine"></div><div class="vig"></div></div>
-<div class="sheet{' electives' if electives else ''}" style="--tier:{s['color']}">
+<div class="sheet{' electives' if electives else ''}" style="--tier:{s['color']}" data-dir="{s['dir']}" data-sheet="{s['sheet']}">
   <div class="stamp"><b>BROPHY</b>UAV PROGRAM<br>FPV CLUB</div>
   <div class="eyebrow"><h2>The pilot path &middot; sheet {s['sheet']} of 4 &middot; badges unlock the gear</h2><span class="rule"></span></div>
   <div class="tierhead"><div class="tn">TIER {tier_n}</div><div class="tname">{s['name']}</div></div>
@@ -172,12 +172,8 @@ def render(s, fs, prev_count):
 
   <div class="map" id="map">
     <svg class="trail" id="trail"></svg>
-    <div class="band">{top_left}{gate}</div>
-    {summit}
-    <div class="cols">
-      <div class="col left">{''.join(left)}</div>
-      <div class="col right">{''.join(right)}{extra_right}</div>
-    </div>
+    {lead}{gate}{summit}
+    <div class="cards" id="cards">{''.join(cards)}{extra}</div>
   </div>
 
   <div class="legend">{legend}<span class="how"><b>Quiz</b> badges: pass at {fs['PASS']} %, no sign-off &middot; <b>Bench</b> and <b>witnessed</b> badges: a mentor who holds the badge signs it off &middot; demonstration, not attendance</span></div>
@@ -185,73 +181,130 @@ def render(s, fs, prev_count):
   <div class="foot"><span><b>Brophy UAV Program</b> &middot; FPV Club pilot path &middot; Tier {tier_n} of 3</span><span>mtucker27@ for questions</span></div>
 </div>
 <script>
-/* Draw the trail through the checkpoint pins once fonts and layout are final.
-   Entry/exit both sit at Y_EDGE so adjacent sheets join. */
+/* Organic layout, done in the page so it uses real card heights.
+   - Cards hang off a winding trail on alternating sides (masonry: each card
+     goes to the side that is shorter so far), staggered, a little narrower or
+     wider and tilted by a fixed pseudo-random amount.
+   - 'down' sheets start at the top-left and leave through a gate at the
+     bottom-right; 'up' sheets come in at the bottom-left and climb to the
+     top-right. Exits and entries share heights, so the four sheets join.
+   - If the cards do not fit, the text is scaled down a step and laid out
+     again. <body data-trail> says "ok", or "overflow Npx" if even the
+     smallest step did not fit. */
 (function () {{
-  var Y_EDGE = 44, EXIT = {'true' if s.get('gate') else 'false'}, SUMMIT = {'true' if s.get('summit') else 'false'};
-  function cr(p) {{               // Catmull-Rom -> cubic Bezier path
-    if (p.length < 2) return '';
-    var d = 'M' + p[0][0] + ' ' + p[0][1], q = [p[0]].concat(p, [p[p.length - 1]]);
+  var sheet = document.querySelector('.sheet'), DIR = sheet.getAttribute('data-dir'), SEED = +sheet.getAttribute('data-sheet');
+  var map = document.getElementById('map'), W = map.clientWidth, H = map.clientHeight;
+  var MID = W / 2, CH = 184, MARGIN = 30, GAP = 20, YT = 50, YB = H - 46;
+  function rnd(i, k) {{ var x = Math.sin((i + 1) * 12.9898 + SEED * 78.233 + k * 37.719) * 43758.5453; return x - Math.floor(x); }}
+  function box(el) {{ var r = el.getBoundingClientRect(), m = map.getBoundingClientRect(); return {{x: r.left - m.left, y: r.top - m.top, w: r.width, h: r.height}}; }}
+
+  // vertical room per side: start at the whole map, then step clear of every
+  // label (start, entry, gate, summit, side-quest heading) on that side
+  var lim = {{ L: [24, H - 24], R: [24, H - 24] }};
+  ['.start', '.entry', '.gate .txt', '.gate .arch', '.summit', '.peak', '.sidequest'].forEach(function (sel) {{
+    document.querySelectorAll(sel).forEach(function (el) {{
+      var b = box(el), top = b.y + b.h / 2 < H / 2;
+      ['L', 'R'].forEach(function (sd) {{
+        var x0 = sd === 'L' ? 0 : MID - CH / 2, x1 = sd === 'L' ? MID + CH / 2 : W;
+        if (b.x > x1 || b.x + b.w < x0) return;
+        if (top) lim[sd][0] = Math.max(lim[sd][0], b.y + b.h + 18);
+        else lim[sd][1] = Math.min(lim[sd][1], b.y - 18);
+      }});
+    }});
+  }});
+  // the trail needs a lane at the entry / exit edges too
+  if (DIR === 'down') {{ lim.R[1] = Math.min(lim.R[1], YB - 40); lim.L[0] = Math.max(lim.L[0], YT + 44); }}
+  else {{ lim.L[1] = Math.min(lim.L[1], YB - 40); lim.R[0] = Math.max(lim.R[0], YT + 44); }}
+
+  function layout(k, gap0) {{
+    sheet.style.setProperty('--k', k);
+    var cards = Array.prototype.slice.call(document.querySelectorAll('#cards .card, #cards .p107'));
+    var base = (W - 2 * MARGIN - CH) / 2, y = {{ L: 0, R: 0 }}, over = 0, used = {{ L: 0, R: 0 }}, cnt = {{ L: 0, R: 0 }};
+    y.L = DIR === 'down' ? lim.L[0] : lim.L[1];
+    y.R = DIR === 'down' ? lim.R[0] + 80 : lim.R[1] - 80;       // stagger the two sides
+    cards.forEach(function (c, i) {{
+      var w = Math.round(base - 58 * rnd(i, 1));
+      c.style.width = w + 'px'; c.style.transform = 'none';
+      var h = c.offsetHeight;
+      var room = function (sd) {{ return DIR === 'down' ? lim[sd][1] - y[sd] : y[sd] - lim[sd][0]; }};
+      var sd = DIR === 'down' ? (y.L <= y.R ? 'L' : 'R') : (y.L >= y.R ? 'L' : 'R');
+      if (room(sd) < h && room(sd === 'L' ? 'R' : 'L') >= h) sd = sd === 'L' ? 'R' : 'L';
+      var top = DIR === 'down' ? y[sd] : y[sd] - h;
+      var drift = Math.round((base - w) * rnd(i, 2));               // outward only: the channel stays clear
+      var x = sd === 'L' ? MID - CH / 2 - w - drift : MID + CH / 2 + drift;
+      c.style.left = x + 'px'; c.style.top = top + 'px';
+      c.classList.remove('side-L', 'side-R'); c.classList.add('side-' + sd);
+      c.style.transform = 'rotate(' + ((rnd(i, 3) - .5) * 1.8).toFixed(2) + 'deg)';
+      var gap = gap0 + Math.round(16 * rnd(i, 4));
+      y[sd] = DIR === 'down' ? top + h + gap : top - gap;
+      used[sd] += h + gap; cnt[sd]++;
+      over = Math.max(over, DIR === 'down' ? (top + h) - lim[sd][1] : lim[sd][0] - top);
+    }});
+    var spare = Math.min((lim.L[1] - lim.L[0]) - used.L - (DIR === 'down' ? 0 : 0), (lim.R[1] - lim.R[0] - 80) - used.R);
+    return {{ over: over, spare: spare, per: Math.max(cnt.L, cnt.R) }};
+  }}
+
+  function catmull(p) {{
+    var d = 'M' + p[0][0].toFixed(1) + ' ' + p[0][1].toFixed(1), q = [p[0]].concat(p, [p[p.length - 1]]);
     for (var i = 1; i < q.length - 2; i++) {{
-      var a = q[i - 1], b = q[i], c = q[i + 1], e = q[i + 2], k = 1 / 6;
-      d += ' C' + (b[0] + (c[0] - a[0]) * k) + ' ' + (b[1] + (c[1] - a[1]) * k) + ',' +
-           (c[0] - (e[0] - b[0]) * k) + ' ' + (c[1] - (e[1] - b[1]) * k) + ',' + c[0] + ' ' + c[1];
+      var a = q[i - 1], b = q[i], c = q[i + 1], e = q[i + 2], t = 1 / 6;
+      d += ' C' + (b[0] + (c[0] - a[0]) * t).toFixed(1) + ' ' + (b[1] + (c[1] - a[1]) * t).toFixed(1) + ',' +
+           (c[0] - (e[0] - b[0]) * t).toFixed(1) + ' ' + (c[1] - (e[1] - b[1]) * t).toFixed(1) + ',' + c[0].toFixed(1) + ' ' + c[1].toFixed(1);
     }}
     return d;
   }}
-  /* Move the tail of the card list into the right column so both columns
-     are as close to the same height as possible. Order is kept: the left
-     column runs pt 1.. top to bottom, the right climbs from the bottom. */
-  function balance() {{                 // idempotent: safe to run more than once
-    var left = document.querySelector('.col.left'), right = document.querySelector('.col.right');
-    var cards = Array.prototype.slice.call(document.querySelectorAll('.col .card'))
-                  .sort(function (a, b) {{ return a.getAttribute('data-i') - b.getAttribute('data-i'); }});
-    cards.forEach(function (c) {{ left.appendChild(c); }});
-    var extra = right.querySelector('.p107'), gap = 10;
-    var h = cards.map(function (c) {{ return c.getBoundingClientRect().height + gap; }});
-    var tot = h.reduce(function (a, b) {{ return a + b; }}, 0), xh = extra ? extra.getBoundingClientRect().height + gap : 0;
-    var best = 1, bestv = 1e9, acc = 0;
-    for (var k = 1; k < cards.length; k++) {{
-      acc += h[k - 1];
-      var v = Math.max(acc, tot - acc + xh);
-      if (v < bestv) {{ bestv = v; best = k; }}
-    }}
-    for (var j = best; j < cards.length; j++) right.insertBefore(cards[j], extra);
-  }}
-  function draw() {{
-    balance();
-    var map = document.getElementById('map'), m = map.getBoundingClientRect();
-    var W = m.width, H = m.height, svg = document.getElementById('trail');
-    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('width', W); svg.setAttribute('height', H);
-    function c(el) {{ var r = el.getBoundingClientRect(); return [r.left - m.left + r.width / 2, r.top - m.top + r.height / 2]; }}
-    var L = document.querySelectorAll('.col.left .pin'), R = document.querySelectorAll('.col.right .pin');
-    var xl = L.length ? c(L[0])[0] : 70, xr = R.length ? c(R[0])[0] : W - 70, pts = [];
-    var go = document.querySelector('.go'), peak = document.querySelector('.peak');
-    if (go) pts.push(c(go)); else pts.push([-30, Y_EDGE], [xl - 10, Y_EDGE + 6]);
-    if (peak) {{ pts.push(c(peak)); }}
-    var wig = 1;
-    function along(list) {{
-      for (var i = 0; i < list.length; i++) {{
-        var p = c(list[i]);
-        if (pts.length) {{ var a = pts[pts.length - 1]; pts.push([(a[0] + p[0]) / 2 + 16 * wig, (a[1] + p[1]) / 2]); wig = -wig; }}
-        pts.push(p);
+
+  function trail() {{
+    var m = map.getBoundingClientRect();
+    function ctr(el) {{ var r = el.getBoundingClientRect(); return [r.left - m.left + r.width / 2, r.top - m.top + r.height / 2]; }}
+    var pins = Array.prototype.slice.call(document.querySelectorAll('#cards .card .pin')).map(ctr);
+    var pts = [], go = document.querySelector('.go'), peak = document.querySelector('.peak');
+    if (go) pts.push(ctr(go), [ctr(go)[0] + 70, ctr(go)[1] + 50]);
+    else if (DIR === 'down') pts.push([-30, YT], [70, YT + 6], [MID - 120, YT + 40]);
+    else pts.push([-30, YB], [80, YB - 4], [MID - 90, YB - 40]);
+    // the biggest vertical gap between consecutive pins gets a proper loop
+    var gi = -1, gbest = 0;
+    for (var j = 1; j < pins.length; j++) {{ var g = Math.abs(pins[j][1] - pins[j - 1][1]); if (g > gbest) {{ gbest = g; gi = j; }} }}
+    var swing = 1;
+    pins.forEach(function (p, i) {{
+      if (pts.length) {{
+        var a = pts[pts.length - 1], my = (a[1] + p[1]) / 2;
+        var cx = MID + swing * (30 + 26 * rnd(i, 5));
+        if (i === gi && gbest > 170) {{
+          var r = 40, s = DIR === 'down' ? 1 : -1, cy = my;
+          pts.push([MID + swing * 46, cy - s * 70]);
+          for (var t = 0; t <= 8; t++) {{                         // once around, entering and leaving on the same side
+            var ang = (-Math.PI / 2) * s + swing * s * t * (2 * Math.PI / 8);
+            pts.push([MID + Math.cos(ang) * r, cy + Math.sin(ang) * r]);
+          }}
+          pts.push([MID - swing * 40, cy + s * 70]);
+        }} else pts.push([cx, my]);
+        swing = -swing;
       }}
-    }}
-    along(L);
-    var bottom = 0; document.querySelectorAll('.col .card, .p107').forEach(function (e) {{ var r = e.getBoundingClientRect(); bottom = Math.max(bottom, r.bottom - m.top); }});
-    var yb = Math.min(H - 16, bottom + 34);
-    pts.push([xl, yb - 20], [(xl + xr) / 2, yb + 8], [xr, yb - 20]);
-    along(R);                       // column-reverse: DOM order is already bottom-to-top
-    if (EXIT) pts.push([xr + 4, Y_EDGE + 16], [W + 30, Y_EDGE]);
-    var d = cr(pts);
+      pts.push(p);
+    }});
+    if (peak) pts.push([MID + 40, ctr(peak)[1] + 70], ctr(peak));
+    else if (DIR === 'down') pts.push([MID + 60, YB - 30], [W - 150, YB + 2], [W + 30, YB]);
+    else pts.push([MID + 70, YT + 60], [W - 150, YT - 2], [W + 30, YT]);
+    var svg = document.getElementById('trail'), d = catmull(pts);
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('width', W); svg.setAttribute('height', H);
     svg.innerHTML = '<path class="trail-shadow" d="' + d + '"/><path class="trail-line" d="' + d + '"/>';
-    var colsR = document.querySelector('.cols').getBoundingClientRect(), over = 0;
-    document.querySelectorAll('.col .card, .col .p107').forEach(function (c) {{
-      var r = c.getBoundingClientRect(); over = Math.max(over, colsR.top - r.top, r.bottom - colsR.bottom); }});
-    document.body.setAttribute('data-trail', over > 1 ? 'overflow ' + Math.round(over) + 'px' : 'ok');
   }}
-  draw();                                   // now, so a fast print never sees one long column
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);   // and again with final metrics
+
+  function run() {{
+    var ks = [1, .96, .92, .88, .84], r = null;
+    for (var i = 0; i < ks.length; i++) {{ r = layout(ks[i], GAP); if (r.over <= 0) break; }}
+    if (r.over <= 0 && r.spare > 40) {{                    // spread the spare height between the cards
+      var g2 = GAP + Math.min(130, Math.floor(r.spare / Math.max(1, r.per)));
+      var r2 = layout(+sheet.style.getPropertyValue('--k'), g2);
+      if (r2.over > 0) layout(+sheet.style.getPropertyValue('--k'), GAP); else r = r2;
+    }}
+    var over = r.over;
+    trail();
+    document.body.setAttribute('data-trail', over > 0 ? 'overflow ' + Math.round(over) + 'px' : 'ok k=' + sheet.style.getPropertyValue('--k'));
+  }}
+  run();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);
 }})();
 </script>
 </body></html>
