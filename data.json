@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791356852636,
-    "generatedIso":  "2026-10-07T00:07:32-07:00",
+    "generated":  1791383752608,
+    "generatedIso":  "2026-10-07T07:35:53-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  353353233,
+                   "clubMs":  353460624,
                    "pilots":  37,
                    "activePilots7":  23,
                    "sims":  5,
                    "perSimMs":  {
                                     "liftoff":  251830912.9828997,
-                                    "microdrones":  99633021.699200317,
+                                    "microdrones":  99740412.699200317,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
                                     "picasim":  814526.99810002092
@@ -154,17 +154,17 @@
                    },
                    {
                        "name":  "Bryson E.",
-                       "totalMs":  20809001,
+                       "totalMs":  20916392,
                        "perSimMs":  {
                                         "liftoff":  12021494,
-                                        "microdrones":  8787507,
+                                        "microdrones":  8894898,
                                         "skydive":  0,
                                         "fpvlabs":  0,
                                         "picasim":  0
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791212067255
+                       "lastSeen":  1791383689006
                    },
                    {
                        "name":  "Aeson T.",
@@ -262,7 +262,7 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791298749597
+                       "lastSeen":  1791383742562
                    },
                    {
                        "name":  "Aled L.",
