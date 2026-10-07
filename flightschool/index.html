@@ -431,7 +431,19 @@ $('pNames').addEventListener('click', function (e) { var b = e.target.closest('b
 /* ---------- boot ---------- */
 pilot = lsGet(LS.pilot, null);
 render(); pullServer(); pullAwards();
-fetch('../data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d; drawNames(); render(); }).catch(function () { drawNames(); });
+/* The kiosk snapshot (hours, earned badges, tier). ?t= skips GitHub Pages'
+   10-minute CDN cache. Re-read every minute (2026-10-06) together with this
+   pilot's awards and website progress, so an open page keeps up with the
+   kiosk - which publishes every minute and on every sign-in/out. Skipped
+   while the tab is hidden; the picker list is left alone while it is open. */
+function pullData(first) {
+  fetch('../data.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+    DATA = d; if (first || !$('picker').classList.contains('open')) drawNames(); render();
+  }).catch(function () { if (first) drawNames(); });
+}
+pullData(true);
+setInterval(function () { if (document.hidden) return; pullData(false); pullServer(); pullAwards(); }, 60 * 1000);
+document.addEventListener('visibilitychange', function () { if (!document.hidden) { pullData(false); pullServer(); pullAwards(); } });
 if (location.hash && /^#(t0|t1|t2|t3|el)$/.test(location.hash)) setTimeout(function () { var el = document.querySelector(location.hash); if (el) el.scrollIntoView(); }, 50);
 </script>
 </body>

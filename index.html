@@ -979,7 +979,7 @@ $('shuffle').addEventListener('click', function(){
    snapshot itself is worth re-checking now and then for anyone who leaves the
    page open on a wall display. */
 setInterval(function(){ if (DATA) { renderStatus(); } }, 30000);
-setInterval(load, 5 * 60 * 1000);
+setInterval(load, 60 * 1000);   // every minute (2026-10-06): the kiosk publishes every minute too
 document.addEventListener('visibilitychange', function(){
   if (!document.hidden && DATA) { renderStatus(); }
 });
