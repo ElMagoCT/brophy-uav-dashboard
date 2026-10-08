@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791489859785,
-    "generatedIso":  "2026-10-08T13:04:20-07:00",
+    "generated":  1791489920725,
+    "generatedIso":  "2026-10-08T13:05:21-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  374857558,
+                   "clubMs":  374917633,
                    "pilots":  38,
                    "activePilots7":  20,
                    "sims":  5,
                    "perSimMs":  {
                                     "liftoff":  266684002.10839969,
-                                    "microdrones":  106284256.01820029,
+                                    "microdrones":  106344331.3178003,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
                                     "picasim":  814526.99810002092
@@ -393,17 +393,17 @@
                    },
                    {
                        "name":  "Carter.B",
-                       "totalMs":  3017574,
+                       "totalMs":  3077649,
                        "perSimMs":  {
                                         "liftoff":  1154114,
-                                        "microdrones":  1863460,
+                                        "microdrones":  1923535,
                                         "skydive":  0,
                                         "fpvlabs":  0,
                                         "picasim":  0
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791489849166,
+                       "lastSeen":  1791489909243,
                        "badges":  [
 
                                   ],
