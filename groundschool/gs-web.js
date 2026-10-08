@@ -116,6 +116,19 @@
     u = u.slice(k);
     if(u === '/api/active') return reply({ profile: load() });
     if(u === '/api/groundschool/catalog') return reply(catalog());
+    /* A badge quiz passed here already showed its confetti in the course;
+       note it for Flight School so it does not pop the same badge again on
+       this device (2026-10-08). Only if Flight School has already recorded
+       this pilot here - its first look records everything quietly. */
+    if(u === '/api/badges/celebrated'){
+      var cb = {}; try{ cb = JSON.parse(opts && opts.body || '{}'); }catch(e){}
+      var who = pilot(), cel = get('fs.celebrated.v1', {});
+      if(who.slug !== 'guest' && cel[who.slug]){
+        (cb.ids || []).forEach(function(id){ cel[who.slug][String(id)] = Date.now(); });
+        set('fs.celebrated.v1', cel);
+      }
+      return reply({ ok:true });
+    }
     if(u === '/api/groundschool/lesson'){
       var b = {}; try{ b = JSON.parse(opts && opts.body || '{}'); }catch(e){}
       return reply(lesson(b));

@@ -60,3 +60,22 @@ button:disabled{opacity:.5;cursor:default}
 button.primary.flush{margin-top:0}
 .btn-link{font:inherit;font-size:14px;color:var(--ink);text-decoration:none;border:1px solid var(--line);background:var(--chip);border-radius:6px;padding:7px 12px;white-space:nowrap}
 .btn-link:hover{border-color:var(--muted)}
+
+/* ---- photo review (2026-10-08) ---- */
+#rvCount{display:inline-block;min-width:1.4em;font:12px "Share Tech Mono",ui-monospace,monospace;background:var(--accent);color:#fff;border-radius:999px;padding:1px 6px;text-align:center}
+#rvCount:empty{display:none}
+.setup{border:1px dashed var(--warn);border-radius:8px;padding:10px 12px;margin:10px 0;font-size:14px}
+.setup code{word-break:break-all;user-select:all}
+.rvlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:10px}
+.rv{border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;background:var(--bg)}
+.rv .ph{aspect-ratio:4/3;background:var(--chip);border-radius:7px;overflow:hidden;display:grid;place-items:center;color:var(--muted);font-size:13.5px}
+.rv .ph img{width:100%;height:100%;object-fit:contain;display:block;cursor:zoom-in}
+.rv .ph.big{aspect-ratio:auto}
+.rv .ph.big img{height:auto;cursor:zoom-out}
+.rv b{font-weight:600}
+.rv .meta{font-size:13.5px;color:var(--muted)}
+.rv .warn{font-size:13.5px;color:var(--warn)}
+.rv input{width:100%}
+.rv .row button{margin-top:0;flex:1}
+.rv .done{font-size:14px;font-weight:600}
+.rv .done.pass{color:var(--ok)} .rv .done.fail{color:var(--bad)}

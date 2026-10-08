@@ -115,6 +115,34 @@ section{margin-top:30px}
 .approve{font-size:13.5px;color:var(--ink-soft);margin-top:8px;line-height:1.4}
 .approve b{color:var(--ink);font-weight:600}
 
+/* ---------- checkpoints (2026-10-08): dashed until the rest of the tier is
+   done, a check once ready to attempt, solid green once awarded ---------- */
+.badge.checkpoint{border-style:dashed;border-left-style:solid}
+.badge.checkpoint .lab .type::before{content:'Checkpoint · ';color:var(--ink)}
+.badge.checkpoint.ready{border-style:solid;border-color:var(--amber);box-shadow:0 0 0 2px rgba(240,169,26,.35)}
+.badge.checkpoint.ready .nm::after{content:'\2713';color:var(--amber);font-size:22px}
+.badge.checkpoint.won{border-style:solid;border-color:var(--green);background-color:var(--green);color:#f2ece0}
+.badge.checkpoint.won .lab,.badge.checkpoint.won .lab .type,.badge.checkpoint.won .lab .type::before,.badge.checkpoint.won .est,
+.badge.checkpoint.won .more .why,.badge.checkpoint.won .more .why b,.badge.checkpoint.won .approve,.badge.checkpoint.won .approve b{color:#f2ece0}
+.badge.checkpoint.won .std{color:var(--ink)}
+.badge.checkpoint.won .nm .st.earned{background:#f2ece0}
+
+/* ---------- photo submissions ---------- */
+.subs{margin-top:8px;display:flex;flex-direction:column;gap:5px}
+.sub{font-size:13.5px;border:1px solid var(--line);border-radius:7px;padding:6px 9px;background-color:var(--glass)}
+.sub b{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:400}
+.sub.pending b{color:var(--amber)} .sub.pass b{color:var(--green)} .sub.fail b{color:var(--rust)}
+#cam{position:fixed;inset:0;z-index:50;background:rgba(16,24,38,.55);display:none;align-items:center;justify-content:center;padding:16px}
+#cam.open{display:flex}
+#cam .box{background:#fffdf7;border:2px solid var(--ink);border-radius:14px;width:100%;max-width:560px;padding:16px;display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 32px);overflow:auto}
+#cam .ttl{font-family:var(--font-sketch);font-weight:700;font-size:24px}
+#cam .view{background:#111;border-radius:9px;overflow:hidden;aspect-ratio:4/3;display:grid;place-items:center;color:#f2ece0;font-size:14px;text-align:center}
+#cam video,#cam img{width:100%;height:100%;object-fit:contain;display:block}
+#cam textarea{font:15px var(--font-body);border:1.5px solid var(--line-hard);border-radius:7px;padding:8px;min-height:56px;resize:vertical}
+#cam .row{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+#cam .msg{font-size:14px;color:var(--ink-soft);min-height:1.2em}
+#cam [hidden]{display:none!important}
+
 footer{margin-top:34px;padding:16px 18px;background-color:var(--glass);border:1.5px solid var(--line-hard);border-radius:var(--r);font-size:13.5px;color:var(--ink-soft);display:flex;flex-wrap:wrap;gap:6px 20px;justify-content:space-between}
 footer a{color:var(--ink)}
 
@@ -135,7 +163,7 @@ footer a{color:var(--ink)}
   <header class="title">
     <div>
       <h1>Flight <span class="a">School</span></h1>
-      <div class="sub">Brophy UAV &middot; 18 badges &middot; four tiers &middot; badges unlock the gear &middot; plus bonus badges</div>
+      <div class="sub">Brophy UAV &middot; 20 badges &middot; four tiers, each ending in a checkpoint &middot; plus bonus badges</div>
       <div class="stamp">sim is Tier 0</div>
     </div>
     <div class="pilot" id="pilot">
@@ -154,9 +182,9 @@ footer a{color:var(--ink)}
     <div class="eyebrow"><h2 id="hHead">How it works</h2><span class="rule"></span></div>
     <div class="how">
       <div class="card h"><div class="k">Quiz badges</div><div class="v">Short lessons, then a 10-question quiz. <b>80 % passes.</b> Retake as often as you like; your best score counts. The kiosk awards these by itself.</div></div>
-      <div class="card h"><div class="k">Bench badges</div><div class="v">Step-by-step instructions on the kiosk or here. Tick the boxes as you go, <b>DM a photo</b> of your work to mtucker27@brophybroncos.org, then a mentor signs it off.</div></div>
+      <div class="card h"><div class="k">Bench badges</div><div class="v">Step-by-step instructions on the kiosk or here. Tick the boxes as you go, then <b>submit a photo</b> of your work right from the card &mdash; a mentor reviews it and passes or fails it.</div></div>
       <div class="card h"><div class="k">Witnessed badges</div><div class="v">A mentor who holds the badge watches you do it against <b>the standard</b> written on the card. Prep drills are in Ground School.</div></div>
-      <div class="card h"><div class="k">Gates</div><div class="v">Earn every badge in a tier and the gate opens: <b>the next drone is yours to fly.</b> Bonus badges are extra, any time, and don&rsquo;t count toward your total &mdash; <b>Mentor</b> is for Tier 2 pilots.</div></div>
+      <div class="card h"><div class="k">Checkpoints</div><div class="v">Every tier ends in a <b>checkpoint flight</b>. Finish the rest of the tier and it gets a &#10003;; pass it with a mentor watching and it turns green &mdash; <b>you move up a tier and the next drone is yours to fly.</b> Bonus badges are extra, any time, and don&rsquo;t count toward your total &mdash; <b>Mentor</b> is for Tier 2 pilots.</div></div>
     </div>
   </section>
 
@@ -171,6 +199,24 @@ footer a{color:var(--ink)}
   </footer>
 </div>
 
+<div id="cam" role="dialog" aria-modal="true" aria-labelledby="camTitle">
+  <div class="box">
+    <div class="ttl" id="camTitle">Submit a photo</div>
+    <div class="view" id="camView">Starting the camera…</div>
+    <input id="camFile" type="file" accept="image/*" capture="environment" hidden>
+    <textarea id="camNote" maxlength="300" placeholder="Anything the mentor should know? (optional)"></textarea>
+    <div class="msg" id="camMsg"></div>
+    <div class="row">
+      <button class="btn" type="button" id="camCancel">Cancel</button>
+      <button class="btn" type="button" id="camPick">Choose a file</button>
+      <button class="btn" type="button" id="camRetake" hidden>Retake</button>
+      <button class="btn primary" type="button" id="camShoot">Take photo</button>
+      <button class="btn primary" type="button" id="camSend" hidden>Submit for review</button>
+    </div>
+  </div>
+</div>
+
+<script src="../confetti.js"></script>
 <script src="badges.js"></script>
 <script>
 /* Three sources, merged per badge:
@@ -180,7 +226,7 @@ footer a{color:var(--ink)}
         app's localStorage (gsWeb.profiles.v2, written by ../groundschool/gs-web.js);
      3. bench-step ticks made on this page (fs.progress.v1).
    Earned-from-kiosk always wins. Nothing here can take a badge away. */
-var FS = window.FS, DATA = null, pilot = null, SERVER = null, AWARDS = null;
+var FS = window.FS, DATA = null, pilot = null, SERVER = null, AWARDS = null, LOADED = {};
 var API = 'https://brophy-uav-api.netlify.app';   // the club API: per-pilot progress mirror (forward-only)
 var LS = { pilot: 'fs.pilot.v1', progress: 'fs.progress.v1', gs: 'gsWeb.profiles.v2' };
 
@@ -194,12 +240,12 @@ function setPilot(name) {
   pilot = name ? { name: name.trim(), slug: FS.slug(name) } : null;
   lsSet(LS.pilot, pilot);
   $('picker').classList.remove('open');
-  SERVER = null; AWARDS = null; render(); pullServer(); pullAwards();
+  SERVER = null; AWARDS = null; SUBS = null; LOADED = {}; render(); pullServer(); pullAwards(); pullSubs();
 }
 function pullAwards() {
   if (!pilot) return;
   fetch(API + '/api/award?pilot=' + encodeURIComponent(pilot.name), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
-    AWARDS = (j && j.awards) || null; render();
+    AWARDS = (j && j.awards) || null; LOADED.awards = true; render();
   }).catch(function () {});
 }
 /* What the API already knows for this pilot (lessons done elsewhere, ticks from
@@ -207,7 +253,7 @@ function pullAwards() {
 function pullServer() {
   if (!pilot) return;
   fetch(API + '/api/progress?pilot=' + encodeURIComponent(pilot.name), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
-    SERVER = (j && j.progress) || null;
+    SERVER = (j && j.progress) || null; LOADED.server = true; if (!SERVER) render();
     if (!SERVER) return;
     var all = lsGet(LS.gs, {}), p = all[pilot.slug] || { groundSchool: { lessons: {}, progressPct: 0, updated: 0 } }, RANK = { 'not-started': 0, 'in-progress': 1, complete: 2 };
     Object.keys(SERVER.lessons || {}).forEach(function (id) {
@@ -254,7 +300,25 @@ function pilotTier() {
   }
   return 3;
 }
+/* checkpoint (2026-10-08): the badge that closes a tier counts only once every
+   other badge of its tier is earned. `ready` = the rest is done (the card gets
+   a check); earned = awarded (the card turns green). Same rule as the kiosk
+   dash and the kiosk's export. */
 function status(b) {
+  var s = rawStatus(b);
+  if (!b.checkpoint || !pilot) return s;
+  var mates = FS.mates(b), left = mates.filter(function (m) { return !rawStatus(m).earned; }).length;
+  s.checkpoint = true; s.ready = left === 0;
+  if (left > 0) {
+    var approved = s.earned;
+    s.earned = false; s.pct = Math.round((mates.length - left) / Math.max(1, mates.length) * 90);
+    s.detail = (approved ? 'approved · counts once the rest of the tier is done · ' : '') + left + ' more Tier ' + b.tier.slice(1) + ' badge' + (left === 1 ? '' : 's') + ' before this checkpoint';
+  } else if (!s.earned) {
+    s.pct = 95; s.detail = '✓ ready - ask a mentor to watch your checkpoint';
+  }
+  return s;
+}
+function rawStatus(b) {
   var kp = kioskPilot(), gp = gsProfile(), pr = progress()[b.id] || {};
   var out = { earned: false, source: '', pct: 0, detail: '' };
   /* minTier (2026-10-06, Mentor = Tier 2 pilots): below it the badge does not
@@ -333,6 +397,7 @@ function nextStep() {
     if (!open.length) continue;
     var pick = open.filter(function (b) { return b.type === 'knowledge' || b.type === 'bench'; })[0] || open[0];
     var verb = { knowledge: 'do the lessons and pass the quiz', bench: 'work through the steps at the kiosk', witnessed: 'ask a mentor to watch you', auto: 'keep flying the sim' }[pick.type];
+    if (pick.checkpoint) verb = 'your checkpoint - ask a mentor to watch you fly it';
     if (pick.minHours && status(pick).needHours) verb = 'log ' + pick.minHours + ' h in the sim, then ask a mentor to judge it';
     return '<b>Tier ' + t.n + ' · ' + (bs.length - open.length) + ' of ' + bs.length + '</b> · next: <b>' + esc(pick.name) + '</b> — ' + verb + '.';
   }
@@ -363,7 +428,8 @@ function render() {
       var s = status(b), col = { flight: 'var(--sky)', build: 'var(--amber)', know: 'var(--green)', crew: 'var(--violet)' }[b.track];
       var type = { knowledge: 'Quiz', bench: 'Bench', witnessed: 'Witnessed', auto: 'Automatic' }[b.type];
       var st = s.earned ? '<span class="st earned">earned' + (s.source === 'kiosk' ? ' · kiosk' : (s.source === 'web' ? ' · quiz passed' : (s.source === 'instructor' ? ' · signed off' : ''))) + '</span>' : (pilot && s.pct > 0 ? '<span class="st progress">' + s.pct + '%</span>' : '');
-      html += '<div class="card badge' + (open[b.id] ? ' open' : '') + '" data-id="' + b.id + '" style="--t:' + col + '">' +
+      var cp = b.checkpoint ? ' checkpoint' + (s.earned ? ' won' : (s.ready ? ' ready' : '')) : '';
+      html += '<div class="card badge' + cp + (open[b.id] ? ' open' : '') + '" data-id="' + b.id + '" style="--t:' + col + '">' +
         '<div class="lab"><span class="type">' + type + '</span><span>' + esc(FS.TRACK[b.track]) + '</span></div>' +
         '<div class="nm">' + esc(b.name) + st + '</div>' +
         '<div class="do">' + esc(b.do) + '</div>' +
@@ -374,6 +440,7 @@ function render() {
     html += '</div></div>';
   });
   $('tiers').innerHTML = html;
+  setTimeout(celebrate, 0);
 }
 function more(b, s) {
   var gp = gsProfile(), pr = progress()[b.id] || {}, h = '<div class="why"><b>Why:</b> ' + esc(b.why) + '</div>';
@@ -395,7 +462,7 @@ function more(b, s) {
       h += '<li class="step" data-step="' + i + '"><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>' + esc(t) + '</span></li>';
     });
     h += '</ul>';
-    h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done — signed off by a mentor.' : 'a mentor signs this badge off in the instructor console once your photo has arrived; it shows here within a minute.') + '</div>';
+    h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done — passed by a mentor.' : 'submit a photo of your work below; a mentor reviews it and passes or fails it. A pass shows here within a minute.') + '</div>';
   } else if (b.type === 'witnessed') {
     if (b.prep && b.prep.length) {
       h += '<ul>';
@@ -407,7 +474,9 @@ function more(b, s) {
     }
     h += '<div class="std"><b>The standard</b>' + esc(b.standard || '') + '</div>';
     h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done.' : (((b.minTier != null || b.minHours) && s.detail) ? esc(s.detail) + '. ' : '') + 'a mentor who holds this badge watches you, then signs it off in the instructor console.') + '</div>';
-  } else if (b.type === 'auto') {
+  }
+  if (FS.photoOk(b)) h += photoBlock(b, s);
+  if (b.type === 'auto') {
     h += '<div class="std"><b>Automatic</b>' + esc(b.standard) + (s.detail ? ' · ' + esc(s.detail) : '') + '</div>';
     h += '<div class="act"><a class="btn" href="../">Lab hours &amp; leaderboard &rarr;</a></div>';
   }
@@ -443,9 +512,141 @@ function drawNames() {
 }
 $('pNames').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setPilot(b.getAttribute('data-n')); });
 
+/* ---------- photo submissions (2026-10-08) ----------
+   Any badge a mentor signs off can take a photo: the camera (the browser asks
+   for permission) or a file, shrunk to 1600 px JPEG here, then POSTed to the
+   club API, which files it in the private control repo for the console's
+   Review tab. A pass there also files the signed award, so the badge then
+   shows earned like any other approval. */
+var SUBS = null, cam = { badge: null, stream: null, data: null };
+function pullSubs() {
+  if (!pilot) return;
+  fetch(API + '/api/submission?pilot=' + encodeURIComponent(pilot.name), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+    SUBS = (j && j.items) || []; render();
+  }).catch(function () {});
+}
+function photoBlock(b, s) {
+  var mine = (SUBS || []).filter(function (x) { return x.badge === b.id; }).slice(-3).reverse();
+  var h = '<div class="subs">' + mine.map(function (x) {
+    var when = new Date(x.at).toLocaleDateString();
+    var head = x.status === 'pass' ? 'Passed' : (x.status === 'fail' ? 'Not passed' : 'Waiting for review');
+    return '<div class="sub ' + esc(x.status) + '"><b>' + head + '</b> · photo sent ' + esc(when) +
+      (x.reviewNote ? '<br>Mentor: ' + esc(x.reviewNote) : '') + '</div>';
+  }).join('') + '</div>';
+  if (!s.earned) h += '<div class="act"><button class="btn primary" type="button" data-photo="' + b.id + '">' +
+    (mine.length && mine[0].status === 'fail' ? 'Try again: submit a new photo' : 'Submit a photo') + '</button></div>';
+  return h;
+}
+function camShow(which) {
+  ['camShoot', 'camSend', 'camRetake', 'camPick'].forEach(function (id) { $(id).hidden = which.indexOf(id) < 0; });
+}
+function camStop() { if (cam.stream) { cam.stream.getTracks().forEach(function (t) { t.stop(); }); cam.stream = null; } }
+function camOpen(badgeId) {
+  if (!pilot) { $('picker').classList.add('open'); $('pInput').focus(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  var b = FS.BADGES.filter(function (x) { return x.id === badgeId; })[0]; if (!b) return;
+  cam.badge = b; cam.data = null;
+  $('camTitle').textContent = 'Photo for ' + b.name; $('camNote').value = ''; $('camMsg').textContent = '';
+  $('cam').classList.add('open');
+  camLive();
+}
+function camLive() {
+  cam.data = null; camStop();
+  var view = $('camView');
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    view.textContent = 'This browser cannot open the camera here - choose a photo file instead.';
+    camShow(['camPick']); return;
+  }
+  view.textContent = 'Allow the camera when your browser asks…';
+  camShow(['camPick']);
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1440 } }, audio: false }).then(function (st) {
+    if (!$('cam').classList.contains('open')) { st.getTracks().forEach(function (t) { t.stop(); }); return; }
+    cam.stream = st;
+    var v = document.createElement('video'); v.autoplay = true; v.playsInline = true; v.muted = true; v.srcObject = st;
+    view.innerHTML = ''; view.appendChild(v);
+    camShow(['camShoot', 'camPick']);
+  }).catch(function () {
+    view.textContent = 'No camera permission - you can choose a photo file instead.';
+    camShow(['camPick']);
+  });
+}
+function camUse(src, w, h) {
+  var max = 1600, k = Math.min(1, max / Math.max(w, h));
+  var c = document.createElement('canvas'); c.width = Math.round(w * k); c.height = Math.round(h * k);
+  c.getContext('2d').drawImage(src, 0, 0, c.width, c.height);
+  cam.data = c.toDataURL('image/jpeg', 0.8);
+  camStop();
+  var img = new Image(); img.src = cam.data; img.alt = 'your photo';
+  $('camView').innerHTML = ''; $('camView').appendChild(img);
+  camShow(['camSend', 'camRetake']);
+  $('camMsg').textContent = 'Happy with it? Submit it for review.';
+}
+$('camShoot').onclick = function () {
+  var v = $('camView').querySelector('video'); if (!v || !v.videoWidth) return;
+  camUse(v, v.videoWidth, v.videoHeight);
+};
+$('camPick').onclick = function () { $('camFile').click(); };
+$('camFile').onchange = function () {
+  var f = this.files && this.files[0]; this.value = ''; if (!f) return;
+  var img = new Image(), url = URL.createObjectURL(f);
+  img.onload = function () { camUse(img, img.naturalWidth, img.naturalHeight); URL.revokeObjectURL(url); };
+  img.onerror = function () { $('camMsg').textContent = 'That file is not a photo this browser can read.'; };
+  img.src = url;
+};
+$('camRetake').onclick = camLive;
+function camClose() { camStop(); $('cam').classList.remove('open'); cam.badge = null; cam.data = null; }
+$('camCancel').onclick = camClose;
+$('cam').addEventListener('click', function (e) { if (e.target === this) camClose(); });
+$('camSend').onclick = function () {
+  if (!cam.data || !cam.badge || !pilot) return;
+  var btn = this; btn.disabled = true; $('camMsg').textContent = 'Sending…';
+  fetch(API + '/api/submission', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ pilot: pilot.name, badge: cam.badge.id, note: $('camNote').value.trim(), photo: cam.data }) })
+    .then(function (r) { return r.json(); }).then(function (j) {
+      btn.disabled = false;
+      if (!j || !j.ok) { $('camMsg').textContent = 'Could not send it: ' + ((j && j.error) || 'try again'); return; }
+      SUBS = (SUBS || []).concat([j.item]); camClose(); render();
+    }).catch(function () { btn.disabled = false; $('camMsg').textContent = 'Could not reach the club server - check the connection and try again.'; });
+};
+document.addEventListener('click', function (e) {
+  var b = e.target.closest ? e.target.closest('[data-photo]') : null;
+  if (b) { e.preventDefault(); camOpen(b.getAttribute('data-photo')); }
+});
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && $('cam').classList.contains('open')) camClose(); });
+
+/* ---------- celebrations (2026-10-08) ----------
+   A badge that turns earned for the picked pilot - a quiz passed here, or
+   one earned on the kiosk, approved by a mentor or passed in photo review
+   while this device was away - gets confetti and "Congrats on ___", once per
+   device (fs.celebrated.v1). The first time a pilot is opened on a device,
+   what they already hold is recorded quietly instead of popping years of
+   badges. The kiosks keep their own once-only record between themselves. */
+var LS_CEL = 'fs.celebrated.v1', celebrateBusy = false;
+function celebrate() {
+  if (!pilot || celebrateBusy || !window.FPVConfetti || $('cam').classList.contains('open')) return;
+  if (!DATA || !LOADED.awards || !LOADED.server) return;   // wait for everything - never record a half-empty first look
+  var all = lsGet(LS_CEL, {}), mine = all[pilot.slug];
+  var earned = FS.BADGES.filter(function (b) { return status(b).earned; });
+  if (!mine) {                                  // first look on this device: record quietly
+    mine = {}; earned.forEach(function (b) { mine[b.id] = Date.now(); });
+    all[pilot.slug] = mine; lsSet(LS_CEL, all); return;
+  }
+  var fresh = earned.filter(function (b) { return !mine[b.id]; });
+  if (!fresh.length) return;
+  fresh.forEach(function (b) { mine[b.id] = Date.now(); }); all[pilot.slug] = mine; lsSet(LS_CEL, all);
+  var counted = FS.BADGES.filter(FS.counted), have = counted.filter(function (b) { return status(b).earned; }).length;
+  var lines = fresh.length > 1 ? [fresh.map(function (b) { return b.name; }).join(' · ')] : [];
+  fresh.forEach(function (b) {
+    if (b.checkpoint) lines.push(b.tier === 't2' ? 'Checkpoint passed: you are an Event Pilot.' : 'Checkpoint passed: you are now a Tier ' + (+b.tier.slice(1) + 1) + ' pilot.');
+  });
+  lines.push(pilot.name + ' · ' + have + ' of ' + counted.length + ' badges');
+  celebrateBusy = true;
+  FPVConfetti.congrats(fresh.length === 1 ? 'Congrats on ' + fresh[0].name + '!' : 'Congrats on ' + fresh.length + ' new badges!', lines,
+    function () { celebrateBusy = false; });
+}
+
 /* ---------- boot ---------- */
 pilot = lsGet(LS.pilot, null);
-render(); pullServer(); pullAwards();
+render(); pullServer(); pullAwards(); pullSubs();
 /* The kiosk snapshot (hours, earned badges, tier). ?t= skips GitHub Pages'
    10-minute CDN cache. Re-read every minute (2026-10-06) together with this
    pilot's awards and website progress, so an open page keeps up with the
@@ -457,7 +658,7 @@ function pullData(first) {
   }).catch(function () { if (first) drawNames(); });
 }
 pullData(true);
-setInterval(function () { if (document.hidden) return; pullData(false); pullServer(); pullAwards(); }, 60 * 1000);
+setInterval(function () { if (document.hidden) return; pullData(false); pullServer(); pullAwards(); pullSubs(); }, 60 * 1000);
 document.addEventListener('visibilitychange', function () { if (!document.hidden) { pullData(false); pullServer(); pullAwards(); } });
 if (location.hash && /^#(t0|t1|t2|t3|el)$/.test(location.hash)) setTimeout(function () { var el = document.querySelector(location.hash); if (el) el.scrollIntoView(); }, 50);
 </script>

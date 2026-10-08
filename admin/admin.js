@@ -50,8 +50,8 @@
   function unb64utf8(b) { var bin = atob(b.replace(/\n/g, '')), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return dec.decode(u); }
 
   // ---------------------------------------------------------------- GitHub
-  function api(method, path, body) {
-    var opt = { method: method, cache: 'no-store', headers: {} };
+  function api(method, path, body, headers) {
+    var opt = { method: method, cache: 'no-store', headers: headers || {} };
     if (body) { opt.body = JSON.stringify(body); opt.headers['Content-Type'] = 'application/json'; }
     return fetch(API + path, opt).then(function (r) {
       return r.json().catch(function () { return { ok: false, error: 'HTTP ' + r.status }; }).then(function (j) {
@@ -69,11 +69,11 @@
     el('signMsg').textContent = '';
     if (pw.length < 4) { el('signMsg').textContent = 'Enter the instructor password.'; return; }
     el('go').disabled = true;
-    sha256Hex(pw).then(importKey).then(function (k) {
+    sha256Hex(pw).then(function (h) { S.keyHex = h; return importKey(h); }).then(function (k) {
       S.key = k; el('pw').value = ''; pw = null;
       el('signin').hidden = true; el('console').hidden = false;
       el('who').textContent = 'Signed in · password kept in this tab only';
-      drawTabs(); drawActions(); loadStatus(); drawApprovals(); showView();
+      drawTabs(); drawActions(); loadStatus(); drawApprovals(); showView(); loadReview(true);
     }).catch(function (e) { el('signMsg').textContent = e.message; }).then(function () { el('go').disabled = false; });
   }
   function signOut() { S.key = null; location.reload(); }
@@ -174,10 +174,11 @@
   // ---------------------------------------------------------------- approvals
   var ROSTER = null;
   function showView() {
-    var ap = location.hash === '#approvals';
-    el('approvals').hidden = !ap; el('kiosks').hidden = ap;
-    el('vKiosks').className = ap ? '' : 'on'; el('vApprovals').className = ap ? 'on' : '';
-    if (ap && !ROSTER) loadRoster();
+    var ap = location.hash === '#approvals', rv = location.hash === '#review';
+    el('approvals').hidden = !ap; el('review').hidden = !rv; el('kiosks').hidden = ap || rv;
+    el('vKiosks').className = (ap || rv) ? '' : 'on'; el('vApprovals').className = ap ? 'on' : ''; el('vReview').className = rv ? 'on' : '';
+    if ((ap || rv) && !ROSTER) loadRoster();
+    if (rv && S.key) loadReview();
   }
   window.addEventListener('hashchange', showView);
   function drawApprovals() {
@@ -208,44 +209,141 @@
     }).catch(function (e) { el('apHas').textContent = e.message; });
   }
   function badgeName(id) { var b = FS.BADGES.filter(function (x) { return x.id === id; })[0]; return b ? b.name : id; }
+  // The badge rules a sign-off must respect, from the kiosk snapshot
+  // (data.json: tier, badges, totalMs). Returns null (fine), {stop: msg}
+  // (refuse) or {ask: msg} (the snapshot cannot tell - ask the instructor).
+  //   minTier  (2026-10-06): Mentor is for Tier 2 pilots
+  //   minHours (2026-10-07): Sim Flight is judged only after 5 sim hours
+  //   checkpoint (2026-10-08): a tier's checkpoint needs the rest of the tier;
+  //            asked rather than refused, because an approval filed a minute
+  //            ago may not be in the snapshot yet - and the kiosks will not
+  //            count it until the tier is done anyway
+  function rosterPilot(s) { return (ROSTER && ROSTER.pilots || []).filter(function (p) { return FS.slug(p.name) === s; })[0]; }
+  function checkRules(pilot, bd) {
+    if (!bd) return null;
+    var rp = rosterPilot(FS.slug(pilot));
+    if (bd.minTier != null) {
+      if (rp && rp.tier != null && rp.tier < bd.minTier) return { stop: bd.name + ' is for Tier ' + bd.minTier + ' pilots - ' + pilot + ' is on Tier ' + rp.tier + '. Not filed.' };
+      if (!rp || rp.tier == null) return { ask: 'The kiosk has not published ' + pilot + '’s tier. ' + bd.name + ' is for Tier ' + bd.minTier + ' pilots, and it will not count until they are one. File it anyway?' };
+    }
+    if (bd.minHours) {
+      var hrs = rp ? (rp.totalMs || 0) / 3600000 : 0;
+      if (hrs < bd.minHours) return { stop: bd.name + ' needs ' + bd.minHours + ' h in the sim before it can be judged - ' + pilot + ' has ' + hrs.toFixed(1) + ' h at the kiosk. Not filed.' };
+    }
+    if (bd.checkpoint) {
+      var held = (rp && rp.badges) || [];
+      var missing = FS.mates(bd).filter(function (m) { return held.indexOf(m.id) < 0; });
+      if (missing.length) return { ask: bd.name + ' is the checkpoint for its tier. The kiosk snapshot shows ' + pilot + ' still needs: ' +
+        missing.map(function (m) { return m.name; }).join(', ') + '. It will not count until those are done. File it anyway?' };
+    }
+    return null;
+  }
   // Sign the decision with the instructor password (same key as commands) and
   // file it. Signature: HMAC over "v1a\n<slug>\n<badge>\n<status>\n<at>".
+  function fileAward(pilot, badge, status, note, evidence) {
+    var at = Date.now(), s = FS.slug(pilot);
+    return hmac('v1a\n' + s + '\n' + badge + '\n' + status + '\n' + at).then(function (sig) {
+      return api('POST', '/api/award', { pilot: pilot, badge: badge, status: status, at: at, note: note, evidence: evidence, sig: sig });
+    });
+  }
   function award(status) {
-    var pilot = el('apPilot').value.trim(), badge = el('apBadge').value, note = el('apNote').value.trim(), at = Date.now();
+    var pilot = el('apPilot').value.trim(), badge = el('apBadge').value, note = el('apNote').value.trim();
     if (pilot.length < 2) { el('apPilot').focus(); return; }
-    var s = FS.slug(pilot), msg = el('apMsg');
-    // minTier (2026-10-06): Mentor is for Tier 2 pilots. The tier comes from
-    // the kiosk snapshot (data.json `tier`, the tier the pilot is ON). Below it:
-    // refuse. Not published yet: ask, because the kiosks would not count the
-    // badge anyway until the pilot gets there.
+    var msg = el('apMsg');
     var bd = FS.BADGES.filter(function (x) { return x.id === badge; })[0];
-    if (status === 'earned' && bd && bd.minTier != null) {
-      var rp = (ROSTER && ROSTER.pilots || []).filter(function (p) { return FS.slug(p.name) === s; })[0];
-      if (rp && rp.tier != null && rp.tier < bd.minTier) {
-        msg.textContent = bd.name + ' is for Tier ' + bd.minTier + ' pilots - ' + pilot + ' is on Tier ' + rp.tier + '. Not filed.';
-        return;
-      }
-      if (!rp || rp.tier == null) {
-        if (!window.confirm('The kiosk has not published ' + pilot + '\u2019s tier. ' + bd.name + ' is for Tier ' + bd.minTier + ' pilots, and it will not count until they are one. File it anyway?')) { msg.textContent = 'Not filed.'; return; }
-      }
-    }
-    // minHours (2026-10-07): the Sim Checkride is judged only after 5 sim hours.
-    // Hours come from the kiosk snapshot (totalMs). Short: refuse.
-    if (status === 'earned' && bd && bd.minHours) {
-      var rh = (ROSTER && ROSTER.pilots || []).filter(function (p) { return FS.slug(p.name) === s; })[0];
-      var hrs = rh ? (rh.totalMs || 0) / 3600000 : 0;
-      if (hrs < bd.minHours) {
-        msg.textContent = bd.name + ' needs ' + bd.minHours + ' h in the sim before it can be judged - ' + pilot + ' has ' + hrs.toFixed(1) + ' h at the kiosk. Not filed.';
-        return;
-      }
+    if (status === 'earned') {
+      var rule = checkRules(pilot, bd);
+      if (rule && rule.stop) { msg.textContent = rule.stop; return; }
+      if (rule && rule.ask && !window.confirm(rule.ask)) { msg.textContent = 'Not filed.'; return; }
     }
     msg.textContent = 'signing…';
-    hmac('v1a\n' + s + '\n' + badge + '\n' + status + '\n' + at).then(function (sig) {
-      return api('POST', '/api/award', { pilot: pilot, badge: badge, status: status, at: at, note: note, evidence: ['dm'], sig: sig });
-    }).then(function () {
+    fileAward(pilot, badge, status, note, ['dm']).then(function () {
       msg.textContent = (status === 'earned' ? 'Approved: ' : 'Revoked: ') + badgeName(badge) + ' for ' + pilot + ' · on file; the kiosks pick it up on their next sync.';
       showHas(); ROSTER = null; loadRoster();
     }).catch(function (e) { msg.textContent = 'Could not file it: ' + e.message; });
+  }
+
+  // ---------------------------------------------------------------- photo review (2026-10-08)
+  // Pilots submit photos from flightschool/; the club API keeps them in the
+  // private control repo. Reading the queue and deciding needs the review key
+  // = hex SHA-256 of the instructor password (S.keyHex), sent as a header and
+  // checked by the API against REVIEW_KEY_HASH (its SHA-256). Pass = the signed
+  // award above plus the review record; Fail = the review record only.
+  function reviewHeaders() { return { 'X-Review-Key': S.keyHex || '' }; }
+  function loadReview(countOnly) {
+    if (!S.keyHex) return;
+    if (!countOnly) el('rvMsg').textContent = 'Loading…';
+    api('GET', '/api/submission?review=1', null, reviewHeaders()).then(function (j) {
+      var items = j.items || [];
+      el('rvCount').textContent = items.length ? String(items.length) : '';
+      el('rvSetup').hidden = true;
+      if (countOnly) return;
+      el('rvMsg').textContent = items.length ? items.length + ' photo' + (items.length === 1 ? '' : 's') + ' waiting, oldest first.' : 'Nothing waiting for review.';
+      drawReview(items);
+    }).catch(function (e) {
+      if (e.status === 503) {
+        sha256Hex(S.keyHex).then(function (h) {
+          var box = el('rvSetup'); box.hidden = false; box.textContent = '';
+          var p1 = document.createElement('div');
+          p1.textContent = 'Photo review is not set up yet. On the brophy-uav-api Netlify site, add the environment variable REVIEW_KEY_HASH with this value, then redeploy (it is a hash of a hash of the instructor password - safe to paste):';
+          var c = document.createElement('code'); c.textContent = h;
+          box.appendChild(p1); box.appendChild(c);
+        });
+        if (!countOnly) el('rvMsg').textContent = '';
+        return;
+      }
+      if (!countOnly) el('rvMsg').textContent = 'Could not load the queue: ' + e.message;
+    });
+  }
+  function drawReview(items) {
+    var list = el('rvList'); list.textContent = '';
+    items.forEach(function (it) {
+      var bd = FS.BADGES.filter(function (x) { return x.id === it.badge; })[0];
+      var card = document.createElement('div'); card.className = 'rv';
+      var ph = document.createElement('div'); ph.className = 'ph'; ph.textContent = 'Loading photo…';
+      var who = document.createElement('div'); who.innerHTML = '<b></b> · <span></span>';
+      who.querySelector('b').textContent = it.pilot; who.querySelector('span').textContent = bd ? bd.name : it.badge;
+      var meta = document.createElement('div'); meta.className = 'meta';
+      meta.textContent = new Date(it.at).toLocaleString() + (it.note ? ' · “' + it.note + '”' : '');
+      var rule = checkRules(it.pilot, bd), warn = null;
+      if (rule) { warn = document.createElement('div'); warn.className = 'warn'; warn.textContent = rule.stop || rule.ask.replace(/ File it anyway\?$/, ''); }
+      var note = document.createElement('input'); note.placeholder = 'Note to the pilot (say why, if it fails)'; note.maxLength = 300;
+      var row = document.createElement('div'); row.className = 'row';
+      var pass = document.createElement('button'); pass.className = 'primary'; pass.textContent = 'Pass';
+      var fail = document.createElement('button'); fail.className = 'danger'; fail.textContent = 'Fail';
+      row.appendChild(pass); row.appendChild(fail);
+      [ph, who, meta].concat(warn ? [warn] : []).concat([note, row]).forEach(function (n) { card.appendChild(n); });
+      list.appendChild(card);
+      api('GET', '/api/submission?photo=' + encodeURIComponent(it.photo), null, reviewHeaders()).then(function (j) {
+        var img = document.createElement('img'); img.alt = 'photo from ' + it.pilot; img.src = 'data:' + (j.type || 'image/jpeg') + ';base64,' + j.base64;
+        img.onclick = function () { ph.classList.toggle('big'); };
+        ph.textContent = ''; ph.appendChild(img);
+      }).catch(function (e) { ph.textContent = 'Could not load the photo: ' + e.message; });
+      function decide(result) {
+        pass.disabled = fail.disabled = true;
+        var first = Promise.resolve();
+        if (result === 'pass') {
+          var r = checkRules(it.pilot, bd);
+          if (r && r.stop) { window.alert(r.stop.replace(/ Not filed\.$/, ' Fail it with a note, or wait.')); pass.disabled = fail.disabled = false; return; }
+          if (r && r.ask && !window.confirm(r.ask)) { pass.disabled = fail.disabled = false; return; }
+          first = fileAward(it.pilot, it.badge, 'earned', 'photo review' + (note.value.trim() ? ': ' + note.value.trim() : ''), ['photo:' + it.id]);
+        }
+        first.then(function () {
+          return api('POST', '/api/submission', { action: 'review', pilot: it.pilot, id: it.id, result: result, note: note.value.trim() }, reviewHeaders());
+        }).then(function () {
+          var d = document.createElement('div'); d.className = 'done ' + result;
+          d.textContent = result === 'pass' ? 'Passed - the badge is on file; the kiosks pick it up on their next sync.' : 'Failed - the pilot sees your note and can send a new photo.';
+          row.replaceWith(d); note.disabled = true;
+          var n = +(el('rvCount').textContent || 0) - 1; el('rvCount').textContent = n > 0 ? String(n) : '';
+          if (result === 'pass') { ROSTER = null; loadRoster(); }
+        }).catch(function (e) {
+          pass.disabled = fail.disabled = false;
+          window.alert('Could not record it: ' + e.message);
+        });
+      }
+      pass.onclick = function () { decide('pass'); };
+      fail.onclick = function () { decide('fail'); };
+    });
   }
   function badgeInfo() {
     var b = FS.BADGES.filter(function (x) { return x.id === el('apBadge').value; })[0];
@@ -278,5 +376,6 @@
   el('go').onclick = signIn;
   el('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') signIn(); });
   el('refresh').onclick = loadStatus;
+  el('rvRefresh').onclick = function () { loadReview(); };
   el('signout').onclick = signOut;
 })();

@@ -790,12 +790,12 @@ var GS_MODULES = [
     blurb:'The part that hurts people: voltages, the math, charging and storage, and what to do when a pack goes bad.' },
   { code:'ELC', badge:'electrical-components', tier:1, name:'Electrical Components', mins:14,
     blurb:'Six parts, how thrust and yaw happen, and how to pick a motor, ESC, prop and pack that agree with each other.' },
-  { code:'RAD', badge:'radio-protocol',        tier:1, name:'Radio Protocol',        mins:28,
-    blurb:'Why analog turns to snow and digital falls off a cliff, Raceband, antennas, the control link, failsafe, a gym full of phones, and setting up a digital video system to record.' },
+  { code:'RAD', badge:'radio-protocol',        tier:1, name:'Radio Protocol',        mins:29,
+    blurb:'Radio is light you cannot see; why analog turns to snow and digital falls off a cliff, Raceband, antennas, the control link, failsafe, a gym full of phones, and setting up a digital video system to record.' },
   { code:'EVT', badge:'event-ops',             tier:2, name:'Event Ops',             mins:39,
     blurb:'Whether you may fly there at all - Class B over Brophy, B4UFLY, LAANC and TRUST - then the flight zone, the brief, the calls and the handover, then what to do when it goes wrong: failsafe, lost video, flyaway, fire, injury, and the report written the same day.' },
   { code:'FLY', badge:null,                    tier:0, name:'Flight prep',           mins:41,
-    blurb:'Sticks, hover, orientation and the tricks: the drills mentors expect you to have done before the Sim Checkride, Line of Sight and Freestyle Flight. No quiz - those badges are watched, not tested.' }
+    blurb:'Sticks, hover, orientation and the tricks: the drills mentors expect you to have done before Sim Flight, Line of Sight and Freestyle Flight. No quiz - those badges are watched, not tested.' }
 ];
 
 /* ---------------------------------------------------------------------------
@@ -1011,8 +1011,18 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-rad-01', mod:'RAD', ord:10, title:'Analog against digital', mins:3, kind:'read', extra:'signal',
+  id:'gs-rad-01', mod:'RAD', ord:10, title:'Analog against digital', mins:4, kind:'read', extra:'signal',
   cards:[
+    { h:'Radio is light you cannot see', tab:'It is light',
+      p:['Your control link, your video and the light from the sun are the same thing: <b>electromagnetic waves</b>, all moving at the speed of light. The only difference is the <b>frequency</b> - how many waves pass each second - and the wavelength that comes with it.',
+         'Higher frequency means a shorter wave. Shorter waves carry more data but are stopped more easily by walls, leaves and people - which is why 5.8 GHz video breaks up behind a tree that 900 MHz control goes straight through.'],
+      facts:[
+        { n:'900 MHz', l:'33 cm wave - long-range control', c:'sky' },
+        { n:'2.4 GHz', l:'12.5 cm - ELRS control, Wi-Fi' },
+        { n:'5.8 GHz', l:'5 cm - the video link', c:'amber' },
+        { n:'~500 THz', l:'visible light - the same wave, far faster', c:'rust' }
+      ],
+      tip:'Wavelength = speed of light / frequency. Antennas are cut to a fraction of the wavelength, which is why a 5.8 GHz antenna is tiny and a 900 MHz one is not.' },
     { h:'One way, and nothing comes back', tab:'One way only',
       p:['A tiny transmitter on the aircraft throws a picture at your goggles on <b>5.8 GHz</b>. There is no handshake, no retry, no acknowledgement. Whatever arrives is what you fly on.',
          'Two families do this very differently, and the difference decides how you fly.'],
@@ -1330,10 +1340,10 @@ var GS_COURSE = [
       ],
       art:'propsOff', cap:'the sheet by the sims' },
     { h:'Who may fly what', tab:'Tiers',
-      p:['The badges are not decoration. They are the club\'s answer to <b>who may touch which drone</b>, and that answer is checked before gear comes out of the case.'],
+      p:['The badges are not decoration. They are the club\'s answer to <b>who may touch which drone</b>, and that answer is checked before gear comes out of the case. Every tier ends in a <b>checkpoint</b>: a flight a mentor watches once the rest of the tier is done. Pass it and you are on the next tier.'],
       cols:{ tone:'vs', ha:'You may', hb:'Only once',
-        a:['Fly any sim, any day','Fly the Meteor 75','Fly the Pavo, the Cinebot, a 5-inch','Fly at a game or rally'],
-        b:['you have a name at the kiosk','all six Tier 0 badges are signed','all six Tier 1 badges are signed','all six Tier 2 badges, with a spotter'] },
+        a:['Fly any sim, any day','Fly the Meteor 75 for your Tiny Whoop checkpoint','Fly the Meteor 75 on your own, and the Pavo for your checkpoint','Fly the Pavo, the Cinebot, a 5-inch','Fly at a game or rally'],
+        b:['you have a name at the kiosk','the other seven Tier 0 badges are done, with a mentor','you passed Tiny Whoop: you are Tier 1','you passed the Pavo 20 Pro Flight: you are Tier 2','for your Event Pilot checkpoint, with a spotter and a mentor'] },
       tip:'Ask before you assume. A mentor can look you up on the kiosk in ten seconds.' },
     { h:'What breaks the rule', tab:'Edge cases',
       p:['Most rule breaks are not rebellion, they are shortcuts. The three below are the ones the club actually sees.'],
@@ -1743,6 +1753,12 @@ var GS_QUIZ = [
 { mod:'RAD', q:'Outdoors on a bright day the footage looks jittery and over-sharp. What goes on the lens?',
   opts:['A wider lens','An ND filter','Nothing, raise the frame rate','A polariser only'], a:1,
   why:'An ND filter is sunglasses for the camera: it lets the shutter slow down so motion blurs naturally.' },
+{ mod:'RAD', q:'What do a radio control link and visible light have in common?',
+  opts:['Nothing - radio is a kind of sound','Both are electromagnetic waves moving at the speed of light','Both need air to travel through','Both are stopped by glass'], a:1,
+  why:'Radio, the video link and light are all electromagnetic waves. Only the frequency, and so the wavelength, is different.' },
+{ mod:'RAD', q:'Why does 5.8 GHz video break up behind a tree when 900 MHz control does not?',
+  opts:['5.8 GHz is limited to less power by law','Its shorter wavelength is soaked up more easily by leaves and water','Trees only block digital video','900 MHz bends around everything'], a:1,
+  why:'Higher frequency means a shorter wave: more data, but leaves, walls and people stop it. Lower frequencies get through.' },
 { mod:'SAF', q:'Somebody walks into the flying area while you are up. What do you do?',
   opts:['Fly around them and keep going','Hover in place until they leave','Land','Climb above them'], a:2,
   why:'You land. Flying around a person keeps a moving aircraft near them, and hovering just makes the decision later.' },
@@ -1860,9 +1876,9 @@ var GS_QUIZ = [
 { mod:'SAF', q:'Where is the only place you arm?',
   opts:['Anywhere the props are clear','On the pad, in the flight zone, after the ARMING call','On the bench, to walk it to the pad','Wherever the spotter is standing'], a:1,
   why:'Arm on the pad, facing away, after the call. Arming anywhere else puts a spinning quad next to people.' },
-{ mod:'SAF', q:'A pilot holds every Tier 0 badge. What may they fly?',
-  opts:['Anything in the club case','The Meteor 75, with the gear signed out','The Pavo 20 Pro at an event','Only the simulator until an instructor says otherwise'], a:1,
-  why:'All six Tier 0 badges open Gate 1: the Meteor. Full-size needs the six Tier 1 badges; events need Tier 2 and a spotter.' },
+{ mod:'SAF', q:'A pilot has every Tier 0 badge except the Tiny Whoop checkpoint. What may they fly?',
+  opts:['Anything in the club case','The Meteor 75, for their checkpoint flight with a mentor','The Pavo 20 Pro at an event','Nothing until an officer signs a form'], a:1,
+  why:'The rest of Tier 0 opens the checkpoint: a first real Meteor flight with a mentor watching. Pass it and you are Tier 1; the Pavo checkpoint opens Tier 2.' },
 { mod:'SAF', q:'The instructor says "LAND" while you are halfway through a line. You:',
   opts:['Finish the line, then land','Ask why over the noise','Land now','Hover and wait for a second call'], a:2,
   why:'LAND means now. The reason comes after the props stop.' },

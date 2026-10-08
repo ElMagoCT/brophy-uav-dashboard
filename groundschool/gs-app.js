@@ -863,6 +863,19 @@ var GSApp = (function(){
       var oPts = Math.round(orientScore / 100 * ORIENT_PTS);
       var total = qPts + hPts + oPts;
       var passed = total >= S.passScore;
+      /* First pass of a badge quiz: confetti here, and tell the bridge the
+         badge has been celebrated so the dash (on this kiosk or the other one)
+         does not pop it up again. On the website gs-web.js answers that call
+         from this device's storage. 2026-10-08. */
+      if(POOL && passed && (rec(S.lesson.def.id).score || 0) < S.passScore){
+        var bid = null;
+        GS_MODULES.forEach(function(M){ if(M.code === S.lesson.def.mod && M.badge) bid = M.badge; });
+        try{ if(window.FPVConfetti) FPVConfetti.burst(); }catch(e){}
+        if(bid){
+          try{ fetch(API + '/api/badges/celebrated', { method:'POST', headers:{'Content-Type':'application/json'},
+                 body: JSON.stringify({ ids:[bid] }) }).catch(function(){}); }catch(e){}
+        }
+      }
 
       body.innerHTML = '';
       var card = h('div','scorecard');
