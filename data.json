@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791487595276,
-    "generatedIso":  "2026-10-08T12:26:35-07:00",
+    "generated":  1791487656792,
+    "generatedIso":  "2026-10-08T12:27:37-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,12 +9,12 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  372840279,
+                   "clubMs":  372900342,
                    "pilots":  38,
                    "activePilots7":  21,
                    "sims":  5,
                    "perSimMs":  {
-                                    "liftoff":  265267445.95429969,
+                                    "liftoff":  265327509.10379967,
                                     "microdrones":  105683533.3391003,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
@@ -339,9 +339,9 @@
                    },
                    {
                        "name":  "Henry P.",
-                       "totalMs":  7380601,
+                       "totalMs":  7440664,
                        "perSimMs":  {
-                                        "liftoff":  7380601,
+                                        "liftoff":  7440664,
                                         "microdrones":  0,
                                         "skydive":  0,
                                         "fpvlabs":  0,
@@ -349,7 +349,7 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791487594541,
+                       "lastSeen":  1791487654606,
                        "badges":  [
 
                                   ],
