@@ -442,7 +442,7 @@ nav.crumbs a:hover,nav.crumbs a[aria-current]{color:var(--ink);text-decoration:u
       <div class="eyebrow" style="margin:0;flex:1">
         <h2 id="fsHead">Flight School</h2>
         <span class="rule"></span>
-        <span class="hint">23 badges in four tiers &middot; quizzes, bench work and witnessed skills &middot; badges unlock the gear</span>
+        <span class="hint">18 badges in four tiers, plus bonus badges &middot; quizzes, bench work and witnessed skills &middot; badges unlock the gear</span>
       </div>
       <div class="btnrow">
         <a class="btn" href="groundschool/">Lessons &rarr;</a>
@@ -450,10 +450,10 @@ nav.crumbs a:hover,nav.crumbs a[aria-current]{color:var(--ink);text-decoration:u
       </div>
     </div>
     <div class="tiers">
-      <a class="card tier" href="flightschool/#t0" style="--c:var(--sky)"><span class="tn">Tier 0</span><span class="nm">Simulator</span><span class="s">The five sims in the IC. Have a name. Log 7.5 hours, pass Safe Flight and Battery Care, flash a Meteor.</span><span class="g">7 badges &rarr; Gate 1</span></a>
+      <a class="card tier" href="flightschool/#t0" style="--c:var(--sky)"><span class="tn">Tier 0</span><span class="nm">Simulator</span><span class="s">The five sims in the IC. Have a name. Log 5 hours and fly your Sim Checkride, pass Safe Flight and Battery Care, flash a Meteor.</span><span class="g">6 badges &rarr; Gate 1</span></a>
       <a class="card tier" href="flightschool/#t1" style="--c:var(--violet)"><span class="tn">Tier 1</span><span class="nm">Tiny Whoop</span><span class="s">Meteor 75 Pro, sub-250 g. Your first real flight.</span><span class="g">6 badges &rarr; Gate 2</span></a>
       <a class="card tier" href="flightschool/#t2" style="--c:var(--rust)"><span class="tn">Tier 2</span><span class="nm">Full-size</span><span class="s">Pavo 20 Pro &middot; Cinebot 35 &middot; 5-inch.</span><span class="g">6 badges &rarr; Gate 3</span></a>
-      <a class="card tier" href="flightschool/#t3" style="--c:var(--green)"><span class="tn">Tier 3</span><span class="nm">Event Pilot</span><span class="s">Any Tier 2 airframe at a school event, with a spotter.</span><span class="g">+ 4 electives</span></a>
+      <a class="card tier" href="flightschool/#t3" style="--c:var(--green)"><span class="tn">Tier 3</span><span class="nm">Event Pilot</span><span class="s">Any Tier 2 airframe at a school event, with a spotter.</span><span class="g">+ 4 bonus badges</span></a>
     </div>
   </section>
 
@@ -701,6 +701,10 @@ function renderStats(){
   $('stats').innerHTML = html;
 }
 
+/* Bonus badges (2026-10-07) - extra, never counted in a pilot's badge total.
+   Same ids as tier 'el' in flightschool/badges.js. */
+var BONUS_BADGES = { editing: 1, tuning: 1, 'fleet-steward': 1, mentor: 1 };
+
 function renderBoard(){
   var pilots = DATA.pilots || [];
   if (!pilots.length){
@@ -716,7 +720,7 @@ function renderBoard(){
     var medal = i < 3 && p.totalMs > 0 ? ' medal m' + (i + 1) : '';
 
     var meta = [];
-    if (p.tier != null) meta.push('<span class="gs">Tier ' + p.tier + (p.badges ? ' · ' + p.badges.length + ' badges' : '') + '</span>');
+    if (p.tier != null) meta.push('<span class="gs">Tier ' + p.tier + (p.badges ? ' · ' + p.badges.filter(function (id) { return !BONUS_BADGES[id]; }).length + ' badges' : '') + '</span>');
     else if (p.gsPct > 0) meta.push('<span class="gs">Ground School ' + p.gsPct + '%</span>');
     if (p.gsLessons > 0) meta.push(p.gsLessons + (p.gsLessons === 1 ? ' lesson' : ' lessons') + ' passed');
 

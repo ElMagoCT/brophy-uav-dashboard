@@ -113,9 +113,10 @@ def render(s, fs, prev_count):
     n_left = (n + 1) // 2
     cards = []
     for i, b in enumerate(badges, 1):
-        label = 'Elective' if electives else 'Tier %d · pt. %d' % (tier_n, i)
+        label = 'Bonus' if electives else 'Tier %d · pt. %d' % (tier_n, i)
         if b['id'] in TAGS: label += ' · ' + TAGS[b['id']]
         if b.get('minTier'): label += ' · Tier %d pilots' % b['minTier']
+        if b.get('minHours'): label += ' · after %g sim h' % b['minHours']
         cards.append(card_html(b, label, fs, '★' if electives else str(i)).replace('<div class="card" ', '<div class="card" data-i="%d" ' % i, 1))
     d = s['dir']
     gate = ''
@@ -133,7 +134,7 @@ def render(s, fs, prev_count):
         t, sub = s['summit']
         summit = ('<div class="summit"><div class="sc"><div class="lab">Tier 3 · the top</div>'
                   '<div class="nm">%s</div><div class="ds">%s</div></div><span class="peak"></span></div>'
-                  '<div class="sidequest">Side quests &middot; electives &middot; any order, any time</div>' % (esc(t), esc(sub)))
+                  '<div class="sidequest">Bonus badges &middot; any order, any time &middot; not counted</div>' % (esc(t), esc(sub)))
     extra = ''
     if electives:
         extra = ('<div class="p107"><b>PART 107</b>Want the real commercial licence? The club runs a study group. '
@@ -144,7 +145,7 @@ def render(s, fs, prev_count):
         prereq = 'Gate 3 — all %s Tier 2 badges' % WORDS[prev_count]
     else:
         prereq = 'Gate %d — all %s Tier %d badges' % (tier_n, WORDS[prev_count], tier_n - 1)
-    onsheet = ('The top · plus %d electives, any order' % n) if electives else \
+    onsheet = ('The top · plus %d bonus badges, any order' % n) if electives else \
               '%d badges · all of them to pass Gate %d' % (n, tier_n + 1)
     kinds = {}
     for b in badges: kinds[b['type']] = kinds.get(b['type'], 0) + 1

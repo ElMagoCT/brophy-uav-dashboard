@@ -3,7 +3,7 @@
    ---------------------------------------------------------------------------
    Data only. No behaviour. Three exports:
 
-     GS_MODULES  one module per knowledge badge (five since 2026-10-06: Airspace folded into Safe Flight, Emergency Procedures into Event Ops, Video Systems into Radio Protocol), plus FLY for the flight drills (Flight School v2, 2026-10-04; was seven modules before
+     GS_MODULES  one module per knowledge badge (five since 2026-10-06: Emergency Procedures folded into Event Ops, Video Systems into Radio Protocol; Airspace into Safe Flight, then on 2026-10-07 into Event Ops), plus FLY for the flight drills (Flight School v2, 2026-10-04; was seven modules before
                  M6 Checkride on purpose - the checkride stays last on screen)
      GS_COURSE   the twenty-two lessons, in order
      GS_QUIZ     the checkride question pool (M1-M5 only - tricks are not
@@ -784,18 +784,18 @@ var GS_MODULES = [
   /* One module per knowledge badge (Flight School v2, 2026-10-04). code is the
      lesson-id stem; badge is the catalogue id in config.json / badges.js.
      FLY has no badge: it holds the drills the witnessed flight badges use. */
-  { code:'SAF', badge:'safe-flight',           tier:0, name:'Safe Flight',           mins:23,
-    blurb:'Who flies, who watches, the four calls, the rules sheet by the sims, the basics of the airspace over Brophy, and the go / no-go call. Pass the quiz, earn the badge.' },
+  { code:'SAF', badge:'safe-flight',           tier:0, name:'Safe Flight',           mins:16,
+    blurb:'Who flies, who watches, the four calls, the rules sheet by the sims, and the go / no-go call. Pass the quiz, earn the badge.' },
   { code:'BAT', badge:'battery-care',          tier:0, name:'Battery Care',          mins:14,
     blurb:'The part that hurts people: voltages, the math, charging and storage, and what to do when a pack goes bad.' },
   { code:'ELC', badge:'electrical-components', tier:1, name:'Electrical Components', mins:14,
     blurb:'Six parts, how thrust and yaw happen, and how to pick a motor, ESC, prop and pack that agree with each other.' },
   { code:'RAD', badge:'radio-protocol',        tier:1, name:'Radio Protocol',        mins:28,
     blurb:'Why analog turns to snow and digital falls off a cliff, Raceband, antennas, the control link, failsafe, a gym full of phones, and setting up a digital video system to record.' },
-  { code:'EVT', badge:'event-ops',             tier:2, name:'Event Ops',             mins:32,
-    blurb:'The flight zone, the brief, the calls and the handover, then what to do when it goes wrong: failsafe, lost video, flyaway, fire, injury, and the report written the same day.' },
+  { code:'EVT', badge:'event-ops',             tier:2, name:'Event Ops',             mins:39,
+    blurb:'Whether you may fly there at all - Class B over Brophy, B4UFLY, LAANC and TRUST - then the flight zone, the brief, the calls and the handover, then what to do when it goes wrong: failsafe, lost video, flyaway, fire, injury, and the report written the same day.' },
   { code:'FLY', badge:null,                    tier:0, name:'Flight prep',           mins:41,
-    blurb:'Sticks, hover, orientation and the tricks: the drills mentors expect you to have done before Proficient Flight, Line of Sight and Freestyle Flight. No quiz - those badges are watched, not tested.' }
+    blurb:'Sticks, hover, orientation and the tricks: the drills mentors expect you to have done before the Sim Checkride, Line of Sight and Freestyle Flight. No quiz - those badges are watched, not tested.' }
 ];
 
 /* ---------------------------------------------------------------------------
@@ -845,7 +845,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-asp-01', mod:'SAF', ord:22, title:'Class B, 400 ft and Sky Harbor', mins:3, kind:'read',
+  id:'gs-asp-01', mod:'EVT', ord:3, title:'Class B, 400 ft and Sky Harbor', mins:3, kind:'read',
   cards:[
     { h:'Two ways to be legal',
       p:['Money is not what decides which one you are. <b>Purpose</b> is - a video for the club or a shot for a class project counts, paid or not.'],
@@ -1333,7 +1333,7 @@ var GS_COURSE = [
       p:['The badges are not decoration. They are the club\'s answer to <b>who may touch which drone</b>, and that answer is checked before gear comes out of the case.'],
       cols:{ tone:'vs', ha:'You may', hb:'Only once',
         a:['Fly any sim, any day','Fly the Meteor 75','Fly the Pavo, the Cinebot, a 5-inch','Fly at a game or rally'],
-        b:['you have a name at the kiosk','all seven Tier 0 badges are signed','all six Tier 1 badges are signed','all eight Tier 2 badges, with a spotter'] },
+        b:['you have a name at the kiosk','all six Tier 0 badges are signed','all six Tier 1 badges are signed','all six Tier 2 badges, with a spotter'] },
       tip:'Ask before you assume. A mentor can look you up on the kiosk in ten seconds.' },
     { h:'What breaks the rule', tab:'Edge cases',
       p:['Most rule breaks are not rebellion, they are shortcuts. The three below are the ones the club actually sees.'],
@@ -1347,7 +1347,7 @@ var GS_COURSE = [
   id:'gs-saf-quiz', mod:'SAF', ord:90, title:'Safe Flight quiz', mins:6, kind:'quiz', pool:'SAF',
   cards:[
     { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
-      p:['Ten questions drawn from the Safe Flight pool - the rules, the calls, and the basics of the airspace over Brophy - reshuffled every time. <b>80 to pass</b> earns the badge on the spot - no sign-off needed. Unlimited retakes; your best score is kept.'] }
+      p:['Ten questions drawn from the Safe Flight pool - the rules, the calls and the go / no-go - reshuffled every time. <b>80 to pass</b> earns the badge on the spot - no sign-off needed. Unlimited retakes; your best score is kept.'] }
   ]
 },
 {
@@ -1540,7 +1540,7 @@ var GS_COURSE = [
   ]
 },
 {
-  id:'gs-asp-02', mod:'SAF', ord:24, title:'B4UFLY, LAANC and TRUST', mins:4, kind:'read',
+  id:'gs-asp-02', mod:'EVT', ord:6, title:'B4UFLY, LAANC and TRUST', mins:4, kind:'read',
   cards:[
     { h:'Three letters you need', tab:'The three',
       p:['Recreational flying in the United States comes with three things every club pilot carries: a <b>TRUST</b> certificate, a <b>B4UFLY</b> check of where you are standing, and - inside controlled airspace - a <b>LAANC</b> authorization before take-off.'],
@@ -1722,7 +1722,7 @@ var GS_COURSE = [
   id:'gs-evt-quiz', mod:'EVT', ord:90, title:'Event Ops quiz', mins:6, kind:'quiz', pool:'EVT',
   cards:[
     { h:'Ten questions. Eight to pass.', tab:'How it works', art:'checkride', cap:'ten questions, eighty to pass',
-      p:['The zone, the brief, the calls and the handover, plus failsafe, flyaway, fire and the incident report. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
+      p:['The airspace check, the zone, the brief, the calls and the handover, plus failsafe, flyaway, fire and the incident report. <b>80 to pass</b> earns the badge. Unlimited retakes; best score kept.'] }
   ]
 }
 ];
@@ -1733,7 +1733,7 @@ var GS_COURSE = [
    'mod' is used for that weighting - keep it accurate when adding questions.
    --------------------------------------------------------------------------- */
 var GS_QUIZ = [
-/* --- SAF / BAT / ASP (from the old M1) --- */
+/* --- SAF / BAT / airspace (EVT since 2026-10-07) - from the old M1 --- */
 { mod:'RAD', q:'Your goggles show no picture from the quad you just powered up. Most likely cause?',
   opts:['The battery is low','The air unit is bound to a different set of goggles','The props are on backwards','The quad is too far away'], a:1,
   why:'Digital units stay bound to the last goggles that paired with them. On a shared fleet, "no picture on the bench" is almost always somebody else\'s binding.' },
@@ -1752,13 +1752,13 @@ var GS_QUIZ = [
 { mod:'SAF', q:'You need to change a Betaflight setting at the field. What comes off first?',
   opts:['The battery','The props','The antenna','Nothing, it is only a setting'], a:1,
   why:'Props off for every configuration change. A quad on a bench with props on is a loaded tool.' },
-{ mod:'SAF', q:'Your aircraft weighs 620 g with the battery in. What does the FAA need?',
+{ mod:'EVT', q:'Your aircraft weighs 620 g with the battery in. What does the FAA need?',
   opts:['Nothing, it is under 1 kg','It registered, with the number visible outside','A Part 107 certificate regardless of purpose','A LAANC authorisation for every flight'], a:1,
   why:'250 g and up gets registered, with the registration marked on the outside where you can read it without tools.' },
 { mod:'BAT', q:'A pack was in a hard crash ten minutes ago and looks fine. What now?',
   opts:['Charge it, it looks fine','Fly it again to use it up','Quarantine it and watch it for half an hour','Straight in the household bin'], a:2,
   why:'Crash damage inside a cell can start a fire minutes later. It goes in the observation bin before it goes anywhere near a charger.' },
-{ mod:'SAF', q:'A crewed helicopter comes low over the field. What is the priority?',
+{ mod:'EVT', q:'A crewed helicopter comes low over the field. What is the priority?',
   opts:['Hold position so it can see you','Land or descend immediately and give way','Climb to be more visible','Continue, they must give way to you'], a:1,
   why:'You always give way to crewed aircraft, immediately. They very likely cannot see you and could not dodge if they did.' },
 { mod:'BAT', q:'A 6S pack reads 25.2 V. What state is it in?',
@@ -1862,7 +1862,7 @@ var GS_QUIZ = [
   why:'Arm on the pad, facing away, after the call. Arming anywhere else puts a spinning quad next to people.' },
 { mod:'SAF', q:'A pilot holds every Tier 0 badge. What may they fly?',
   opts:['Anything in the club case','The Meteor 75, with the gear signed out','The Pavo 20 Pro at an event','Only the simulator until an instructor says otherwise'], a:1,
-  why:'All seven Tier 0 badges open Gate 1: the Meteor. Full-size needs the six Tier 1 badges; events need Tier 2 and a spotter.' },
+  why:'All six Tier 0 badges open Gate 1: the Meteor. Full-size needs the six Tier 1 badges; events need Tier 2 and a spotter.' },
 { mod:'SAF', q:'The instructor says "LAND" while you are halfway through a line. You:',
   opts:['Finish the line, then land','Ask why over the noise','Land now','Hover and wait for a second call'], a:2,
   why:'LAND means now. The reason comes after the props stop.' },
@@ -1932,16 +1932,16 @@ var GS_QUIZ = [
 { mod:'RAD', q:'Your link quality drops to 55 % flying over the crowd at the rally. You:',
   opts:['Keep going, the picture looks fine','Fly back toward yourself and land','Switch to a higher packet rate in flight','Climb for a better signal'], a:1,
   why:'LQ is the early warning. Come home while you still have control; the picture is the last thing to go, not the first.' },
-{ mod:'SAF', q:'Which of these must every club pilot complete before flying a real drone?',
+{ mod:'EVT', q:'Which of these must every club pilot complete before flying a real drone?',
   opts:['Part 107','TRUST','A LAANC authorization','Drone registration'], a:1,
   why:'TRUST is the free recreational test, required of every recreational flyer. Part 107 is the commercial licence; LAANC and registration depend on where and what you fly.' },
-{ mod:'SAF', q:'What is LAANC?',
+{ mod:'EVT', q:'What is LAANC?',
   opts:['A drone registration number','Near-instant authorization to fly in controlled airspace up to the grid ceiling','The app that shows airspace','A no-fly zone'], a:1,
   why:'LAANC is the system that grants recreational and 107 pilots authorization in controlled airspace, through apps like Aloft and AirHub.' },
-{ mod:'SAF', q:'Why is the campus outdoor ceiling so low in B4UFLY?',
+{ mod:'EVT', q:'Why is the campus outdoor ceiling so low in B4UFLY?',
   opts:['Because of the school\'s own rule','Because Brophy is inside Sky Harbor\'s Class B airspace','Because of the mountains','It is not - 400 ft applies everywhere'], a:1,
   why:'Phoenix Sky Harbor is Class B and the campus is in its surface area. The facility map grid there can read 0 ft.' },
-{ mod:'SAF', q:'Do FAA airspace rules apply to the rally race in the gym?',
+{ mod:'EVT', q:'Do FAA airspace rules apply to the rally race in the gym?',
   opts:['Yes, the gym is under Class B','No - indoors is not FAA airspace','Only above 100 ft','Only if the doors are open'], a:1,
   why:'Enclosed spaces are not airspace. The club rules still apply in full.' },
 { mod:'EVT', q:'What is the failsafe procedure on every quad in the club case?',

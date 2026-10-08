@@ -86,6 +86,7 @@ section{margin-top:30px}
 .badge{padding:13px 15px 13px;border-left:6px solid var(--t);display:flex;flex-direction:column;gap:6px;cursor:pointer}
 .badge .lab{display:flex;justify-content:space-between;gap:8px;font-family:var(--font-mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
 .badge .lab .type{color:var(--rust)}
+.badge .est{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.06em;color:var(--ink-soft);margin-top:6px}
 .badge .nm{font-family:var(--font-sketch);font-weight:700;font-size:23px;line-height:1;display:flex;align-items:center;gap:8px}
 .badge .nm .st{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;border-radius:6px;padding:2px 7px;background:var(--paper-2);border:1px solid var(--line-hard);color:var(--ink-soft);font-weight:400}
 .badge .nm .st.earned{background:rgba(31,82,48,.12);border-color:var(--green);color:var(--green)}
@@ -134,7 +135,7 @@ footer a{color:var(--ink)}
   <header class="title">
     <div>
       <h1>Flight <span class="a">School</span></h1>
-      <div class="sub">Brophy UAV &middot; 23 badges &middot; four tiers &middot; badges unlock the gear</div>
+      <div class="sub">Brophy UAV &middot; 18 badges &middot; four tiers &middot; badges unlock the gear &middot; plus bonus badges</div>
       <div class="stamp">sim is Tier 0</div>
     </div>
     <div class="pilot" id="pilot">
@@ -155,7 +156,7 @@ footer a{color:var(--ink)}
       <div class="card h"><div class="k">Quiz badges</div><div class="v">Short lessons, then a 10-question quiz. <b>80 % passes.</b> Retake as often as you like; your best score counts. The kiosk awards these by itself.</div></div>
       <div class="card h"><div class="k">Bench badges</div><div class="v">Step-by-step instructions on the kiosk or here. Tick the boxes as you go, <b>DM a photo</b> of your work to mtucker27@brophybroncos.org, then a mentor signs it off.</div></div>
       <div class="card h"><div class="k">Witnessed badges</div><div class="v">A mentor who holds the badge watches you do it against <b>the standard</b> written on the card. Prep drills are in Ground School.</div></div>
-      <div class="card h"><div class="k">Gates</div><div class="v">Earn every badge in a tier and the gate opens: <b>the next drone is yours to fly.</b> Electives are side quests, any time &mdash; except <b>Mentor</b>, which is for Tier 2 pilots.</div></div>
+      <div class="card h"><div class="k">Gates</div><div class="v">Earn every badge in a tier and the gate opens: <b>the next drone is yours to fly.</b> Bonus badges are extra, any time, and don&rsquo;t count toward your total &mdash; <b>Mentor</b> is for Tier 2 pilots.</div></div>
     </div>
   </section>
 
@@ -243,8 +244,8 @@ function saveProgress(p) { var all = lsGet(LS.progress, {}); if (pilot) { all[pi
 /* ---------- status per badge ---------- */
 /* The tier the picked pilot is ON: the first of Tier 0..2 with a badge not yet
    earned, 3 once Tier 2 is done. Same rule as the kiosk dash and the kiosk's
-   published `tier`. Only tiered badges count, so a badge with minTier (an
-   elective) can ask for it without going round in a circle. */
+   published `tier`. Only tiered badges count, so a badge with minTier (a
+   bonus badge) can ask for it without going round in a circle. */
 function pilotTier() {
   var order = ['t0', 't1', 't2'];
   for (var i = 0; i < order.length; i++) {
@@ -268,8 +269,20 @@ function status(b) {
       return out;
     }
   }
+  /* minHours (2026-10-07, Sim Checkride): a mentor cannot judge it until the
+     kiosk shows that many sim hours; an approval filed early does not count. */
+  if (b.minHours && pilot) {
+    var hh = kp ? (kp.totalMs || 0) / 3600000 : 0;
+    if (hh < b.minHours) {
+      var aw1 = AWARDS && AWARDS.badges && AWARDS.badges[b.id];
+      out.needHours = true; out.pct = Math.min(90, Math.round(hh / b.minHours * 90));
+      out.detail = (aw1 && aw1.status === 'earned' ? 'approved · counts once you have ' + b.minHours + ' h · ' : '') +
+        (kp ? hh.toFixed(1) + ' of ' + b.minHours + ' h logged at the kiosk' : 'hours come from the kiosk') + ' · a mentor can judge it at ' + b.minHours + ' h';
+      return out;
+    }
+  }
   if (kp && kp.badges && kp.badges.indexOf(b.id) >= 0) { out.earned = true; out.source = 'kiosk'; out.pct = 100; return out; }
-  var aw = AWARDS && AWARDS.badges && AWARDS.badges[b.id];
+  var aw =AWARDS && AWARDS.badges && AWARDS.badges[b.id];
   if (aw && aw.status === 'earned') { out.earned = true; out.source = 'instructor'; out.pct = 100; return out; }
   if (aw && aw.status === 'revoked') { out.detail = 'revoked'; return out; }
   if (b.type === 'auto') {
@@ -320,9 +333,10 @@ function nextStep() {
     if (!open.length) continue;
     var pick = open.filter(function (b) { return b.type === 'knowledge' || b.type === 'bench'; })[0] || open[0];
     var verb = { knowledge: 'do the lessons and pass the quiz', bench: 'work through the steps at the kiosk', witnessed: 'ask a mentor to watch you', auto: 'keep flying the sim' }[pick.type];
+    if (pick.minHours && status(pick).needHours) verb = 'log ' + pick.minHours + ' h in the sim, then ask a mentor to judge it';
     return '<b>Tier ' + t.n + ' · ' + (bs.length - open.length) + ' of ' + bs.length + '</b> · next: <b>' + esc(pick.name) + '</b> — ' + verb + '.';
   }
-  return '<b>Event Pilot.</b> Every gate is open. Side quests remain.';
+  return '<b>Event Pilot.</b> Every gate is open. Bonus badges remain.';
 }
 
 /* ---------- render ---------- */
@@ -341,7 +355,7 @@ function render() {
   FS.TIERS.forEach(function (t) {
     var d = tierDone(t);
     html += '<div class="tier" id="' + t.id + '" style="--c:' + t.color + '"><div class="th">' +
-      '<span class="tn">' + (t.n >= 0 ? 'Tier ' + t.n : 'Side quests') + '</span><span class="nm">' + esc(t.name) + '</span>' +
+      '<span class="tn">' + (t.n >= 0 ? 'Tier ' + t.n : 'Bonus') + '</span><span class="nm">' + esc(t.name) + '</span>' +
       '<span class="gear">' + esc(t.gear) + '</span>' +
       (pilot ? '<span class="prog' + (d.n === d.of ? ' done' : '') + '">' + d.n + ' / ' + d.of + '</span>' : '') +
       '<span class="gate">' + esc(t.gate) + '</span></div><div class="badges">';
@@ -353,6 +367,7 @@ function render() {
         '<div class="lab"><span class="type">' + type + '</span><span>' + esc(FS.TRACK[b.track]) + '</span></div>' +
         '<div class="nm">' + esc(b.name) + st + '</div>' +
         '<div class="do">' + esc(b.do) + '</div>' +
+        (b.est ? '<div class="est">Time: ' + esc(b.est) + '</div>' : '') +
         (pilot ? '<div class="meter"><i style="width:' + (s.earned ? 100 : s.pct) + '%"></i></div>' : '') +
         '<div class="more">' + more(b, s) + '</div></div>';
     });
@@ -391,7 +406,7 @@ function more(b, s) {
       h += '</ul><div class="act"><a class="btn" href="../groundschool/">Prep drills &rarr;</a></div>';
     }
     h += '<div class="std"><b>The standard</b>' + esc(b.standard || '') + '</div>';
-    h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done.' : ((b.minTier != null && s.detail) ? esc(s.detail) + '. ' : '') + 'a mentor who holds this badge watches you, then signs it off in the instructor console.') + '</div>';
+    h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done.' : (((b.minTier != null || b.minHours) && s.detail) ? esc(s.detail) + '. ' : '') + 'a mentor who holds this badge watches you, then signs it off in the instructor console.') + '</div>';
   } else if (b.type === 'auto') {
     h += '<div class="std"><b>Automatic</b>' + esc(b.standard) + (s.detail ? ' · ' + esc(s.detail) : '') + '</div>';
     h += '<div class="act"><a class="btn" href="../">Lab hours &amp; leaderboard &rarr;</a></div>';

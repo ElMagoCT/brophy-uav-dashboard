@@ -229,6 +229,16 @@
         if (!window.confirm('The kiosk has not published ' + pilot + '\u2019s tier. ' + bd.name + ' is for Tier ' + bd.minTier + ' pilots, and it will not count until they are one. File it anyway?')) { msg.textContent = 'Not filed.'; return; }
       }
     }
+    // minHours (2026-10-07): the Sim Checkride is judged only after 5 sim hours.
+    // Hours come from the kiosk snapshot (totalMs). Short: refuse.
+    if (status === 'earned' && bd && bd.minHours) {
+      var rh = (ROSTER && ROSTER.pilots || []).filter(function (p) { return FS.slug(p.name) === s; })[0];
+      var hrs = rh ? (rh.totalMs || 0) / 3600000 : 0;
+      if (hrs < bd.minHours) {
+        msg.textContent = bd.name + ' needs ' + bd.minHours + ' h in the sim before it can be judged - ' + pilot + ' has ' + hrs.toFixed(1) + ' h at the kiosk. Not filed.';
+        return;
+      }
+    }
     msg.textContent = 'signing…';
     hmac('v1a\n' + s + '\n' + badge + '\n' + status + '\n' + at).then(function (sig) {
       return api('POST', '/api/award', { pilot: pilot, badge: badge, status: status, at: at, note: note, evidence: ['dm'], sig: sig });
@@ -239,7 +249,7 @@
   }
   function badgeInfo() {
     var b = FS.BADGES.filter(function (x) { return x.id === el('apBadge').value; })[0];
-    el('apBadgeInfo').textContent = b ? ((b.minTier != null ? 'Tier ' + b.minTier + ' pilots only. ' : '') + b.do + (b.standard ? ' — Standard: ' + b.standard : '')) : '';
+    el('apBadgeInfo').textContent = b ? ((b.minTier != null ? 'Tier ' + b.minTier + ' pilots only. ' : '') + (b.minHours ? 'Only after ' + b.minHours + ' h in the sim. ' : '') + (b.tier === 'el' ? 'Bonus badge. ' : '') + b.do + (b.standard ? ' — Standard: ' + b.standard : '')) : '';
   }
   function loadRoster() {
     fetch('../data.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
