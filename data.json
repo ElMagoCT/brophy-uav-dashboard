@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791414302134,
-    "generatedIso":  "2026-10-07T16:05:02-07:00",
+    "generated":  1791437789325,
+    "generatedIso":  "2026-10-07T22:36:29-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -66,7 +66,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791396668887
+                       "lastSeen":  1791396668887,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Cyrus G.",
@@ -80,7 +84,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791317400456
+                       "lastSeen":  1791317400456,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Bode K.",
@@ -94,7 +102,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  7,
-                       "lastSeen":  1790895600068
+                       "lastSeen":  1790895600068,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Micah T.",
@@ -108,7 +120,23 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  5,
-                       "lastSeen":  1791311781417
+                       "lastSeen":  1791311781417,
+                       "badges":  [
+                                      "proficient-flight",
+                                      "spotter",
+                                      "safe-flight",
+                                      "battery-care",
+                                      "building",
+                                      "betaflight",
+                                      "line-of-sight",
+                                      "tiny-whoop",
+                                      "soldering",
+                                      "electrical-components",
+                                      "radio-protocol",
+                                      "field-repair",
+                                      "fleet-steward"
+                                  ],
+                       "tier":  1
                    },
                    {
                        "name":  "Zane R.",
@@ -122,7 +150,11 @@
                                     },
                        "gsPct":  24,
                        "gsLessons":  22,
-                       "lastSeen":  1791398342018
+                       "lastSeen":  1791398342018,
+                       "badges":  [
+                                      "proficient-flight"
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Colton O.",
@@ -136,7 +168,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791215621582
+                       "lastSeen":  1791215621582,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Marco F.",
@@ -150,7 +186,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790891923178
+                       "lastSeen":  1790891923178,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Bryson E.",
@@ -164,7 +204,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791384657347
+                       "lastSeen":  1791384657347,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Aeson T.",
@@ -178,7 +222,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791384860953
+                       "lastSeen":  1791384860953,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Jameson S.",
@@ -192,7 +240,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791397012960
+                       "lastSeen":  1791397012960,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Ben H.",
@@ -206,7 +258,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791328102415
+                       "lastSeen":  1791328102415,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Mr. Lewkowitz",
@@ -220,7 +276,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790809200690
+                       "lastSeen":  1790809200690,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Asher B.",
@@ -234,7 +294,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790793379928
+                       "lastSeen":  1790793379928,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "V (message micah plz)",
@@ -248,7 +312,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790807862502
+                       "lastSeen":  1790807862502,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Micah T",
@@ -262,7 +330,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791391220582
+                       "lastSeen":  1791391220582,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Henry P.",
@@ -276,7 +348,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791395692008
+                       "lastSeen":  1791395692008,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Bruno A.",
@@ -290,7 +366,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791384863307
+                       "lastSeen":  1791384863307,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Grayson",
@@ -304,7 +384,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791396358110
+                       "lastSeen":  1791396358110,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Aled L.",
@@ -318,7 +402,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790178665980
+                       "lastSeen":  1790178665980,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Loic B.",
@@ -332,7 +420,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790966325037
+                       "lastSeen":  1790966325037,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Oscar S.",
@@ -346,7 +438,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790280438806
+                       "lastSeen":  1790280438806,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Carter.B",
@@ -360,7 +456,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791398400142
+                       "lastSeen":  1791398400142,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Kellan K.",
@@ -374,7 +474,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791311286216
+                       "lastSeen":  1791311286216,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Benny T",
@@ -388,7 +492,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790204400480
+                       "lastSeen":  1790204400480,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Miles H.",
@@ -402,7 +510,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790706896797
+                       "lastSeen":  1790706896797,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Max F.",
@@ -416,7 +528,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790883198739
+                       "lastSeen":  1790883198739,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Bo W.",
@@ -430,7 +546,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791325154734
+                       "lastSeen":  1791325154734,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Brandon M.",
@@ -444,7 +564,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790891162000
+                       "lastSeen":  1790891162000,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Kevin M",
@@ -458,7 +582,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790700293639
+                       "lastSeen":  1790700293639,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Mr. Reasy",
@@ -472,7 +600,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1788994274979
+                       "lastSeen":  1788994274979,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Ayaan (message Micah plz)",
@@ -486,7 +618,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1789080507091
+                       "lastSeen":  1789080507091,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Diego O.",
@@ -500,7 +636,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1789764357185
+                       "lastSeen":  1789764357185,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Jack D.",
@@ -514,7 +654,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1788976362719
+                       "lastSeen":  1788976362719,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Jaxson C.",
@@ -528,7 +672,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790280600237
+                       "lastSeen":  1790280600237,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Mr. Burr",
@@ -542,7 +690,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1787697776532
+                       "lastSeen":  1787697776532,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Jack R.",
@@ -556,7 +708,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1790187905965
+                       "lastSeen":  1790187905965,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Sklyer G.",
@@ -570,7 +726,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1788298932583
+                       "lastSeen":  1788298932583,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    },
                    {
                        "name":  "Leo T.",
@@ -584,7 +744,11 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1787697781215
+                       "lastSeen":  1787697781215,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
                    }
                ],
     "schedule":  {
