@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791489981895,
-    "generatedIso":  "2026-10-08T13:06:22-07:00",
+    "generated":  1791490043288,
+    "generatedIso":  "2026-10-08T13:07:23-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,13 +9,13 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  374977742,
+                   "clubMs":  375037838,
                    "pilots":  38,
                    "activePilots7":  20,
                    "sims":  5,
                    "perSimMs":  {
                                     "liftoff":  266684002.10839969,
-                                    "microdrones":  106404440.77510031,
+                                    "microdrones":  106464536.5224003,
                                     "skydive":  757990.89219998755,
                                     "fpvlabs":  316778.85469998,
                                     "picasim":  814526.99810002092
@@ -374,6 +374,24 @@
                        "tier":  0
                    },
                    {
+                       "name":  "Carter.B",
+                       "totalMs":  3197854,
+                       "perSimMs":  {
+                                        "liftoff":  1154114,
+                                        "microdrones":  2043740,
+                                        "skydive":  0,
+                                        "fpvlabs":  0,
+                                        "picasim":  0
+                                    },
+                       "gsPct":  0,
+                       "gsLessons":  0,
+                       "lastSeen":  1791490029452,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
+                   },
+                   {
                        "name":  "Grayson",
                        "totalMs":  3185092,
                        "perSimMs":  {
@@ -386,24 +404,6 @@
                        "gsPct":  0,
                        "gsLessons":  0,
                        "lastSeen":  1791396358110,
-                       "badges":  [
-
-                                  ],
-                       "tier":  0
-                   },
-                   {
-                       "name":  "Carter.B",
-                       "totalMs":  3137758,
-                       "perSimMs":  {
-                                        "liftoff":  1154114,
-                                        "microdrones":  1983644,
-                                        "skydive":  0,
-                                        "fpvlabs":  0,
-                                        "picasim":  0
-                                    },
-                       "gsPct":  0,
-                       "gsLessons":  0,
-                       "lastSeen":  1791489969354,
                        "badges":  [
 
                                   ],
