@@ -15,7 +15,11 @@
      Pavo 20 Pro Flight (new)               closes Tier 1 -> Tier 2
      Event Pilot (new: fly at an event)     closes Tier 2 -> Tier 3
    A checkpoint counts only once every other badge of its tier is earned; it
-   shows a check when ready to attempt and turns green when awarded. Spotter
+   shows a check when ready to attempt and turns green when awarded.
+   2026-10-07 (display): the site and posters show a tier's other badges as
+   the PREREQUISITES of the checkpoint they lead to ("building to Tier 1"),
+   and the checkpoint on its own, full width, under the next tier's heading,
+   with a tick box per prerequisite and a big check once all are done. Spotter
    moved to Tier 0. Proficient Flight is now called "Sim Flight" (id kept).
    Bench steps end in a PHOTO step: the pilot takes a picture on this site and
    a mentor passes or fails it in the console's Review tab.
@@ -68,7 +72,7 @@
       prep: ['gs-los-01', 'gs-los-02', 'gs-los-03'],
       standard: 'A mentor stands beside you: a controlled take-off to head height, a 20-second hover without drifting much, a lap around a tree, and a smooth landing.' },
     { id: 'tiny-whoop', tier: 't0', track: 'flight', type: 'witnessed', name: 'Tiny Whoop', checkpoint: true, est: 'about 2 h',
-      do: 'Checkpoint into Tier 1: your first real flight. With every other Tier 0 badge done, fly the Meteor 75 Pro in goggles for a mentor.', why: 'First real flight, on a sub-250 g drone that can’t do much damage. Pass it and you are a Tier 1 pilot.',
+      do: 'Checkpoint into Tier 1: your first real flight. Once every prerequisite is ticked, fly the Meteor 75 Pro in goggles for a mentor.', why: 'First real flight, on a sub-250 g drone that can’t do much damage. Pass it and you are a Tier 1 pilot.',
       standard: 'In goggles on the Meteor: take-off, a figure-eight through two gates, an orbit, and a landing on the pad, no wall contact.' },
 
     // ---------------- Tier 1 · Tiny Whoop -> checkpoint Pavo 20 Pro Flight
@@ -89,7 +93,7 @@
       prep: ['gs-trk-01', 'gs-trk-02', 'gs-trk-03', 'gs-trk-04'],
       standard: 'A mentor watches you in the simulator: a powerloop, a trippy spin, a Matty flip and three tiny gaps in one run.' },
     { id: 'pavo-flight', tier: 't1', track: 'flight', type: 'witnessed', name: 'Pavo 20 Pro Flight', checkpoint: true, est: 'about 1 h',
-      do: 'Checkpoint into Tier 2: with every other Tier 1 badge done, fly the Pavo 20 Pro for a mentor.', why: 'Your first full-size airframe. Pass it and you are a Tier 2 pilot.',
+      do: 'Checkpoint into Tier 2: once every prerequisite is ticked, fly the Pavo 20 Pro for a mentor.', why: 'Your first full-size airframe. Pass it and you are a Tier 2 pilot.',
       standard: 'With a spotter and a mentor watching: take-off, a figure-eight, an orbit, a pass through a gate and a clean landing on the pad - no contact.' },
 
     // ---------------- Tier 2 · Full-size -> checkpoint Event Pilot
@@ -109,7 +113,7 @@
       do: '3 clean laps of the club course under a target time.', why: 'Gate discipline under pressure; qualifies a pilot for the rally race. Racing.',
       standard: 'Three consecutive clean laps under the posted target time, timed by a mentor.' },
     { id: 'event-pilot', tier: 't2', track: 'flight', type: 'witnessed', name: 'Event Pilot', checkpoint: true, est: 'one event',
-      do: 'Checkpoint into Tier 3: with every other Tier 2 badge done, fly at a real school event or race, with a spotter, under a mentor.', why: 'The top of the path: flying for the school, in front of people.',
+      do: 'Checkpoint into Tier 3: fly at a real school event or a race, with a spotter, under a mentor. You earn it by flying there - once every prerequisite is ticked.', why: 'The top of the path: flying for the school, in front of people.',
       standard: 'At a real school event or race: the airspace checked, the zone set up and briefed, a spotter beside you, a mentor on site. The mentor signs it off afterwards.' },
 
     // ---------------- Bonus badges (tier 'el') - never counted toward the total or the tier

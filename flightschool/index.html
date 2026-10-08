@@ -72,14 +72,18 @@ section{margin-top:30px}
 .how .v b{font-weight:600}
 
 /* ---------- tiers ---------- */
+/* 2026-10-07: the tier line runs beside the CHECKPOINT only. The badges before
+   it are its prerequisites ("building to Tier N"), shown as a plain group. */
 .tier{margin-top:26px;border-left:6px solid var(--c);padding-left:14px}
-.tier .th{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin-bottom:10px}
-.tier .tn{font-family:var(--font-mono);font-size:14px;letter-spacing:.22em;text-transform:uppercase;color:var(--c)}
-.tier .nm{font-family:var(--font-sketch);font-weight:700;font-size:30px;line-height:1}
-.tier .gear{font-size:14.5px;color:var(--ink-soft)}
-.tier .gate{font-family:var(--font-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-left:auto}
-.tier .prog{font-family:var(--font-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;background:var(--paper-2);border:1px solid var(--line-hard);border-radius:6px;padding:2px 8px}
-.tier .prog.done{background:rgba(31,82,48,.12);border-color:var(--green);color:var(--green)}
+.group{margin-top:30px}
+.tier .th,.group .th{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin-bottom:10px}
+.tier .tn,.group .tn{font-family:var(--font-mono);font-size:14px;letter-spacing:.22em;text-transform:uppercase;color:var(--c)}
+.tier .nm,.group .nm{font-family:var(--font-sketch);font-weight:700;font-size:30px;line-height:1}
+.tier .gear,.group .gear{font-size:14.5px;color:var(--ink-soft)}
+.tier .gate,.group .gate{font-family:var(--font-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-left:auto}
+.group .tn{color:var(--ink-soft)}
+.tier .prog,.group .prog{font-family:var(--font-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;background:var(--paper-2);border:1px solid var(--line-hard);border-radius:6px;padding:2px 8px}
+.tier .prog.done,.group .prog.done{background:rgba(31,82,48,.12);border-color:var(--green);color:var(--green)}
 .badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 
 /* ---------- badge card ---------- */
@@ -119,8 +123,24 @@ section{margin-top:30px}
    done, a check once ready to attempt, solid green once awarded ---------- */
 .badge.checkpoint{border-style:dashed;border-left-style:solid}
 .badge.checkpoint .lab .type::before{content:'Checkpoint · ';color:var(--ink)}
-.badge.checkpoint.ready{border-style:solid;border-color:var(--amber);box-shadow:0 0 0 2px rgba(240,169,26,.35)}
-.badge.checkpoint.ready .nm::after{content:'\2713';color:var(--amber);font-size:22px}
+.badge.checkpoint.ready{border-style:solid;border-color:var(--green);box-shadow:0 0 0 2px rgba(31,82,48,.22)}
+/* the checkpoint spans the section: the badge on the left, its prerequisites
+   on the right - a box per badge, ticked as it is earned, and a big check once
+   all of them are, which is when the checkpoint may be attempted */
+.cpwrap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px 22px;align-items:start}
+.cpmain{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pre{background-color:var(--glass);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:4px 14px;align-items:start;cursor:default}
+.pre .ph{grid-column:1/-1;font-family:var(--font-mono);font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--rust)}
+.pre ul{margin:2px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:5px 12px}
+.pre li{font-size:14.5px;line-height:1.25;cursor:pointer}
+.pre li:hover span:last-child{text-decoration:underline;text-underline-offset:3px}
+.pre li.on span:last-child{color:var(--ink-soft)}
+.pre .big{width:74px;height:74px;border-radius:50%;border:3px dashed var(--line-hard);display:grid;place-items:center;font-size:42px;line-height:1;color:transparent;margin-top:2px;background:var(--glass-2)}
+.pre .big.on{border:3px solid var(--green);background:var(--green);color:#f2ece0}
+.pre .pmsg{grid-column:1/-1;font-size:13.5px;color:var(--ink-soft);line-height:1.35;margin-top:4px}
+.pre .pmsg b{color:var(--green);font-weight:600}
+.badge.checkpoint.won .pre{color:var(--ink)}
+@media (max-width:760px){.cpwrap{grid-template-columns:1fr}}
 .badge.checkpoint.won{border-style:solid;border-color:var(--green);background-color:var(--green);color:#f2ece0}
 .badge.checkpoint.won .lab,.badge.checkpoint.won .lab .type,.badge.checkpoint.won .lab .type::before,.badge.checkpoint.won .est,
 .badge.checkpoint.won .more .why,.badge.checkpoint.won .more .why b,.badge.checkpoint.won .approve,.badge.checkpoint.won .approve b{color:#f2ece0}
@@ -147,7 +167,7 @@ footer{margin-top:34px;padding:16px 18px;background-color:var(--glass);border:1.
 footer a{color:var(--ink)}
 
 @media (max-width:900px){.how{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:600px){.wrap{padding:18px 13px 52px}header.title{padding:18px 16px}.how{grid-template-columns:1fr}.pilot{min-width:0;max-width:none}.tier .gate{margin-left:0}}
+@media (max-width:600px){.wrap{padding:18px 13px 52px}header.title{padding:18px 16px}.how{grid-template-columns:1fr}.pilot{min-width:0;max-width:none}.tier .gate,.group .gate{margin-left:0}}
 </style>
 </head>
 <body>
@@ -163,7 +183,7 @@ footer a{color:var(--ink)}
   <header class="title">
     <div>
       <h1>Flight <span class="a">School</span></h1>
-      <div class="sub">Brophy UAV &middot; 20 badges &middot; four tiers, each ending in a checkpoint &middot; plus bonus badges</div>
+      <div class="sub">Brophy UAV &middot; 20 badges &middot; three checkpoints, each opened by its prerequisites &middot; plus bonus badges</div>
       <div class="stamp">sim is Tier 0</div>
     </div>
     <div class="pilot" id="pilot">
@@ -184,7 +204,7 @@ footer a{color:var(--ink)}
       <div class="card h"><div class="k">Quiz badges</div><div class="v">Short lessons, then a 10-question quiz. <b>80 % passes.</b> Retake as often as you like; your best score counts. The kiosk awards these by itself.</div></div>
       <div class="card h"><div class="k">Bench badges</div><div class="v">Step-by-step instructions on the kiosk or here. Tick the boxes as you go, then <b>submit a photo</b> of your work right from the card &mdash; a mentor reviews it and passes or fails it.</div></div>
       <div class="card h"><div class="k">Witnessed badges</div><div class="v">A mentor who holds the badge watches you do it against <b>the standard</b> written on the card. Prep drills are in Ground School.</div></div>
-      <div class="card h"><div class="k">Checkpoints</div><div class="v">Every tier ends in a <b>checkpoint flight</b>. Finish the rest of the tier and it gets a &#10003;; pass it with a mentor watching and it turns green &mdash; <b>you move up a tier and the next drone is yours to fly.</b> Bonus badges are extra, any time, and don&rsquo;t count toward your total &mdash; <b>Mentor</b> is for Tier 2 pilots.</div></div>
+      <div class="card h"><div class="k">Checkpoints</div><div class="v">Tiers 1, 2 and 3 each open with a <b>checkpoint flight</b>. Its card lists the prerequisite badges and ticks each one as you earn it; when they are all done it gets a <b>big green &#10003;</b> and you may attempt it with a mentor watching. Pass it and <b>you are on that tier.</b> Bonus badges are extra, any time, and don&rsquo;t count toward your total &mdash; <b>Mentor</b> is for Tier 2 pilots.</div></div>
     </div>
   </section>
 
@@ -312,9 +332,9 @@ function status(b) {
   if (left > 0) {
     var approved = s.earned;
     s.earned = false; s.pct = Math.round((mates.length - left) / Math.max(1, mates.length) * 90);
-    s.detail = (approved ? 'approved · counts once the rest of the tier is done · ' : '') + left + ' more Tier ' + b.tier.slice(1) + ' badge' + (left === 1 ? '' : 's') + ' before this checkpoint';
+    s.detail = (approved ? 'approved · counts once every prerequisite is done · ' : '') + left + ' more prerequisite' + (left === 1 ? '' : 's') + ' before this checkpoint';
   } else if (!s.earned) {
-    s.pct = 95; s.detail = '✓ ready - ask a mentor to watch your checkpoint';
+    s.pct = 95; s.detail = '✓ prerequisites done - ask a mentor to watch your checkpoint attempt';
   }
   return s;
 }
@@ -383,25 +403,28 @@ function rawStatus(b) {
   }
   return out;
 }
-function tierDone(t) {
-  var bs = FS.BADGES.filter(function (b) { return b.tier === t.id; }), n = 0;
-  bs.forEach(function (b) { if (status(b).earned) n++; });
+function countDone(bs) {
+  var n = 0; bs.forEach(function (b) { if (status(b).earned) n++; });
   return { n: n, of: bs.length };
 }
+/* 2026-10-07: a tier's badges are the PREREQUISITES of the next tier's
+   checkpoint (tier t0's badges build to the Tiny Whoop checkpoint = Tier 1). */
+function prereqs(i) { return FS.BADGES.filter(function (b) { return b.tier === 't' + i && !b.checkpoint; }); }
+function checkpointOf(i) { return FS.BADGES.filter(function (b) { return b.tier === 't' + i && b.checkpoint; })[0]; }
 function nextStep() {
   if (!pilot) return 'Pick your name and this page remembers where you are.';
-  var order = ['t0', 't1', 't2', 't3'];
-  for (var i = 0; i < order.length; i++) {
-    var t = FS.TIERS[i], bs = FS.BADGES.filter(function (b) { return b.tier === t.id; });
-    var open = bs.filter(function (b) { return !status(b).earned; });
-    if (!open.length) continue;
-    var pick = open.filter(function (b) { return b.type === 'knowledge' || b.type === 'bench'; })[0] || open[0];
-    var verb = { knowledge: 'do the lessons and pass the quiz', bench: 'work through the steps at the kiosk', witnessed: 'ask a mentor to watch you', auto: 'keep flying the sim' }[pick.type];
-    if (pick.checkpoint) verb = 'your checkpoint - ask a mentor to watch you fly it';
-    if (pick.minHours && status(pick).needHours) verb = 'log ' + pick.minHours + ' h in the sim, then ask a mentor to judge it';
-    return '<b>Tier ' + t.n + ' · ' + (bs.length - open.length) + ' of ' + bs.length + '</b> · next: <b>' + esc(pick.name) + '</b> — ' + verb + '.';
+  for (var i = 0; i < 3; i++) {
+    var bs = prereqs(i), cp = checkpointOf(i), open = bs.filter(function (b) { return !status(b).earned; });
+    if (open.length) {
+      var pick = open.filter(function (b) { return b.type === 'knowledge' || b.type === 'bench'; })[0] || open[0];
+      var verb = { knowledge: 'do the lessons and pass the quiz', bench: 'work through the steps at the kiosk', witnessed: 'ask a mentor to watch you', auto: 'keep flying the sim' }[pick.type];
+      if (pick.minHours && status(pick).needHours) verb = 'log ' + pick.minHours + ' h in the sim, then ask a mentor to judge it';
+      return '<b>Building to Tier ' + (i + 1) + ' · ' + (bs.length - open.length) + ' of ' + bs.length + '</b> · next: <b>' + esc(pick.name) + '</b> — ' + verb + '.';
+    }
+    if (cp && !status(cp).earned)
+      return '<b>Tier ' + (i + 1) + ' checkpoint ✓</b> · every prerequisite is done: <b>' + esc(cp.name) + '</b> — ask a mentor to watch your attempt.';
   }
-  return '<b>Event Pilot.</b> Every gate is open. Bonus badges remain.';
+  return '<b>Event Pilot.</b> Every checkpoint passed. Bonus badges remain.';
 }
 
 /* ---------- render ---------- */
@@ -417,30 +440,57 @@ function render() {
 
   var open = {}; var cur = document.querySelectorAll('.badge.open'); for (var i = 0; i < cur.length; i++) open[cur[i].getAttribute('data-id')] = true;
   var html = '';
-  FS.TIERS.forEach(function (t) {
-    var d = tierDone(t);
-    html += '<div class="tier" id="' + t.id + '" style="--c:' + t.color + '"><div class="th">' +
-      '<span class="tn">' + (t.n >= 0 ? 'Tier ' + t.n : 'Bonus') + '</span><span class="nm">' + esc(t.name) + '</span>' +
-      '<span class="gear">' + esc(t.gear) + '</span>' +
-      (pilot ? '<span class="prog' + (d.n === d.of ? ' done' : '') + '">' + d.n + ' / ' + d.of + '</span>' : '') +
-      '<span class="gate">' + esc(t.gate) + '</span></div><div class="badges">';
-    FS.BADGES.filter(function (b) { return b.tier === t.id; }).forEach(function (b) {
-      var s = status(b), col = { flight: 'var(--sky)', build: 'var(--amber)', know: 'var(--green)', crew: 'var(--violet)' }[b.track];
-      var type = { knowledge: 'Quiz', bench: 'Bench', witnessed: 'Witnessed', auto: 'Automatic' }[b.type];
-      var st = s.earned ? '<span class="st earned">earned' + (s.source === 'kiosk' ? ' · kiosk' : (s.source === 'web' ? ' · quiz passed' : (s.source === 'instructor' ? ' · signed off' : ''))) + '</span>' : (pilot && s.pct > 0 ? '<span class="st progress">' + s.pct + '%</span>' : '');
-      var cp = b.checkpoint ? ' checkpoint' + (s.earned ? ' won' : (s.ready ? ' ready' : '')) : '';
-      html += '<div class="card badge' + cp + (open[b.id] ? ' open' : '') + '" data-id="' + b.id + '" style="--t:' + col + '">' +
-        '<div class="lab"><span class="type">' + type + '</span><span>' + esc(FS.TRACK[b.track]) + '</span></div>' +
-        '<div class="nm">' + esc(b.name) + st + '</div>' +
-        '<div class="do">' + esc(b.do) + '</div>' +
-        (b.est ? '<div class="est">Time: ' + esc(b.est) + '</div>' : '') +
-        (pilot ? '<div class="meter"><i style="width:' + (s.earned ? 100 : s.pct) + '%"></i></div>' : '') +
-        '<div class="more">' + more(b, s) + '</div></div>';
-    });
-    html += '</div></div>';
-  });
+  function head(cls, id, c, tn, nm, gear, d, gate) {
+    return '<div class="' + cls + '" id="' + id + '" style="--c:' + c + '"><div class="th">' +
+      '<span class="tn">' + tn + '</span><span class="nm">' + esc(nm) + '</span>' +
+      '<span class="gear">' + esc(gear) + '</span>' +
+      (pilot && d ? '<span class="prog' + (d.n === d.of ? ' done' : '') + '">' + d.n + ' / ' + d.of + '</span>' : '') +
+      (gate ? '<span class="gate">' + esc(gate) + '</span>' : '') + '</div>';
+  }
+  function grid(bs) { return '<div class="badges">' + bs.map(function (b) { return card(b, open); }).join('') + '</div>'; }
+  /* Page order: prerequisites for Tier 1, the Tier 1 checkpoint (the only
+     thing beside the Tier 1 line), prerequisites for Tier 2, and so on. The
+     anchors #t0..#t3 still land on "where Tier N is". */
+  for (var i = 0; i < 3; i++) {
+    var T = FS.TIERS[i], N = FS.TIERS[i + 1], bs = prereqs(i), cp = checkpointOf(i);
+    html += head('group', i === 0 ? 't0' : 'pre' + (i + 1), T.color, (i === 0 ? 'Tier 0 · start here' : 'Tier ' + i) + ' &rarr; Tier ' + (i + 1),
+                 'Building to Tier ' + (i + 1), 'You fly: ' + T.gear, countDone(bs), 'Then the Tier ' + (i + 1) + ' checkpoint ↓') + grid(bs) + '</div>';
+    if (cp) html += head('tier', 't' + (i + 1), N.color, 'Tier ' + (i + 1), N.name, N.gear, null, 'Checkpoint') + card(cp, open) + '</div>';
+  }
+  var el = FS.TIERS.filter(function (t) { return t.id === 'el'; })[0];
+  html += head('group', 'el', el.color, 'Bonus', el.name, el.gear, countDone(FS.BADGES.filter(function (b) { return b.tier === 'el'; })), '') +
+    grid(FS.BADGES.filter(function (b) { return b.tier === 'el'; })) + '</div>';
   $('tiers').innerHTML = html;
   setTimeout(celebrate, 0);
+}
+function card(b, open) {
+  var s = status(b), col = { flight: 'var(--sky)', build: 'var(--amber)', know: 'var(--green)', crew: 'var(--violet)' }[b.track];
+  var type = { knowledge: 'Quiz', bench: 'Bench', witnessed: 'Witnessed', auto: 'Automatic' }[b.type];
+  var st = s.earned ? '<span class="st earned">earned' + (s.source === 'kiosk' ? ' · kiosk' : (s.source === 'web' ? ' · quiz passed' : (s.source === 'instructor' ? ' · signed off' : ''))) + '</span>' : (pilot && s.pct > 0 ? '<span class="st progress">' + s.pct + '%</span>' : '');
+  var cp = b.checkpoint ? ' checkpoint' + (s.earned ? ' won' : (s.ready ? ' ready' : '')) : '';
+  var main = '<div class="lab"><span class="type">' + type + '</span><span>' + esc(FS.TRACK[b.track]) + '</span></div>' +
+    '<div class="nm">' + esc(b.name) + st + '</div>' +
+    '<div class="do">' + esc(b.do) + '</div>' +
+    (b.est ? '<div class="est">Time: ' + esc(b.est) + '</div>' : '') +
+    (pilot ? '<div class="meter"><i style="width:' + (s.earned ? 100 : s.pct) + '%"></i></div>' : '') +
+    '<div class="more">' + more(b, s) + '</div>';
+  if (b.checkpoint) main = '<div class="cpwrap"><div class="cpmain">' + main + '</div>' + prereqPanel(b) + '</div>';
+  return '<div class="card badge' + cp + (open[b.id] ? ' open' : '') + '" data-id="' + b.id + '" style="--t:' + col + '">' + main + '</div>';
+}
+/* the checkpoint's prerequisites: a box per badge, ticked once earned (tap one
+   to jump to it), and the big check once every box is ticked */
+function prereqPanel(b) {
+  var mates = FS.mates(b), done = 0;
+  var li = mates.map(function (m) {
+    var on = pilot && status(m).earned; if (on) done++;
+    return '<li class="' + (on ? 'on' : '') + '" data-goto="' + m.id + '"><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>' + esc(m.name) + '</span></li>';
+  }).join('');
+  var all = pilot && done === mates.length;
+  var msg = !pilot ? 'Pick your name and each box ticks itself as you earn the badge.'
+    : (all ? '<b>All done.</b> You may attempt the checkpoint: ask a mentor to watch.' : (mates.length - done) + ' to go. Once every box is ticked you get the big check and may attempt the checkpoint.');
+  return '<div class="pre"><div class="ph">Prerequisites' + (pilot ? ' · ' + done + ' of ' + mates.length : ' · ' + mates.length + ' badges') + '</div>' +
+    '<ul>' + li + '</ul><div class="big' + (all ? ' on' : '') + '" title="' + (all ? 'Ready to attempt' : 'Not yet') + '">✓</div>' +
+    '<div class="pmsg">' + msg + '</div></div>';
 }
 function more(b, s) {
   var gp = gsProfile(), pr = progress()[b.id] || {}, h = '<div class="why"><b>Why:</b> ' + esc(b.why) + '</div>';
@@ -486,6 +536,13 @@ function more(b, s) {
 /* ---------- events ---------- */
 $('tiers').addEventListener('click', function (e) {
   var step = e.target.closest ? e.target.closest('li.step') : null;
+  var go = e.target.closest ? e.target.closest('[data-goto]') : null;
+  if (go) {
+    var to = document.querySelector('.badge[data-id="' + go.getAttribute('data-goto') + '"]');
+    if (to) { to.classList.add('open'); to.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    return;
+  }
+  if (e.target.closest && e.target.closest('.pre')) return;
   var card = e.target.closest ? e.target.closest('.badge') : null;
   if (!card) return;
   if (step) {

@@ -17,6 +17,12 @@ drifted outward and slightly tilted (fixed pseudo-random per sheet, so every
 rebuild looks the same). The trail S-curves through a clear centre channel
 and makes one loop in the biggest gap.
 
+Checkpoints (2026-10-07): a tier's badges are the PREREQUISITES of the next
+tier's checkpoint. Each checkpoint is NOT a trail card: it is a full-width box
+on the sheet of the tier it opens - Tiny Whoop at the foot of sheet 2, the
+Pavo 20 Pro Flight at the head of sheet 3, Event Pilot as the summit of sheet
+4 - with a tick box per prerequisite and a big check for when all are done.
+
 The sheet's own script does the layout with real card heights: it keeps
 cards clear of every label, spreads spare height between cards, scales the
 card text down a step if a sheet is crowded, draws the trail through the
@@ -48,19 +54,18 @@ SHEETS = [
   dict(file='03-map-tier0', sheet=1, tier='t0', name='SIMULATOR', color='var(--sky)', dir='down',
        gear='FPV sim rigs in the IC · Liftoff · Micro Drones · SkyDive · FPV Labs · PicaSim',
        start=('START', 'Add your name at the kiosk'),
-       gate=('GATE 1', 'Meteor 75 Pro unlocked', 'Tier 1 · Tiny Whoop')),
+       gate=('NEXT', 'Tier 1 checkpoint', 'Tiny Whoop · sheet 2')),
   dict(file='04-map-tier1', sheet=2, tier='t1', name='TINY WHOOP', color='var(--violet)', dir='up',
        gear='Meteor 75 Pro · sub-250 g · safe indoors',
-       entry='From Tier 0', first_flight=True,
-       gate=('GATE 2', 'Full-size unlocked', 'Tier 2 · Pavo 20 Pro · Cinebot 35 · 5-inch')),
+       checkpoint='t0',
+       gate=('NEXT', 'Tier 2 checkpoint', 'Pavo 20 Pro Flight · sheet 3')),
   dict(file='05-map-tier2', sheet=3, tier='t2', name='FULL-SIZE', color='var(--rust)', dir='down',
        gear='Pavo 20 Pro · Cinebot 35 · 5-inch',
-       entry='From Tier 1',
-       gate=('GATE 3', 'Event Pilot', 'Tier 3 · the top')),
+       checkpoint='t1',
+       gate=('NEXT', 'Tier 3 checkpoint', 'Event Pilot · sheet 4')),
   dict(file='06-map-tier3', sheet=4, tier='el', name='EVENT PILOT', color='var(--green)', dir='up',
        gear='Any Tier 2 airframe at a school event · always with a spotter',
-       entry='From Tier 2',
-       summit=('EVENT PILOT', 'Cleared to fly in front of a crowd, with a spotter. Every Tier 2 badge earned, including Spotter, Cinematography and FAA TRUST.')),
+       entry='From Tier 2', checkpoint='t2'),
 ]
 
 # ----------------------------------------------------------------- helpers
@@ -87,11 +92,11 @@ def card_html(b, label, fs, pin):
                '<div class="ft">10 questions · %d %% passes · no sign-off needed · retake any time</div></div>'
                % (len(ls), items, fs['PASS']))
     elif t == 'bench':
-        steps = [short_step(s) for s in (b.get('steps') or []) if not s.startswith('DM a photo')]
+        steps = [short_step(s) for s in (b.get('steps') or []) if not s.startswith('DM a photo') and not s.startswith('Take a photo')]
         seq = ' <i>›</i> '.join(esc(s) for s in steps)
         note = '<div class="nt">%s</div>' % esc(b['note']) if b.get('note') else ''
         how = ('<div class="how"><b>At the bench · %d steps</b><div class="seq">%s</div>%s'
-               '<div class="ft">Photo DM’d to mtucker27@ · a mentor signs it off</div></div>'
+               '<div class="ft">Then a photo, submitted on the website · a mentor passes or fails it</div></div>'
                % (len(steps), seq, note))
     elif t == 'witnessed':
         prep = b.get('prep') or []
@@ -104,16 +109,29 @@ def card_html(b, label, fs, pin):
     return ('<div class="card" data-id="%s" style="--t:%s"><span class="pin"><span>%s</span></span>%s%s%s%s</div>'
             % (b['id'], TRACK_COLOR[b['track']], esc(pin), head, body, how, why))  # data-i added in render()
 
+def checkpoint_html(cp, mates, tier_n, at, d):
+    """The full-width checkpoint box: the badge on the left, its prerequisites
+    on the right (a box each) and the big check."""
+    lis = ''.join('<li><span class="bx"></span>%s</li>' % esc(m['name']) for m in mates)
+    return ('<div class="cpbox cp-%s" data-at="%s"><div class="cpl">'
+            '<div class="lab">Tier %d checkpoint · %s</div><div class="nm">%s</div><div class="ds">%s</div>'
+            '<div class="how"><b>The standard</b><div class="seq">%s</div></div></div>'
+            '<div class="cpr"><div class="ph">Prerequisites · %d badges</div><ul>%s</ul>'
+            '<div class="ck"><span class="bigck">&#10003;</span><span>All ticked? That is the big check: '
+            'attempt the checkpoint with a mentor watching.</span></div></div></div>'
+            % ('top' if (at == 'start') == (d == 'down') else 'bottom', at, tier_n, TYPE_NAME[cp['type']],
+               esc(cp['name']), esc(cp['do']), esc(cp.get('standard')), len(mates), lis))
+
 # ----------------------------------------------------------------- render
 def render(s, fs, prev_count):
-    badges = [b for b in fs['BADGES'] if b['tier'] == s['tier']]
+    badges = [b for b in fs['BADGES'] if b['tier'] == s['tier'] and not b.get('checkpoint')]
     tier_n = {'t0': 0, 't1': 1, 't2': 2, 'el': 3}[s['tier']]
     electives = s['tier'] == 'el'
     n = len(badges)
     n_left = (n + 1) // 2
     cards = []
     for i, b in enumerate(badges, 1):
-        label = 'Bonus' if electives else 'Tier %d · pt. %d' % (tier_n, i)
+        label = 'Bonus' if electives else 'To Tier %d · pt. %d' % (tier_n + 1, i)
         if b['id'] in TAGS: label += ' · ' + TAGS[b['id']]
         if b.get('minTier'): label += ' · Tier %d pilots' % b['minTier']
         if b.get('minHours'): label += ' · after %g sim h' % b['minHours']
@@ -130,23 +148,29 @@ def render(s, fs, prev_count):
     elif s.get('entry'):
         lead = '<div class="entry entry-%s">&larr; %s</div>' % ('top' if d == 'down' else 'bottom', esc(s['entry']))
     summit = ''
-    if s.get('summit'):
-        t, sub = s['summit']
-        summit = ('<div class="summit"><div class="sc"><div class="lab">Tier 3 · the top</div>'
-                  '<div class="nm">%s</div><div class="ds">%s</div></div><span class="peak"></span></div>'
-                  '<div class="sidequest">Bonus badges &middot; any order, any time &middot; not counted</div>' % (esc(t), esc(sub)))
+    cp = None
+    if s.get('checkpoint'):
+        cp = [b for b in fs['BADGES'] if b['tier'] == s['checkpoint'] and b.get('checkpoint')][0]
+        mates = [b for b in fs['BADGES'] if b['tier'] == s['checkpoint'] and not b.get('checkpoint')]
+        at = 'end' if electives else 'start'          # sheet 4: the summit; sheets 2-3: where you arrive
+        summit = checkpoint_html(cp, mates, tier_n, at, d)
+        if electives:
+            summit += '<div class="sidequest">Bonus badges &middot; any order, any time &middot; not counted</div>'
+            lead = '<div class="entry entry-bottom">&larr; %s</div>' % esc(s['entry'])
+        else:
+            lead = ''
     extra = ''
     if electives:
         extra = ('<div class="p107"><b>PART 107</b>Want the real commercial licence? The club runs a study group. '
                  'You pay the exam; we supply the prep.</div>')
     if s['tier'] == 't0':
         prereq = 'Have a name'
-    elif electives:
-        prereq = 'Gate 3 — all %s Tier 2 badges' % WORDS[prev_count]
     else:
-        prereq = 'Gate %d — all %s Tier %d badges' % (tier_n, WORDS[prev_count], tier_n - 1)
-    onsheet = ('The top · plus %d bonus badges, any order' % n) if electives else \
-              '%d badges · all of them to pass Gate %d' % (n, tier_n + 1)
+        prereq = 'Pass the %s checkpoint (%s) · its %s prerequisites first' % (
+            cp['name'], 'top of this sheet' if (electives or d == 'down') else 'foot of this sheet', WORDS[prev_count])
+    onsheet = ('The Event Pilot checkpoint · plus %d bonus badges, any order' % n) if electives else \
+              ('%d prerequisites for the Tier %d checkpoint' % (n, tier_n + 1)) if s['tier'] == 't0' else \
+              ('Your checkpoint · then %d prerequisites for Tier %d' % (n, tier_n + 1))
     kinds = {}
     for b in badges: kinds[b['type']] = kinds.get(b['type'], 0) + 1
     mix = ' · '.join('%d %s' % (kinds[k], TYPE_NAME[k].lower()) for k in ('knowledge', 'bench', 'witnessed', 'auto') if kinds.get(k))
@@ -202,7 +226,10 @@ def render(s, fs, prev_count):
   // vertical room per side: start at the whole map, then step clear of every
   // label (start, entry, gate, summit, side-quest heading) on that side
   var lim = {{ L: [24, H - 24], R: [24, H - 24] }};
-  ['.start', '.entry', '.gate .txt', '.gate .arch', '.summit', '.peak', '.sidequest'].forEach(function (sel) {{
+  // sheet 4: the bonus heading sits just under the summit box
+  var cpb = document.querySelector('.cpbox'), sq = document.querySelector('.sidequest');
+  if (cpb && sq) sq.style.top = (cpb.offsetTop + cpb.offsetHeight + 34) + 'px';
+  ['.start', '.entry', '.gate .txt', '.gate .arch', '.cpbox', '.sidequest'].forEach(function (sel) {{
     document.querySelectorAll(sel).forEach(function (el) {{
       var b = box(el), top = b.y + b.h / 2 < H / 2;
       ['L', 'R'].forEach(function (sd) {{
@@ -259,8 +286,12 @@ def render(s, fs, prev_count):
     var m = map.getBoundingClientRect();
     function ctr(el) {{ var r = el.getBoundingClientRect(); return [r.left - m.left + r.width / 2, r.top - m.top + r.height / 2]; }}
     var pins = Array.prototype.slice.call(document.querySelectorAll('#cards .card .pin')).map(ctr);
-    var pts = [], go = document.querySelector('.go'), peak = document.querySelector('.peak');
+    var pts = [], go = document.querySelector('.go'), cpb = document.querySelector('.cpbox'), peak = null;
+    var cpAt = cpb ? cpb.getAttribute('data-at') : '', cb = cpb ? box(cpb) : null;
+    if (cpAt === 'end') peak = cpb;
     if (go) pts.push(ctr(go), [ctr(go)[0] + 70, ctr(go)[1] + 50]);
+    else if (cpAt === 'start' && DIR === 'down') pts.push([MID - 140, cb.y + cb.h - 8], [MID - 110, cb.y + cb.h + 46]);
+    else if (cpAt === 'start') pts.push([MID - 140, cb.y + 8], [MID - 110, cb.y - 46]);
     else if (DIR === 'down') pts.push([-30, YT], [70, YT + 6], [MID - 120, YT + 40]);
     else pts.push([-30, YB], [80, YB - 4], [MID - 90, YB - 40]);
     // the biggest vertical gap between consecutive pins gets a proper loop
@@ -284,7 +315,7 @@ def render(s, fs, prev_count):
       }}
       pts.push(p);
     }});
-    if (peak) pts.push([MID + 40, ctr(peak)[1] + 70], ctr(peak));
+    if (peak) pts.push([MID + 110, cb.y + cb.h + 70], [MID + 90, cb.y + cb.h - 8]);
     else if (DIR === 'down') pts.push([MID + 60, YB - 30], [W - 150, YB + 2], [W + 30, YB]);
     else pts.push([MID + 70, YT + 60], [W - 150, YT - 2], [W + 30, YT]);
     var svg = document.getElementById('trail'), d = catmull(pts);
@@ -313,9 +344,9 @@ def render(s, fs, prev_count):
 
 if __name__ == '__main__':
     fs = load_fs()
-    counts = {t['id']: sum(1 for b in fs['BADGES'] if b['tier'] == t['id']) for t in fs['TIERS']}
+    counts = {t['id']: sum(1 for b in fs['BADGES'] if b['tier'] == t['id'] and not b.get('checkpoint')) for t in fs['TIERS']}
     prev = {'t0': 0, 't1': counts['t0'], 't2': counts['t1'], 'el': counts['t2']}
-    print('badges.js: %d badges (%s)' % (len(fs['BADGES']), ', '.join('%s %d' % (k, v) for k, v in counts.items())))
+    print('badges.js: %d badges, prerequisites per tier (%s)' % (len(fs['BADGES']), ', '.join('%s %d' % (k, v) for k, v in counts.items())))
     for s in SHEETS:
         with open(os.path.join(HERE, s['file'] + '.html'), 'w', encoding='utf-8') as f:
             f.write(render(s, fs, prev[s['tier']]))
