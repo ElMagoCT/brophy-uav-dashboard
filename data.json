@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791500312776,
-    "generatedIso":  "2026-10-08T15:58:33-07:00",
+    "generated":  1791500373127,
+    "generatedIso":  "2026-10-08T15:59:33-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,14 +9,14 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  377958843,
+                   "clubMs":  378018958,
                    "pilots":  38,
                    "activePilots7":  20,
                    "sims":  5,
                    "perSimMs":  {
                                     "liftoff":  266684002.10839969,
                                     "microdrones":  107580158.23370031,
-                                    "skydive":  2563374.6108999904,
+                                    "skydive":  2623489.5588999894,
                                     "fpvlabs":  316778.85469998,
                                     "picasim":  814526.99810002092
                                 }
@@ -428,6 +428,24 @@
                        "tier":  0
                    },
                    {
+                       "name":  "Ayaan (message Micah plz)",
+                       "totalMs":  2660767,
+                       "perSimMs":  {
+                                        "liftoff":  795269,
+                                        "microdrones":  0,
+                                        "skydive":  1865499,
+                                        "fpvlabs":  0,
+                                        "picasim":  0
+                                    },
+                       "gsPct":  0,
+                       "gsLessons":  0,
+                       "lastSeen":  1791500362886,
+                       "badges":  [
+
+                                  ],
+                       "tier":  0
+                   },
+                   {
                        "name":  "Loic B.",
                        "totalMs":  2643202,
                        "perSimMs":  {
@@ -440,24 +458,6 @@
                        "gsPct":  0,
                        "gsLessons":  0,
                        "lastSeen":  1790966325037,
-                       "badges":  [
-
-                                  ],
-                       "tier":  0
-                   },
-                   {
-                       "name":  "Ayaan (message Micah plz)",
-                       "totalMs":  2600652,
-                       "perSimMs":  {
-                                        "liftoff":  795269,
-                                        "microdrones":  0,
-                                        "skydive":  1805384,
-                                        "fpvlabs":  0,
-                                        "picasim":  0
-                                    },
-                       "gsPct":  0,
-                       "gsLessons":  0,
-                       "lastSeen":  1791500302770,
                        "badges":  [
 
                                   ],
