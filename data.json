@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791490287603,
-    "generatedIso":  "2026-10-08T13:11:27-07:00",
+    "generated":  1791495250844,
+    "generatedIso":  "2026-10-08T14:34:11-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -66,7 +66,7 @@
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791396668887,
+                       "lastSeen":  1791495236996,
                        "badges":  [
 
                                   ],
