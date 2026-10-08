@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791500010924,
-    "generatedIso":  "2026-10-08T15:53:31-07:00",
+    "generated":  1791500071319,
+    "generatedIso":  "2026-10-08T15:54:31-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -9,14 +9,14 @@
                  "playlistUrl":  "https://www.youtube.com/playlist?list=PLSMZuEPVkmR_Z2GjwgFvcgPaWJXxR4xRF"
              },
     "totals":  {
-                   "clubMs":  377658408,
+                   "clubMs":  377718471,
                    "pilots":  38,
                    "activePilots7":  20,
                    "sims":  5,
                    "perSimMs":  {
                                     "liftoff":  266684002.10839969,
                                     "microdrones":  107580158.23370031,
-                                    "skydive":  2262939.0426999908,
+                                    "skydive":  2323002.2818999905,
                                     "fpvlabs":  316778.85469998,
                                     "picasim":  814526.99810002092
                                 }
@@ -465,17 +465,17 @@
                    },
                    {
                        "name":  "Ayaan (message Micah plz)",
-                       "totalMs":  2300217,
+                       "totalMs":  2360280,
                        "perSimMs":  {
                                         "liftoff":  795269,
                                         "microdrones":  0,
-                                        "skydive":  1504948,
+                                        "skydive":  1565011,
                                         "fpvlabs":  0,
                                         "picasim":  0
                                     },
                        "gsPct":  0,
                        "gsLessons":  0,
-                       "lastSeen":  1791500002328,
+                       "lastSeen":  1791500062392,
                        "badges":  [
 
                                   ],
