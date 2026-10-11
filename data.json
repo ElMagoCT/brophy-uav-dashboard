@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791682031781,
-    "generatedIso":  "2026-10-10T18:27:12-07:00",
+    "generated":  1791682276930,
+    "generatedIso":  "2026-10-10T18:31:17-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -64,14 +64,15 @@
                                         "fpvlabs":  62030,
                                         "picasim":  0
                                     },
-                       "gsPct":  12,
-                       "gsLessons":  5,
+                       "gsPct":  14,
+                       "gsLessons":  6,
                        "lastSeen":  1791496129739,
                        "badges":  [
                                       "safe-flight",
                                       "battery-care",
                                       "soldering",
-                                      "electrical-components"
+                                      "electrical-components",
+                                      "radio-protocol"
                                   ],
                        "tier":  0
                    },
