@@ -10,6 +10,17 @@
      network timeout before the page paints. -->
 <link href="fonts.css" rel="stylesheet">
 <link href="gs-theme.css" rel="stylesheet">
+<script>
+/* 2026-10-10: Ground School was folded into the badge page (../flightschool/).
+   Each badge there opens its lessons one at a time in a frame, as
+   ?lesson=<id>. Opened directly with no lesson, this page sends you there. */
+(function(){
+  var q = null; try { q = new URLSearchParams(location.search).get('lesson'); } catch(e){}
+  if(!q){ location.replace('../flightschool/'); return; }
+  document.documentElement.className += ' one';
+})();
+</script>
+<style>.one #syllabusWrap{display:none!important}</style>
 </head>
 <body>
 

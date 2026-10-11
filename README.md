@@ -97,7 +97,7 @@ change, Netlify rebuilds in a few seconds, and the site is current.
 
 | Path | What it is |
 |---|---|
-| `groundschool/` | the FPV Ground School course app, copied from the kiosk by `Publish-GroundSchool.ps1` |
+| `groundschool/` | the course app (same as the kiosk's), no longer a page of its own: Flight School opens one lesson at a time in a frame as `groundschool/?lesson=<id>`; the bare URL redirects to `flightschool/` |
 | `flightschool/` | **Flight School** — the whole badge curriculum (18 badges in four tiers plus 4 bonus badges that do not count; quiz, bench and witnessed badges; a time estimate on each), with a pilot picker so progress is per pilot. `badges.js` is the one badge catalogue the site uses; keep it in step with the kiosk's `config.json` catalogue. Progress merges the kiosk snapshot (earned badges, hours), Ground School lessons done on this device, and bench-step ticks made on the page |
 | `progression/` | redirect to `flightschool/` — kept because the printed posters' QR codes point here |
 | `posters/` | the seven 11×17 posters above the simulators, as PDFs with PNG previews, plus a printing page. **Sources in `posters/src/`** — see below |

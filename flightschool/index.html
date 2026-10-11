@@ -152,6 +152,24 @@ section{margin-top:30px}
 .badge.checkpoint.won .std{color:var(--ink)}
 .badge.checkpoint.won .nm .st.earned{background:#f2ece0}
 
+/* ---------- lessons inside the badge cards (2026-10-10: Ground School folded in) ---------- */
+.badge li.les{cursor:pointer;border-radius:5px;padding:1px 3px;margin:0 -3px}
+.badge li.les:hover{background:var(--paper-2)}
+.badge li.les .go{margin-left:auto;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--rust);white-space:nowrap;padding-left:8px}
+.badge li.les.on .go{color:var(--ink-soft)}
+#lp{position:fixed;inset:0;z-index:60;background:var(--paper);display:none;flex-direction:column}
+#lp.open{display:flex}
+#lp .bar{display:flex;align-items:center;gap:12px;padding:8px 14px;border-bottom:1.5px solid var(--line-hard);background:var(--glass)}
+#lp .bar .t{font-family:var(--font-mono);font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#lp iframe{flex:1;border:0;width:100%;background:var(--paper)}
+#lpDone{position:absolute;inset:52px 0 0;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(242,236,224,.96)}
+#lpDone.show{display:flex}
+#lpDone .box{background:#fffdf7;border:2px solid var(--ink);border-radius:14px;max-width:520px;width:100%;padding:22px;text-align:center;box-shadow:4px 4px 0 var(--ink)}
+#lpDone .big{font-family:var(--font-sketch);font-weight:700;font-size:30px;line-height:1.05}
+#lpDone .lpsub{color:var(--ink-soft);margin-top:6px;font-size:15px}
+#lpDone .nx{margin-top:14px;font-size:15px}
+#lpDone .row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+
 /* ---------- photo submissions ---------- */
 .subs{margin-top:8px;display:flex;flex-direction:column;gap:5px}
 .sub{font-size:13.5px;border:1px solid var(--line);border-radius:7px;padding:6px 9px;background-color:var(--glass)}
@@ -206,9 +224,9 @@ footer a{color:var(--ink)}
   <section aria-labelledby="hHead">
     <div class="eyebrow"><h2 id="hHead">How it works</h2><span class="rule"></span></div>
     <div class="how">
-      <div class="card h"><div class="k">Quiz badges</div><div class="v">Short lessons, then a 10-question quiz. <b>80 % passes.</b> Retake as often as you like; your best score counts. The kiosk awards these by itself.</div></div>
+      <div class="card h"><div class="k">Quiz badges</div><div class="v">Short lessons, then a 10-question quiz - all opened right here from the badge card, with <b>Proceed to next</b> when each one ends. <b>80 % passes.</b> Retake as often as you like; your best score counts. The kiosk awards these by itself.</div></div>
       <div class="card h"><div class="k">Bench badges</div><div class="v">Step-by-step instructions on the kiosk or here. Tick the boxes as you go, then <b>submit a photo</b> of your work right from the card &mdash; a mentor reviews it and passes or fails it.</div></div>
-      <div class="card h"><div class="k">Witnessed badges</div><div class="v">A mentor who holds the badge watches you do it against <b>the standard</b> written on the card. Prep drills are in Ground School. <b>Spotter</b> and <b>Event Ops</b> are both: a short course and quiz first, then a mentor signs them off. Every card has optional resources.</div></div>
+      <div class="card h"><div class="k">Witnessed badges</div><div class="v">A mentor who holds the badge watches you do it against <b>the standard</b> written on the card. Prep drills open right from the card. <b>Spotter</b> and <b>Event Ops</b> are both: a short course and quiz first, then a mentor signs them off. Every card has optional resources.</div></div>
       <div class="card h"><div class="k">Checkpoints</div><div class="v">Tiers 1, 2 and 3 each open with a <b>checkpoint flight</b>. Its card lists the prerequisite badges and ticks each one as you earn it; when they are all done it gets a <b>big green &#10003;</b> and you may attempt it with a mentor watching. Pass it and <b>you are on that tier.</b> Bonus badges are extra, any time, and don&rsquo;t count toward your total &mdash; <b>Mentor</b> is for Tier 2 pilots.</div></div>
     </div>
   </section>
@@ -222,6 +240,17 @@ footer a{color:var(--ink)}
     <span>Kiosk hours and earned badges come from the lab kiosk. Lessons and ticks you do here are saved for the pilot you picked and mirrored to the club, forward-only; the kiosk is the record of truth. Instructors approve badges in the <a href="../admin/#approvals" rel="nofollow">instructor console</a>.</span>
     <span>mtucker27@ for questions</span>
   </footer>
+</div>
+
+<div id="lp" role="dialog" aria-modal="true" aria-labelledby="lpTitle">
+  <div class="bar"><span class="t" id="lpTitle">Lesson</span><button class="btn" type="button" id="lpClose">&larr; Back to badges</button></div>
+  <iframe id="lpFrame" title="Lesson"></iframe>
+  <div id="lpDone"><div class="box">
+    <div class="big" id="lpDoneBig">Done</div>
+    <div class="lpsub" id="lpDoneSub"></div>
+    <div class="nx" id="lpNext"></div>
+    <div class="row" id="lpBtns"></div>
+  </div></div>
 </div>
 
 <div id="cam" role="dialog" aria-modal="true" aria-labelledby="camTitle">
@@ -305,9 +334,8 @@ function kioskPilot() {
   return null;
 }
 function gsProfile() {
-  if (!pilot) return null;
   var all = lsGet(LS.gs, {});
-  return all[pilot.slug] || null;
+  return all[pilot ? pilot.slug : 'guest'] || null;   // nobody picked: the course saves to "guest" on this device
 }
 function progress() { var all = lsGet(LS.progress, {}); return pilot ? (all[pilot.slug] || {}) : {}; }
 function saveProgress(p) { var all = lsGet(LS.progress, {}); if (pilot) { all[pilot.slug] = p; lsSet(LS.progress, all); } }
@@ -519,11 +547,11 @@ function more(b, s) {
     h += '<ul>';
     (b.lessons || []).forEach(function (l) {
       var r = gp && gp.groundSchool && gp.groundSchool.lessons[l.id], on = r && r.status === 'complete';
-      h += '<li><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>' + esc(l.t) + (l.drill ? ' <span class="soon">drill</span>' : '') + '</span></li>';
+      h += lesRow(l.id, on, esc(l.t) + (l.drill ? ' <span class="soon">drill</span>' : ''));
     });
-    var qrec = gp && gp.groundSchool && b.quiz && gp.groundSchool.lessons[b.quiz], qbest = qrec ? (qrec.score || 0) : 0;
-    h += '<li><span class="tick' + (qbest >= FS.PASS ? ' on' : '') + '">' + (qbest >= FS.PASS ? '✓' : '') + '</span><span>Quiz · 10 questions · ' + FS.PASS + ' % to pass' + (qbest > 0 ? ' · best ' + qbest : '') + '</span></li></ul>';
-    h += '<div class="act"><a class="btn primary" href="../groundschool/">Open the lessons &rarr;</a></div>';
+    var qrec = gp && gp.groundSchool && b.quiz && gp.groundSchool.lessons[b.quiz], qbest = Math.max(qrec ? (qrec.score || 0) : 0, quizBest(b, gp));
+    h += lesRow(b.quiz, qbest >= FS.PASS, 'Quiz · 10 questions · ' + FS.PASS + ' % to pass' + (qbest > 0 ? ' · best ' + qbest : '')) + '</ul>';
+    h += startBtn(b);
     h += '<div class="approve">Lessons tick off here as you finish them for this pilot. Pass the quiz and the badge is yours, no sign-off needed.</div>';
   } else if (b.type === 'bench') {
     h += '<ul>';
@@ -538,20 +566,20 @@ function more(b, s) {
       h += '<ul>';
       (b.lessons || []).forEach(function (l) {
         var r = gp && gp.groundSchool && gp.groundSchool.lessons[l.id], on = r && r.status === 'complete';
-        h += '<li><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>' + esc(l.t) + '</span></li>';
+        h += lesRow(l.id, on, esc(l.t));
       });
       var qb2 = quizBest(b, gp);
-      h += '<li><span class="tick' + (qb2 >= FS.PASS ? ' on' : '') + '">' + (qb2 >= FS.PASS ? '✓' : '') + '</span><span>Quiz · 10 questions · ' + FS.PASS + ' % to pass' + (qb2 > 0 ? ' · best ' + qb2 : '') + '</span></li>';
+      h += lesRow(b.quiz, qb2 >= FS.PASS, 'Quiz · 10 questions · ' + FS.PASS + ' % to pass' + (qb2 > 0 ? ' · best ' + qb2 : ''));
       h += '<li><span class="tick' + (s.earned ? ' on' : '') + '">' + (s.earned ? '✓' : '') + '</span><span>A mentor watches you and signs it off</span></li></ul>';
-      h += '<div class="act"><a class="btn primary" href="../groundschool/">Open the lessons &rarr;</a></div>';
+      h += startBtn(b);
     }
     if (b.prep && b.prep.length) {
       h += '<ul>';
       b.prep.forEach(function (id) {
         var r = gp && gp.groundSchool && gp.groundSchool.lessons[id], on = r && r.status === 'complete';
-        h += '<li><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>Prep: ' + esc(FS.LESSON_TITLES[id] || id) + '</span></li>';
+        h += lesRow(id, on, 'Prep: ' + esc(lesTitle(id)));
       });
-      h += '</ul><div class="act"><a class="btn" href="../groundschool/">Prep drills &rarr;</a></div>';
+      h += '</ul>' + startBtn(b);
     }
     h += '<div class="std"><b>The standard</b>' + esc(b.standard || '') + '</div>';
     h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done.' : (((b.minTier != null || b.minHours) && s.detail) ? esc(s.detail) + '. ' : '') + 'a mentor who holds this badge watches you, then signs it off in the instructor console.') + '</div>';
@@ -569,9 +597,106 @@ function more(b, s) {
   return h;
 }
 
+/* ---------- lessons, right in the badge cards (2026-10-10) ----------
+   Ground School no longer has its own page: every lesson, drill and quiz is
+   listed in its badge's card and opens here, one at a time, in a frame
+   (../groundschool/?lesson=<id>, the same course app the kiosk runs). When it
+   ends the frame says so, and this page offers the next one. Progress is the
+   same localStorage profile (gs-web.js), so the card ticks itself on close. */
+function lesTitle(id) {
+  var L = (window.GS_TITLES || {})[id];
+  return L || FS.LESSON_TITLES[id] || id;
+}
+function lessonDone(id) {
+  var gp = gsProfile(), r = gp && gp.groundSchool && gp.groundSchool.lessons[id];
+  return !!(r && r.status === 'complete');
+}
+function lesRow(id, on, label) {
+  return '<li class="les' + (on ? ' on' : '') + '" data-lesson="' + esc(id) + '"><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>' + label + '</span><span class="go">' + (on ? 'review' : 'start &rsaquo;') + '</span></li>';
+}
+function badgeItems(b) { return (b.lessons || []).map(function (l) { return l.id; }).concat(b.quiz ? [b.quiz] : [], b.prep || []); }
+function startBtn(b) {
+  var items = badgeItems(b), next = items.filter(function (id) { return !lessonDone(id); })[0];
+  if (!items.length) return '';
+  return '<div class="act"><button class="btn primary" type="button" data-lesson="' + esc(next || items[0]) + '">' +
+    (next ? (next === items[0] && !items.some(lessonDone) ? 'Start the lessons' : 'Continue: ' + esc(lesName(next, b))) : 'Review the lessons') + ' &rarr;</button></div>';
+}
+function lesName(id, b) {
+  if (b && id === b.quiz) return b.name + ' quiz';
+  var l = b && (b.lessons || []).filter(function (x) { return x.id === id; })[0];
+  return l ? l.t : lesTitle(id);
+}
+/* every lesson on the path, in page order: Building to Tier 1, its checkpoint, ... bonus */
+function pathItems() {
+  var order = [];
+  for (var i = 0; i < 3; i++) { prereqs(i).forEach(function (b) { order.push(b); }); var cp = checkpointOf(i); if (cp) order.push(cp); }
+  FS.BADGES.filter(function (b) { return b.tier === 'el'; }).forEach(function (b) { order.push(b); });
+  var out = [], seen = {};
+  order.forEach(function (b) { badgeItems(b).forEach(function (id) { if (!seen[id]) { seen[id] = 1; out.push({ id: id, badge: b }); } }); });
+  return out;
+}
+function nextAfter(id) {
+  var all = pathItems(), k = -1;
+  for (var i = 0; i < all.length; i++) if (all[i].id === id) { k = i; break; }
+  if (k >= 0) {   // finish the badge you are in first, then move along the path
+    var same = all.filter(function (x) { return x.badge === all[k].badge && x.id !== id && !lessonDone(x.id); })[0];
+    if (same) return same;
+  }
+  for (var j = k + 1; j < all.length; j++) if (!lessonDone(all[j].id)) return all[j];
+  for (var m = 0; m < k; m++) if (!lessonDone(all[m].id)) return all[m];
+  return null;
+}
+var LP = { id: null };
+function openLesson(id) {
+  var it = pathItems().filter(function (x) { return x.id === id; })[0];
+  LP.id = id;
+  $('lpTitle').textContent = (it ? it.badge.name + ' · ' : '') + lesName(id, it && it.badge);
+  $('lpDone').classList.remove('show');
+  $('lpFrame').src = '../groundschool/?lesson=' + encodeURIComponent(id) + '&t=' + Date.now();
+  $('lp').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLP() {
+  $('lp').classList.remove('open'); $('lpDone').classList.remove('show');
+  $('lpFrame').src = 'about:blank'; LP.id = null; document.body.style.overflow = '';
+  render(); pullServer();
+}
+function lessonEnded(id, how) {
+  if (how === 'exit') { closeLP(); return; }
+  var it = pathItems().filter(function (x) { return x.id === id; })[0], b = it && it.badge, nx = nextAfter(id);
+  var isQuiz = b && id === b.quiz, passed = how === 'complete';
+  $('lpDoneBig').textContent = passed ? (isQuiz ? 'Quiz passed ✓' : 'Done ✓') : 'Not passed yet';
+  $('lpDoneSub').textContent = passed ? lesName(id, b) + (isQuiz && FS.both(b) ? ' - now a mentor signs the rest of the badge off.' : '')
+                                      : 'Your best score is kept. The questions reshuffle every try.';
+  $('lpNext').innerHTML = nx ? 'Next: <b>' + esc(lesName(nx.id, nx.badge)) + '</b>' + (nx.badge !== b ? ' · ' + esc(nx.badge.name) : '') : 'That was the last open lesson on the path.';
+  var btns = '';
+  if (!passed) btns += '<button class="btn primary" type="button" data-lp="retry">Try again</button>';
+  if (nx) btns += '<button class="btn' + (passed ? ' primary' : '') + '" type="button" data-lp="next">Proceed to next &rarr;</button>';
+  btns += '<button class="btn" type="button" data-lp="close">Back to badges</button>';
+  $('lpBtns').innerHTML = btns;
+  LP.next = nx ? nx.id : null;
+  $('lpDone').classList.add('show');
+  render();
+}
+window.addEventListener('message', function (e) {
+  if (e.origin !== location.origin || !e.data || e.data.source !== 'groundschool') return;
+  if (e.data.action === 'lessonClosed') lessonEnded(e.data.id, e.data.how);
+  else if (e.data.action === 'close') closeLP();
+});
+$('lpClose').onclick = closeLP;
+$('lpBtns').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-lp]'); if (!b) return;
+  var a = b.getAttribute('data-lp');
+  if (a === 'retry') openLesson(LP.id);
+  else if (a === 'next' && LP.next) openLesson(LP.next);
+  else closeLP();
+});
+
 /* ---------- events ---------- */
 $('tiers').addEventListener('click', function (e) {
   var step = e.target.closest ? e.target.closest('li.step') : null;
+  var les = e.target.closest ? e.target.closest('[data-lesson]') : null;
+  if (les) { openLesson(les.getAttribute('data-lesson')); return; }
   var go = e.target.closest ? e.target.closest('[data-goto]') : null;
   if (go) {
     var to = document.querySelector('.badge[data-id="' + go.getAttribute('data-goto') + '"]');
@@ -704,7 +829,10 @@ document.addEventListener('click', function (e) {
   var b = e.target.closest ? e.target.closest('[data-photo]') : null;
   if (b) { e.preventDefault(); camOpen(b.getAttribute('data-photo')); }
 });
-document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && $('cam').classList.contains('open')) camClose(); });
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && $('cam').classList.contains('open')) camClose();
+  else if (e.key === 'Escape' && $('lp').classList.contains('open')) closeLP();
+});
 
 /* ---------- celebrations (2026-10-08) ----------
    A badge that turns earned for the picked pilot - a quiz passed here, or

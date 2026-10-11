@@ -214,7 +214,7 @@ var GS_ART = {
     '</g>' +
     '</svg>',
 
-  /* the three jobs on a flight line */
+  /* the two jobs on a flight line (the timer went 2026-10-10) */
   threeJobs: '<svg viewBox="0 0 320 210">' +
     '<g stroke="var(--ink)" stroke-width="2" fill="none">' +
       '<path d="M14 168 L306 168"/>' +
@@ -223,33 +223,25 @@ var GS_ART = {
       '<path d="M22 168 l-6 9 M62 168 l-6 9 M102 168 l-6 9 M142 168 l-6 9 M182 168 l-6 9 M222 168 l-6 9 M262 168 l-6 9 M302 168 l-6 9"/>' +
     '</g>' +
     /* pilot */
-    '<g transform="translate(70,140)">' +
+    '<g transform="translate(100,140)">' +
       '<circle cx="0" cy="-30" r="9" fill="var(--rust)"/>' +
       '<path d="M0 -21 L0 0 M-11 -12 L11 -12 M0 0 L-8 22 M0 0 L8 22" stroke="var(--rust)" stroke-width="2.6" fill="none"/>' +
       '<rect x="-13" y="-16" width="26" height="9" rx="2" fill="var(--paper-2)" stroke="var(--rust)" stroke-width="1.8"/>' +
       '<text x="0" y="42" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" fill="var(--rust)" letter-spacing="1.4">PILOT</text>' +
     '</g>' +
     /* spotter, eyes up */
-    '<g transform="translate(150,140)">' +
+    '<g transform="translate(190,140)">' +
       '<circle cx="0" cy="-30" r="9" fill="none" stroke="var(--ink)" stroke-width="2.2"/>' +
       '<path d="M0 -21 L0 0 M-11 -14 L9 -22 M0 0 L-8 22 M0 0 L8 22" stroke="var(--ink)" stroke-width="2.6" fill="none"/>' +
       '<path d="M12 -30 L38 -46" stroke="var(--sky)" stroke-width="1.6" stroke-dasharray="4 3"/>' +
       '<text x="0" y="42" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" fill="var(--ink)" letter-spacing="1.4">SPOTTER</text>' +
-    '</g>' +
-    /* timer with a clock */
-    '<g transform="translate(238,140)">' +
-      '<circle cx="0" cy="-30" r="9" fill="none" stroke="var(--ink-soft)" stroke-width="2.2"/>' +
-      '<path d="M0 -21 L0 0 M-11 -12 L11 -12 M0 0 L-8 22 M0 0 L8 22" stroke="var(--ink-soft)" stroke-width="2.6" fill="none"/>' +
-      '<circle cx="19" cy="-16" r="9" fill="var(--paper)" stroke="var(--amber)" stroke-width="2"/>' +
-      '<path d="M19 -16 L19 -21 M19 -16 L23 -14" stroke="var(--amber)" stroke-width="1.6"/>' +
-      '<text x="0" y="42" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" fill="var(--ink-soft)" letter-spacing="1.4">TIMER</text>' +
     '</g>' +
     /* the aircraft, out front */
     '<g transform="translate(268,58)" stroke="var(--ink)" stroke-width="2" fill="none">' +
       '<path d="M-14 0 L14 0"/><path d="M-19 -6 L-9 -6 M9 -6 L19 -6"/>' +
       '<path d="M-14 0 L-14 -5 M14 0 L14 -5"/>' +
     '</g>' +
-    '<text x="160" y="26" text-anchor="middle" font-family="var(--font-mono)" font-size="11.5" fill="var(--ink)" letter-spacing="2.2">THREE JOBS, EVERY FLIGHT</text>' +
+    '<text x="160" y="26" text-anchor="middle" font-family="var(--font-mono)" font-size="11.5" fill="var(--ink)" letter-spacing="2.2">TWO JOBS, EVERY FLIGHT</text>' +
     '<text x="160" y="200" text-anchor="middle" font-family="var(--font-hand)" font-size="15" fill="var(--ink-soft)">nobody walks out until DISARMED is called</text>' +
     '</svg>',
 
@@ -810,7 +802,7 @@ var GS_COURSE = [
 {
   id:'gs-saf-01', mod:'SAF', ord:10, title:"Who's flying, who's watching", mins:3, kind:'read',
   cards:[
-    { h:'Three jobs, every flight', tab:'Three jobs',
+    { h:'Two jobs, every flight', tab:'Two jobs',
       p:['On this kiosk you practise the pilot\'s job. In the club you will spot far more often than you fly - and a good spotter is the reason nothing goes wrong.'],
       facts:[
         { n:'PILOT',   l:'flies. only flies' },

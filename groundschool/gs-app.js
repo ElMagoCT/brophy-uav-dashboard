@@ -959,7 +959,7 @@ var GSApp = (function(){
     killLive();
     post(id, 'complete', score, ms).then(function(){
       toast(Ls.def.title + ' — complete');
-      closeLesson(true);
+      closeLesson(true, 'complete');
     });
   }
 
@@ -971,16 +971,25 @@ var GSApp = (function(){
     var ms = elapsed();
     killLive();                 /* same reason as complete() above */
     post(Ls.def.id, 'in-progress', score, ms).then(function(){
-      closeLesson(true);
+      closeLesson(true, 'banked');
     });
   }
 
-  function closeLesson(alreadySaved){
+  function closeLesson(alreadySaved, how){
     var Ls = S.lesson;
     killLive();
     if(Ls && !Ls.done && !alreadySaved){
       /* walked away part-way: bank the time, leave it in-progress */
       post(Ls.def.id, 'in-progress', null, elapsed());
+    }
+    /* ONE-LESSON MODE (?lesson=<id>, 2026-10-10): the website's badge page
+       opens a single lesson in a frame. When it ends, tell the page (which
+       offers the next one) instead of showing the syllabus. The kiosk never
+       passes ?lesson=, so this never runs there. */
+    if(DEEP && framed()){
+      try{ window.parent.postMessage({ source:'groundschool', action:'lessonClosed', id: Ls ? Ls.def.id : DEEP,
+                                       how: how || 'exit' }, window.location.origin); }catch(e){}
+      return;
     }
     S.lesson = null;
     el('lesson').classList.remove('on');
@@ -991,6 +1000,7 @@ var GSApp = (function(){
   }
 
   /* ---------------------------------------------------------------- boot */
+  var DEEP = (function(){ try{ return new URLSearchParams(window.location.search).get('lesson'); }catch(e){ return null; } })();
   function boot(){
     Promise.all([
       api('/api/active').catch(function(){ return { profile:null }; }),
@@ -1008,6 +1018,7 @@ var GSApp = (function(){
       renderSyllabus();
 
       if(!S.profile) el('gate').classList.add('show');
+      else if(DEEP && lessonById(DEEP)) openLesson(DEEP);
       if(S.catalogStale){
         console.warn('[ground school] the catalogue on the bridge does not match gs-content.js - ' +
                      'config.json has changed but the kiosk has not been restarted. ' +
