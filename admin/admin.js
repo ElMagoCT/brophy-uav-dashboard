@@ -518,12 +518,63 @@
       if (!countOnly) el('rvMsg').textContent = 'Could not load the queue: ' + e.message;
     });
   }
-  function drawReview(items) {
+  // 2026-10-10: ONE submission on stage (big photo, + / − zoom, pannable when
+  // zoomed, Pass / Fail + note), the rest in a grid below; clicking a grid card
+  // brings it up. After a decision the next waiting one comes up by itself.
+  var RV = { cards: [], stage: null };
+  function rvFocus(card) {
+    if (!card || card === RV.stage) return;
+    RV.stage = card; el('rvStage').textContent = ''; el('rvStage').appendChild(card);
     var list = el('rvList'); list.textContent = '';
+    RV.cards.forEach(function (c) { c.classList.toggle('on', c === card); if (c !== card) list.appendChild(c); c.rvZoom(1); });   // every switch resets zoom
+  }
+  function rvNext(after) {
+    var i = RV.cards.indexOf(after), rest = RV.cards.slice(i + 1).concat(RV.cards.slice(0, i));
+    var nx = rest.filter(function (c) { return !c.classList.contains('decided'); })[0];
+    if (nx) rvFocus(nx);
+  }
+  function zoomBox(ph, card) {
+    var z = 1, zb = document.createElement('div'); zb.className = 'zoom';
+    var minus = document.createElement('button'); minus.textContent = '−'; minus.title = 'Zoom out'; minus.setAttribute('aria-label', 'Zoom out');
+    var plus = document.createElement('button'); plus.textContent = '+'; plus.title = 'Zoom in'; plus.setAttribute('aria-label', 'Zoom in');
+    var lvl = document.createElement('span');
+    zb.appendChild(minus); zb.appendChild(lvl); zb.appendChild(plus);
+    card.rvZoom = function (to) {
+      var img = ph.querySelector('img'), cx = 0.5, cy = 0.5;
+      if (ph.scrollWidth > ph.clientWidth) cx = (ph.scrollLeft + ph.clientWidth / 2) / ph.scrollWidth;
+      if (ph.scrollHeight > ph.clientHeight) cy = (ph.scrollTop + ph.clientHeight / 2) / ph.scrollHeight;
+      z = Math.max(1, Math.min(6, to)); lvl.textContent = Math.round(z * 100) + '%';
+      ph.classList.toggle('zoomed', z > 1); minus.disabled = z <= 1; plus.disabled = z >= 6;
+      if (!img) return;
+      img.style.width = z > 1 ? (z * 100) + '%' : ''; img.style.height = z > 1 ? 'auto' : '';
+      if (z > 1) { ph.scrollLeft = cx * ph.scrollWidth - ph.clientWidth / 2; ph.scrollTop = cy * ph.scrollHeight - ph.clientHeight / 2; }
+      else { ph.scrollLeft = ph.scrollTop = 0; }
+    };
+    minus.onclick = function (e) { e.stopPropagation(); card.rvZoom(z / 1.5); };
+    plus.onclick = function (e) { e.stopPropagation(); card.rvZoom(z * 1.5); };
+    // drag to pan when zoomed (scrollbars and the trackpad work too)
+    var drag = null;
+    ph.addEventListener('pointerdown', function (e) {
+      if (z <= 1 || e.target.closest('.zoom')) return;
+      drag = { x: e.clientX, y: e.clientY, l: ph.scrollLeft, t: ph.scrollTop }; ph.setPointerCapture(e.pointerId); ph.classList.add('drag');
+    });
+    ph.addEventListener('pointermove', function (e) { if (drag) { ph.scrollLeft = drag.l - (e.clientX - drag.x); ph.scrollTop = drag.t - (e.clientY - drag.y); } });
+    function end() { drag = null; ph.classList.remove('drag'); }
+    ph.addEventListener('pointerup', end); ph.addEventListener('pointercancel', end);
+    return zb;
+  }
+  function drawReview(items) {
+    var list = el('rvList'); list.textContent = ''; el('rvStage').textContent = '';
+    RV.cards = []; RV.stage = null;
     items.forEach(function (it) {
       var bd = FS.BADGES.filter(function (x) { return x.id === it.badge; })[0];
       var card = document.createElement('div'); card.className = 'rv';
-      var ph = document.createElement('div'); ph.className = 'ph'; ph.textContent = 'Loading photo…';
+      var ph = document.createElement('div'); ph.className = 'ph';
+      var phMsg = document.createElement('span'); phMsg.textContent = 'Loading photo…'; ph.appendChild(phMsg);
+      var frame = document.createElement('div'); frame.className = 'frame';   // zoom buttons sit outside the scroller
+      frame.appendChild(ph); frame.appendChild(zoomBox(ph, card));
+      card.addEventListener('click', function () { if (card !== RV.stage) rvFocus(card); });
+      RV.cards.push(card);
       var who = document.createElement('div'); who.innerHTML = '<b></b> · <span></span>';
       who.querySelector('b').textContent = it.pilot; who.querySelector('span').textContent = bd ? bd.name : it.badge;
       var meta = document.createElement('div'); meta.className = 'meta';
@@ -535,13 +586,13 @@
       var pass = document.createElement('button'); pass.className = 'primary'; pass.textContent = 'Pass';
       var fail = document.createElement('button'); fail.className = 'danger'; fail.textContent = 'Fail';
       row.appendChild(pass); row.appendChild(fail);
-      [ph, who, meta].concat(warn ? [warn] : []).concat([note, row]).forEach(function (n) { card.appendChild(n); });
-      list.appendChild(card);
+      [frame, who, meta].concat(warn ? [warn] : []).concat([note, row]).forEach(function (n) { card.appendChild(n); });
       api('GET', '/api/submission?photo=' + encodeURIComponent(it.photo), null, reviewHeaders()).then(function (j) {
         var img = document.createElement('img'); img.alt = 'photo from ' + it.pilot; img.src = 'data:' + (j.type || 'image/jpeg') + ';base64,' + j.base64;
-        img.onclick = function () { ph.classList.toggle('big'); };
-        ph.textContent = ''; ph.appendChild(img);
-      }).catch(function (e) { ph.textContent = 'Could not load the photo: ' + e.message; });
+        img.draggable = false;
+        phMsg.remove(); ph.insertBefore(img, ph.firstChild);
+        if (card === RV.stage) card.rvZoom(1);
+      }).catch(function (e) { phMsg.textContent = 'Could not load the photo: ' + e.message; });
       function decide(result) {
         pass.disabled = fail.disabled = true;
         var first = Promise.resolve();
@@ -558,7 +609,8 @@
         }).then(function () {
           var d = document.createElement('div'); d.className = 'done ' + result;
           d.textContent = result === 'pass' ? 'Passed - the badge is on file; the kiosks pick it up on their next sync.' : 'Failed - the pilot sees your note and can send a new photo.';
-          row.replaceWith(d); note.disabled = true;
+          row.replaceWith(d); note.disabled = true; card.classList.add('decided');
+          setTimeout(function () { if (RV.stage === card) rvNext(card); }, 1500);
           var n = +(el('rvCount').textContent || 0) - 1; el('rvCount').textContent = n > 0 ? String(n) : '';
           if (result === 'pass') { ROSTER = null; loadRoster(); }
         }).catch(function (e) {
@@ -569,6 +621,7 @@
       pass.onclick = function () { decide('pass'); };
       fail.onclick = function () { decide('fail'); };
     });
+    rvFocus(RV.cards[0]);
   }
   function badgeInfo() {
     var b = FS.BADGES.filter(function (x) { return x.id === el('apBadge').value; })[0];
@@ -584,17 +637,19 @@
       (d.pilots || []).forEach(function (p) {
         var div = document.createElement('div'), b = document.createElement('b'), s = document.createElement('span');
         b.textContent = p.name;
-        if (p.tier != null) { var t = document.createElement('i'); t.className = 'tier'; t.textContent = 'T' + p.tier; b.appendChild(t); }
+        // 2026-10-10: sim hours always shown (they used to appear only for pilots with no badges)
+        var t = document.createElement('i'); t.className = 'tier';
+        t.textContent = (p.tier != null ? 'T' + p.tier + ' · ' : '') + ((p.totalMs || 0) / 3600000).toFixed(1) + ' h';
+        b.appendChild(t);
         var badges = p.badges || [];
         if (badges.length) any = true;
-        s.textContent = badges.length ? badges.map(badgeName).join(' · ')
-                                      : (Math.round((p.totalMs || 0) / 360000) / 10) + ' h in the sim · no badges published by the kiosk';
+        s.textContent = badges.length ? badges.map(badgeName).join(' · ') : 'no badges published by the kiosk';
         div.appendChild(b); div.appendChild(s); box.appendChild(div);
         div.title = 'Show ' + p.name + '’s progress';
         div.onclick = function () { el('apPilot').value = p.name; pickPilot(); el('pp').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
       });
       el('apRosterNote').textContent = (any ? 'From the kiosk\'s last published snapshot (' + (d.generatedIso || '').slice(0, 16).replace('T', ' ') + ').'
-        : 'The kiosk is not publishing badges yet (Flight School v2, Phase 3). Hours shown instead.') + ' Pick a name above (or click one here) to see their whole path and edit it.';
+        : 'The kiosk is not publishing badges yet (Flight School v2, Phase 3).') + ' Pick a name above (or click one here) to see their whole path and edit it.';
     }).catch(function (e) { el('apRosterNote').textContent = 'Could not load data.json: ' + e.message; });
   }
 

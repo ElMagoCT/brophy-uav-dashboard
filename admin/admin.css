@@ -66,12 +66,10 @@ button.primary.flush{margin-top:0}
 #rvCount:empty{display:none}
 .setup{border:1px dashed var(--warn);border-radius:8px;padding:10px 12px;margin:10px 0;font-size:14px}
 .setup code{word-break:break-all;user-select:all}
-.rvlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:10px}
+.rvlist{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
 .rv{border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;background:var(--bg)}
 .rv .ph{aspect-ratio:4/3;background:var(--chip);border-radius:7px;overflow:hidden;display:grid;place-items:center;color:var(--muted);font-size:13.5px}
-.rv .ph img{width:100%;height:100%;object-fit:contain;display:block;cursor:zoom-in}
-.rv .ph.big{aspect-ratio:auto}
-.rv .ph.big img{height:auto;cursor:zoom-out}
+.rv .ph img{width:100%;height:100%;object-fit:contain;display:block}
 .rv b{font-weight:600}
 .rv .meta{font-size:13.5px;color:var(--muted)}
 .rv .warn{font-size:13.5px;color:var(--warn)}
@@ -105,3 +103,25 @@ button.primary.flush{margin-top:0}
 @media (max-width:560px){ .prow{grid-template-columns:1fr} .pacts{grid-row:auto} }
 .show-pw{margin-top:6px;font-size:14px;color:var(--muted);cursor:pointer}
 .show-pw input{margin:0}
+
+/* ---- review stage + grid (2026-10-10) ---- */
+.rvstage{margin-top:10px}
+.rvstage:empty{display:none}
+.rvstage .rv{border-color:var(--accent);padding:12px;gap:8px}
+.rvstage .rv .ph{aspect-ratio:auto;height:min(64vh,620px);position:relative;display:block;overflow:hidden}
+.rvstage .rv .ph > span{position:absolute;inset:0;display:grid;place-items:center}
+.rvstage .rv .ph.zoomed{overflow:auto;cursor:grab}
+.rvstage .rv .ph.zoomed.drag{cursor:grabbing}
+.rvstage .rv .ph.zoomed img{max-width:none;object-fit:contain}
+.rvstage .rv b{font-size:17px}
+.rv .zoom{display:none}
+.rv .frame{position:relative}
+.rvstage .rv .zoom{display:flex;align-items:center;gap:6px;position:absolute;top:10px;right:10px;z-index:2;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.rv .zoom button{width:34px;height:34px;padding:0;border-radius:999px;font-size:20px;line-height:1;margin:0}
+.rv .zoom span{font:12px "Share Tech Mono",ui-monospace,monospace;color:var(--muted);min-width:3.4em;text-align:center}
+.rvlist .rv{cursor:pointer}
+.rvlist .rv:hover{border-color:var(--muted)}
+.rvlist .rv input,.rvlist .rv .row,.rvlist .rv .warn{display:none}
+.rvlist .rv.decided{opacity:.6}
+@media (max-width:560px){ .rvlist{grid-template-columns:1fr} .rvstage .rv .ph{height:52vh} }
