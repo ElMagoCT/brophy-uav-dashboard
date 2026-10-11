@@ -60,3 +60,8 @@ body{background-color:#f8f5ee}
   .mebtn .t small{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 @media (max-width:600px){ .sitme{order:-1;flex-basis:100%;display:flex;justify-content:flex-end} .mepanel{right:0} }
+/* the tier beside your name (button + profile panel) */
+.mebtn em.tier{font-style:normal;font-family:var(--font-mono);font-weight:400;font-size:12px;letter-spacing:.08em;
+  color:#fff;background:var(--ink);border-radius:4px;padding:1px 6px;margin-left:5px;vertical-align:1px}
+.mepanel .mtier{font-family:var(--font-mono);font-weight:400;font-size:14px;letter-spacing:.1em;text-transform:uppercase;
+  color:#fff;background:var(--ink);border-radius:5px;padding:2px 8px;vertical-align:6px}

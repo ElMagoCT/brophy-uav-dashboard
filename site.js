@@ -63,10 +63,11 @@
   var btn = bar.querySelector('#siteMeBtn'), panel = bar.querySelector('#siteMePanel');
 
   function draw() {
-    var p = get();
+    var p = get(), r = row(p);
     btn.classList.toggle('on', !!p);
     btn.innerHTML = p
-      ? '<span class="av">' + esc(initials(p.name)) + '</span><span class="t"><b>My profile</b><small>' + esc(p.name) + '</small></span>'
+      ? '<span class="av">' + esc(initials(p.name)) + '</span><span class="t"><b>My profile</b><small>' + esc(p.name) +
+        (r && r.tier != null ? ' <em class="tier">Tier ' + r.tier + '</em>' : '') + '</small></span>'
       : '<span class="av none">?</span><span class="t"><b>Select profile</b></span>';
     if (panelOpen) drawPanel();
   }
@@ -96,12 +97,12 @@
       ? '<div class="mstats">' +
           '<div><b>' + (r.weekMs != null ? hm(r.weekMs) : '&ndash;') + '</b><span>this week</span></div>' +
           '<div><b>' + hm(r.totalMs) + '</b><span>all-time</span></div>' +
-          '<div><b>' + (r.tier != null ? 'Tier ' + r.tier : '&ndash;') + '</b><span>' + countBadges(r) + ' badges</span></div>' +
+          '<div><b>' + countBadges(r) + '</b><span>badges</span></div>' +
         '</div>'
       : '<div class="mhint">No kiosk time under this name yet. Fly at the kiosk with the same name and it shows up here.</div>';
     panel.innerHTML =
       '<div class="mh">My profile</div>' +
-      '<div class="mname">' + esc(p.name) + '</div>' + stats +
+      '<div class="mname">' + esc(p.name) + (r && r.tier != null ? ' <span class="mtier">Tier ' + r.tier + '</span>' : '') + '</div>' + stats +
       '<a class="mgo" href="' + BASE + 'flightschool/">My progression &rarr;</a>' +
       '<div class="mrow"><button type="button" class="mlink" data-act="switch">Switch profile</button>' +
       '<button type="button" class="mlink" data-act="out">Sign out</button></div>';
@@ -145,7 +146,7 @@
   });
 
   fetch(BASE + 'data.json', { cache: 'no-cache' }).then(function (r) { return r.json(); })
-    .then(function (d) { DATA = d; if (panelOpen) drawPanel(); }).catch(function () {});
+    .then(function (d) { DATA = d; draw(); }).catch(function () {});
 
   draw();
   window.SiteNav = { pilot: get, set: set, open: function () { picking = false; open(); window.scrollTo({ top: 0, behavior: 'smooth' }); }, row: row, slug: slug };
