@@ -371,13 +371,6 @@ footer a{color:var(--ink)}
 .msg.bad{color:var(--rust)}
 
 /* ---------- site nav + pilot path ---------- */
-.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.tier{display:flex;flex-direction:column;gap:5px;padding:14px 16px 13px;border-top:6px solid var(--c);text-decoration:none;color:var(--ink)}
-.tier:hover{background-color:#fffdf6}
-.tier .tn{font-family:var(--font-mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--c)}
-.tier .nm{font-family:var(--font-sketch);font-weight:700;font-size:26px;line-height:1}
-.tier .s{font-size:14px;color:var(--ink-soft);line-height:1.35;flex:1}
-.tier .g{font-family:var(--font-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
 
 
 /* ---------- this week + tiers, side by side ---------- */
@@ -387,7 +380,11 @@ footer a{color:var(--ink)}
 .ladder{overflow:hidden}
 .rung{border-top:1px solid var(--line);padding:13px 18px 14px}
 .rung:first-child{border-top:0}
-.rung-h{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.rung-h{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;color:var(--ink);text-decoration:none}
+.rung-h:hover .nm{color:var(--c)}
+.rung .desc{font-size:14px;color:var(--ink-soft);line-height:1.38;margin-bottom:8px}
+.rung.mentor{background:#fffaf0}
+.rung.mentor .climb .n{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);white-space:nowrap}
 .rung-h .tn{font-family:var(--font-mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--c)}
 .rung-h .nm{font-family:var(--font-sketch);font-weight:700;font-size:22px;line-height:1}
 .rung-h .ct{margin-left:auto;font-family:var(--font-mono);font-size:13px;color:var(--ink-soft);white-space:nowrap}
@@ -420,12 +417,10 @@ header.title .side .btn{text-align:center;justify-content:center}
 @media (max-width:860px){
   .duo{grid-template-columns:1fr}
   .stats{grid-template-columns:repeat(2,1fr)}
-  .tiers{grid-template-columns:repeat(2,1fr)}
   .reel{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:600px){
   .wrap{padding:18px 13px 52px}
-  .tiers{grid-template-columns:1fr}
   header.title{padding:18px 16px}
   .status{min-width:0;width:100%}
   header.title .side{width:100%}
@@ -472,15 +467,6 @@ header.title .side .btn{text-align:center;justify-content:center}
 
   <section aria-label="Club totals">
     <div class="stats" id="stats"></div>
-  </section>
-
-  <section aria-label="Flight School tiers">
-    <div class="tiers">
-      <a class="card tier" href="flightschool/#t0" style="--c:var(--sky)"><span class="tn">Tier 0</span><span class="nm">Simulator</span><span class="s">The five sims in the IC. Everyone starts here: spot a flight, log 5 hours and fly Sim Flight, pass Safe Flight and Battery Care, rebuild and set up a Meteor.</span><span class="g">7 prerequisites &rarr; Tier 1 checkpoint</span></a>
-      <a class="card tier" href="flightschool/#t1" style="--c:var(--violet)"><span class="tn">Tier 1</span><span class="nm">Tiny Whoop</span><span class="s">Checkpoint: Tiny Whoop, your first real flight on the Meteor 75 Pro. Then solder, diagnose, freestyle.</span><span class="g">5 prerequisites &rarr; Tier 2 checkpoint</span></a>
-      <a class="card tier" href="flightschool/#t2" style="--c:var(--rust)"><span class="tn">Tier 2</span><span class="nm">Full-size</span><span class="s">Checkpoint: the Pavo 20 Pro Flight. Then FAA TRUST, Event Ops, filming and racing on Pavo 20 Pro &middot; Cinebot 35 &middot; 5-inch.</span><span class="g">5 prerequisites &rarr; Tier 3 checkpoint</span></a>
-      <a class="card tier" href="flightschool/#t3" style="--c:var(--green)"><span class="tn">Tier 3</span><span class="nm">Event Pilot</span><span class="s">Checkpoint: Event Pilot, earned by flying at a school event or a race, with a spotter.</span><span class="g">+ 4 bonus badges</span></a>
-    </div>
   </section>
 
   <section aria-labelledby="lbHead">
@@ -828,11 +814,30 @@ function countedBadges(p){
    toward the next checkpoint (flightschool/badges.js decides which badges
    those are). Top tier first, so it reads as a climb. */
 var LADDER_SHOW = 8;
+/* what each tier is - these were their own row of cards above the boards
+   until 2026-10-10, now folded into the ladder */
+var TIER_DESC = [
+  'The five sims in the IC. Everyone starts here: spot a flight, log 5 hours and fly Sim Flight, pass Safe Flight and Battery Care, rebuild and set up a Meteor.',
+  'Your first real flight on the Meteor 75 Pro. Then solder, diagnose, freestyle.',
+  'Pavo 20 Pro, Cinebot 35 and 5-inch. FAA TRUST, Event Ops, filming and racing.',
+  'Earned by flying at a school event or a race, with a spotter. The top of the path.'
+];
 function renderLadder(){
   if (!window.FS){ $('ladder').innerHTML = '<div class="msg">Badge list did not load.</div>'; return; }
   var pilots = (DATA.pilots || []).filter(function (p) { return p.tier != null; });
   var tiers = FS.TIERS.filter(function (t) { return t.n >= 0; }).slice().reverse();
-  var html = '';
+  /* Mentors first: the people who sign your badges off. A Tier 2 pilot with
+     the Mentor bonus badge (an officer judges it). They stay on their own
+     tier below as well. */
+  var mentors = (DATA.pilots || []).filter(function (p) { return (p.badges || []).indexOf('mentor') >= 0; });
+  var html = '<div class="rung mentor" style="--c:var(--amber)">' +
+    '<a class="rung-h" href="flightschool/#el"><span class="tn">Mentors</span><span class="nm">Mentor</span>' +
+    '<span class="ct">' + mentors.length + (mentors.length === 1 ? ' mentor' : ' mentors') + '</span></a>' +
+    '<div class="desc">These are the people who can approve your stuff: they watch your witnessed badges, check your photos and sign your badges off.</div>' +
+    (mentors.length ? mentors.map(function (p){
+      return '<div class="climb top' + (isMe(p) ? ' me' : '') + '"><span class="nm">' + esc(p.name) + '</span><span class="n">signs off badges</span></div>';
+    }).join('') : '<div class="none">No mentors yet. Tier 2 pilots can earn it.</div>') +
+    '</div>';
 
   tiers.forEach(function (t){
     var on = pilots.filter(function (p) { return p.tier === t.n; });
@@ -849,8 +854,9 @@ function renderLadder(){
     var waiting = rows.length - started.length;
 
     html += '<div class="rung' + (isTop ? ' top' : '') + '" style="--c:' + t.color + '">' +
-      '<div class="rung-h"><span class="tn">Tier ' + t.n + '</span><span class="nm">' + esc(t.name) + '</span>' +
-      '<span class="ct">' + on.length + (on.length === 1 ? ' pilot' : ' pilots') + '</span></div>';
+      '<a class="rung-h" href="flightschool/#' + t.id + '"><span class="tn">Tier ' + t.n + '</span><span class="nm">' + esc(t.name) + '</span>' +
+      '<span class="ct">' + on.length + (on.length === 1 ? ' pilot' : ' pilots') + '</span></a>' +
+      '<div class="desc">' + esc(TIER_DESC[t.n] || '') + '</div>';
 
     if (!on.length){
       html += '<div class="none">' + (isTop ? 'Nobody yet. Fly at a school event to be the first.' : 'Nobody here yet.') + '</div>';
