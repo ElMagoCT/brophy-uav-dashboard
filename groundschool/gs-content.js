@@ -927,7 +927,7 @@ var GS_COURSE = [
       p:['An <b>ESC</b> per motor, or one 4-in-1 board. It turns "spin this fast" into three-phase power. When one fails it smells like burnt plastic and usually takes the motor with it.',
          'The <b>flight controller</b> is the brain: a gyro, an accelerometer, and Betaflight. It reads your sticks, reads how the aircraft is actually moving, and corrects all four motors <b>hundreds of times a second</b> to close the gap.'] },
     { h:'Receiver and battery',
-      p:['The <b>receiver</b> listens for your transmitter. When it stops hearing anything, <b>failsafe</b> fires: the aircraft cuts throttle and comes down. That is deliberate - a quad that keeps flying with nobody controlling it is far worse.',
+      p:['The <b>receiver</b> listens for your transmitter. When it stops hearing anything, <b>failsafe</b> runs: whatever that drone is set up to do when it loses you. Most small quads are set to cut the motors and come down - a quad that keeps flying with nobody controlling it is far worse.',
          'The <b>battery</b> is a LiPo pack. It is the part you replace most often and the only part that can burn your house down. Next lesson.'],
       note:'Six parts, one laptop, and a set of hex drivers. That is the entire toolkit.' }
   ]
@@ -1541,13 +1541,13 @@ var GS_COURSE = [
         b:['50-100 Hz','more range','fine for cinewhoops and long shots'] },
       tip:'The club bind phrase is the same on every club receiver. Flashing a new receiver with it is part of the Betaflight badge.' },
     { h:'Failsafe is the thing you set before you need it', tab:'Failsafe',
-      p:['When the receiver stops hearing the radio, the flight controller runs the <b>failsafe</b>. For a whoop or a freestyle quad with no GPS that means <b>drop</b>: motors off, the aircraft falls where it is. It sounds brutal. The alternative is a quad flying away under its last command.'],
+      p:['When the receiver stops hearing the radio, the flight controller runs the <b>failsafe</b> - and what that does <b>depends on how that drone is set up</b>. Small quads with no GPS are usually set to drop (motors off); others may be set to land or, with GPS, to fly home. Know what the one in your hands does.'],
       steps:[
-        { t:'Set it',  d:'Betaflight Failsafe tab: stage 2 = Drop' },
-        { t:'Test it', d:'props OFF, arm, switch the radio off - motors must stop within two seconds' },
-        { t:'Trust it', d:'if the radio dies at the field, the quad is already on the ground' }
+        { t:'Check it', d:'Betaflight Failsafe tab: what is this drone set to do, and how fast?' },
+        { t:'Test it',  d:'props OFF, arm, switch the radio off - it should do what it is set to' },
+        { t:'Ask',      d:'not sure what a quad does? Ask a mentor before you fly it' }
       ],
-      note:'"Land" and GPS rescue modes exist for big GPS drones. Not for anything in the club case.' }
+      note:'Every drone can be different. Never assume a quad behaves like the last one you flew.' }
   ]
 },
 {
@@ -1626,24 +1626,23 @@ var GS_COURSE = [
 {
   id:'gs-emg-01', mod:'EVT', ord:40, title:'Failsafe: set it, test it', mins:3, kind:'read',
   cards:[
-    { h:'The one setting that saves a crowd', tab:'Set',
-      p:['Failsafe is what the aircraft does the moment it stops hearing you. For every quad in the club case the answer is <b>drop</b>. A dropped quad falls on the spot; a quad that keeps its last command flies into whatever was in front of it.'],
+    { h:'Know what your drone does', tab:'Set',
+      p:['Failsafe is what the aircraft does the moment it stops hearing you. It is <b>set per drone</b> in Betaflight, so the procedure and the timing can differ from one quad to the next. Before an event, find out what each quad you will fly is set to.'],
       facts:[
-        { n:'STAGE 1', l:'a short hold, sticks centred, under a second' },
-        { n:'STAGE 2', l:'the procedure: DROP', c:'rust' },
-        { n:'1.5 s', l:'from silence to motors off, by default', c:'amber' }
-      ],
-      art:'failCurves', cap:'silence, then off' },
+        { n:'DROP',   l:'motors off, it falls where it is', c:'rust' },
+        { n:'LAND',   l:'a slow descent on its own' },
+        { n:'RESCUE', l:'GPS drones fly back toward home', c:'sky' }
+      ] },
     { h:'Test it on the bench, props off', tab:'Test',
       p:['A failsafe nobody has tested is a guess. The test is thirty seconds and part of every Betaflight badge sign-off.'],
       steps:[
         { t:'Props off, battery in',  d:'on the bench, nowhere near the pad' },
         { t:'Arm',                     d:'motors idle' },
-        { t:'Switch the radio off',    d:'count: one, two' },
-        { t:'Motors must stop',        d:'and the OSD must say FAILSAFE' },
+        { t:'Switch the radio off',    d:'and watch' },
+        { t:'It does what it is set to', d:'and the OSD says FAILSAFE' },
         { t:'Radio back on',           d:'the quad must stay disarmed until you re-arm' }
       ],
-      note:'If the motors keep spinning, the quad does not fly until it is fixed. No exceptions, no "it is probably fine".' }
+      note:'If it does not do what it is set to, the quad does not fly until it is fixed. No exceptions, no "it is probably fine".' }
   ]
 },
 {
@@ -1659,7 +1658,7 @@ var GS_COURSE = [
       ],
       art:'recoverSteps', cap:'hover. call. come home. land.' },
     { h:'Control gone', tab:'Flyaway',
-      p:['A real flyaway - the aircraft not responding at all - is rare with a tested failsafe, because the failsafe has already dropped it. If it is still flying, it is still hearing <i>something</i>.'],
+      p:['A real flyaway - the aircraft not responding at all - is rare with a tested failsafe, because the failsafe has already taken over. If it is still flying, it is still hearing <i>something</i>.'],
       cols:{ tone:'dd', ha:'Do', hb:'Don\'t',
         a:['Switch the radio off and on - a reconnect often fixes it','Watch where it goes and note the time','Say it out loud so everyone looks up'],
         b:['Run after it in goggles','Assume it will come back on its own','Keep it quiet to avoid embarrassment'] },
@@ -1848,9 +1847,9 @@ var GS_QUIZ = [
 { mod:'ELC', q:'A motor is too hot to hold right after landing. Most likely?',
   opts:['Normal for brushless motors','A bent shaft, a dry bearing, or something wound round it','The battery C rating is too high','The ESC is undersized for the pack'], a:1,
   why:'Warm is normal, too-hot-to-hold is not. It means something is binding, and it will get worse.' },
-{ mod:'RAD', q:'The receiver stops hearing the transmitter. What is supposed to happen?',
-  opts:['It holds its last input','Failsafe fires and it cuts throttle','It flies a straight line until the battery dies','It switches to angle mode'], a:1,
-  why:'Failsafe cuts throttle and brings it down. A quad that keeps flying with nobody controlling it is a far worse outcome.' },
+{ mod:'RAD', q:'The receiver stops hearing the transmitter. What happens?',
+  opts:['Nothing, it keeps its last input','Failsafe runs - whatever that drone is set up to do','It always flies home','It switches to angle mode'], a:1,
+  why:'Failsafe is set per drone. Know what the one you are flying does before you take off.' },
 { mod:'ELC', q:'Which part is designed to break in a crash?',
   opts:['The frame arms','The flight controller','The motors','The ESCs'], a:0,
   why:'Arms snap on purpose. They are the cheapest part on the aircraft and they break instead of the expensive ones.' },
@@ -2032,12 +2031,9 @@ var GS_QUIZ = [
 { mod:'RAD', q:'What is the bind phrase for?',
   opts:['Encrypting the video feed','Deciding which receivers answer to your radio','Setting the channel for the VTX','Naming the quad on the OSD'], a:1,
   why:'A receiver flashed with your bind phrase binds to your radio automatically. The club uses one phrase on every club receiver.' },
-{ mod:'RAD', q:'What should a club quad do when the receiver loses the radio?',
-  opts:['Hold its last stick position','Return to home','Drop: motors off','Land slowly'], a:2,
-  why:'No GPS, no return-to-home. Drop puts it on the ground where it is instead of flying on under its last command.' },
 { mod:'RAD', q:'How do you test failsafe?',
-  opts:['Fly far away until it triggers','Props off, arm, switch the radio off, watch the motors stop','Unplug the receiver in flight','Read the Betaflight tab and trust it'], a:1,
-  why:'On the bench, props off, radio off. Motors must stop within two seconds and the OSD must say FAILSAFE.' },
+  opts:['Fly far away until it triggers','Props off, arm, switch the radio off, watch what it does','Unplug the receiver in flight','Read the Betaflight tab and trust it'], a:1,
+  why:'On the bench, props off, radio off. It should do what its failsafe is set to, and the OSD should say FAILSAFE.' },
 { mod:'RAD', q:'Your link quality drops to 55 % flying over the crowd at the rally. You:',
   opts:['Keep going, the picture looks fine','Fly back toward yourself and land','Switch to a higher packet rate in flight','Climb for a better signal'], a:1,
   why:'LQ is the early warning. Come home while you still have control; the picture is the last thing to go, not the first.' },
@@ -2053,12 +2049,6 @@ var GS_QUIZ = [
 { mod:'EVT', q:'Do FAA airspace rules apply to the rally race in the gym?',
   opts:['Yes, the FAA covers every building','No - indoors is not FAA airspace','Only above 100 ft','Only if the doors are open'], a:1,
   why:'Enclosed spaces are not airspace. The club rules still apply in full.' },
-{ mod:'EVT', q:'What is the failsafe procedure on every quad in the club case?',
-  opts:['Return to home','Land','Drop','Hold position'], a:2,
-  why:'No GPS means no return and no reliable land. Drop stops the motors where it is.' },
-{ mod:'EVT', q:'How long after the radio goes silent should the motors stop?',
-  opts:['Instantly','About 1.5 seconds','10 seconds','They should not stop - it should hover'], a:1,
-  why:'Stage 1 holds briefly in case it is a blip; stage 2 drops. By default that is about a second and a half.' },
 { mod:'EVT', q:'Goggles go black at 20 m. Spotter can see the quad. First move?',
   opts:['Disarm','Hover and say VIDEO OUT','Climb to full height','Pull the goggles off and look'], a:1,
   why:'Hover, hand the calls to the spotter, come home on their calls. Disarming at 20 m out is a crash.' },
@@ -2080,7 +2070,7 @@ var GS_QUIZ = [
 { mod:'EVT', q:'After a pack fire has burned out, when may someone touch what is left?',
   opts:['As soon as the flames stop','After it has cooled for an hour','After it has been doused','Immediately, with gloves'], a:1,
   why:'Cells next to the one that burned can still go. An hour, untouched.' },
-{ mod:'EVT', q:'The failsafe test: props off, armed, radio switched off - and the motors keep spinning. The quad:',
+{ mod:'EVT', q:'The failsafe test: props off, armed, radio switched off - and the quad does not do what its failsafe is set to. The quad:',
   opts:['Flies, but only line of sight','Flies if the pilot is careful','Does not fly until it is fixed','Flies at the field but not at events'], a:2,
   why:'No failsafe, no flight. There is no careful enough.' },
 { mod:'EVT', q:'What separates the crew from the crowd at an event?',
