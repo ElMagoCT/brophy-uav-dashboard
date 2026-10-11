@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
-    "generated":  1791685295919,
-    "generatedIso":  "2026-10-10T19:21:36-07:00",
+    "generated":  1791685356391,
+    "generatedIso":  "2026-10-10T19:22:36-07:00",
     "club":  {
                  "name":  "Brophy UAV",
                  "subtitle":  "Flight Simulator Lab",
@@ -125,8 +125,8 @@
                                         "fpvlabs":  254749,
                                         "picasim":  760076
                                     },
-                       "gsPct":  2,
-                       "gsLessons":  6,
+                       "gsPct":  9,
+                       "gsLessons":  9,
                        "lastSeen":  1791311781417,
                        "badges":  [
                                       "proficient-flight",
