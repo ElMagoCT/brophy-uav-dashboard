@@ -64,16 +64,44 @@
   function readResult(m, id) { return api('GET', '/api/result?machine=' + encodeURIComponent(m) + '&id=' + encodeURIComponent(id)).then(function (j) { return j.result; }); }
 
   // ---------------------------------------------------------------- sign in
+  // 2026-10-10: a wrong password used to get in (it only showed up later as
+  // "NOT verified"). Now it is checked before the console opens, with the two
+  // checks that already exist - nothing new is sent or stored:
+  //   1. the review key (hex SHA-256 of the password, the same header photo
+  //      review sends) against the API's REVIEW_KEY_HASH: 403 = wrong;
+  //   2. if review is not set up (503) or unreachable, a kiosk's last signed
+  //      heartbeat, verified locally with the HMAC key, like the status badge.
+  // Resolves true (right), false (wrong) or null (nothing could tell).
+  function verifyPassword(keyHex, key) {
+    return api('GET', '/api/submission?review=1', null, { 'X-Review-Key': keyHex }).then(function () { return true; }, function (e) {
+      if (e.status === 401 || e.status === 403) return false;
+      var i = 0;
+      function next() {
+        if (i >= MACHINES.length) return null;
+        var m = MACHINES[i++];
+        return readStatus(m).then(function (st) {
+          if (!st || !st.sig) return next();
+          return crypto.subtle.sign('HMAC', key, enc.encode('v1s\n' + m + '\n' + st.data + '\n' + st.updated)).then(hex).then(function (sig) { return sig === st.sig; });
+        }, next);
+      }
+      return next();
+    });
+  }
   function signIn() {
-    var pw = el('pw').value;
+    var pw = el('pw').value, h0;
     el('signMsg').textContent = '';
     if (pw.length < 4) { el('signMsg').textContent = 'Enter the instructor password.'; return; }
-    el('go').disabled = true;
-    sha256Hex(pw).then(function (h) { S.keyHex = h; return importKey(h); }).then(function (k) {
-      S.key = k; el('pw').value = ''; pw = null;
-      el('signin').hidden = true; el('console').hidden = false;
-      el('who').textContent = 'Signed in · password kept in this tab only'; el('signout').hidden = false;
-      drawTabs(); drawActions(); loadStatus(); showView(); loadReview(true);
+    el('go').disabled = true; el('signMsg').textContent = 'Checking…';
+    sha256Hex(pw).then(function (h) { h0 = h; return importKey(h); }).then(function (k) {
+      return verifyPassword(h0, k).then(function (ok) {
+        if (ok === false) { el('signMsg').textContent = 'Wrong password.'; el('pw').select(); return; }
+        S.keyHex = h0; S.key = k; el('pw').value = ''; pw = null; el('signMsg').textContent = '';
+        el('signin').hidden = true; el('console').hidden = false;
+        el('who').textContent = ok ? 'Signed in · password checked · kept in this tab only'
+                                   : 'Signed in · password NOT checked (photo review not set up and no signed kiosk status to check it against) · kept in this tab only';
+        el('signout').hidden = false;
+        drawTabs(); drawActions(); loadStatus(); showView(); loadReview(true);
+      });
     }).catch(function (e) { el('signMsg').textContent = e.message; }).then(function () { el('go').disabled = false; });
   }
   function signOut() { S.key = null; location.reload(); }
@@ -261,15 +289,43 @@
   }
   // One path for every console decision (the form above and the progress list):
   // the badge rules, then the signed award, then a refresh of what is on file.
+  // A badge with a `quiz` that is also bench/witnessed (spotter, event-ops)
+  // needs the quiz passed AND a mentor's approval. Approving before the quiz
+  // is allowed but asked, like an unfinished checkpoint. Quiz best comes from
+  // /api/progress (quizzes[badge].best, or the quiz lesson's score).
+  function needsQuiz(bd) { return !!(bd && bd.quiz && (bd.type === 'witnessed' || bd.type === 'bench')); }
+  function quizBest(prog, bd) {
+    var q = prog && prog.quizzes && prog.quizzes[bd.id], l = prog && prog.lessons && prog.lessons[bd.quiz];
+    return Math.max(q ? (+q.best || 0) : 0, l ? (+l.score || 0) : 0);
+  }
+  function quizAsk(pilot, bd) {
+    if (!needsQuiz(bd)) return Promise.resolve(null);
+    var got = PP.slug === FS.slug(pilot) && PP.loaded ? Promise.resolve(PP.prog)
+      : api('GET', '/api/progress?pilot=' + encodeURIComponent(pilot)).then(function (j) { return j.progress || null; }, function () { return null; });
+    return got.then(function (prog) {
+      var best = quizBest(prog, bd);
+      if (best >= FS.PASS) return null;
+      return bd.name + ' needs its quiz passed AND a mentor’s approval. ' + pilot + (best ? '’s best quiz is ' + best + ' %' : ' has not passed the quiz yet') +
+        ' (needs ' + FS.PASS + ' %). The approval is filed, but it will not count until the quiz is passed. File it anyway?';
+    });
+  }
   function decideBadge(pilot, badge, status, msg, evidence) {
     var bd = FS.BADGES.filter(function (x) { return x.id === badge; })[0], note = el('apNote').value.trim();
+    var go = Promise.resolve(true);
     if (status === 'earned') {
       var rule = checkRules(pilot, bd);
       if (rule && rule.stop) { msg.textContent = rule.stop; return; }
       if (rule && rule.ask && !window.confirm(rule.ask)) { msg.textContent = 'Not filed.'; return; }
+      go = quizAsk(pilot, bd).then(function (ask) { return !ask || window.confirm(ask); });
     }
+    go.then(function (yes) {
+      if (!yes) { msg.textContent = 'Not filed.'; return; }
+      return fileDecision(pilot, badge, status, note, evidence, msg);
+    });
+  }
+  function fileDecision(pilot, badge, status, note, evidence, msg) {
     msg.textContent = 'signing…';
-    fileAward(pilot, badge, status, note, evidence).then(function () {
+    return fileAward(pilot, badge, status, note, evidence).then(function () {
       msg.textContent = (status === 'earned' ? 'Approved: ' : 'Revoked: ') + badgeName(badge) + ' for ' + pilot + ' · on file; the kiosks pick it up on their next sync.';
       showHas(); ROSTER = null; loadRoster();
       if (PP.slug === FS.slug(pilot)) { PP.slug = null; pickPilot(); }
@@ -291,7 +347,7 @@
     showHas();
     if (s.length < 2) { el('pp').hidden = true; PP.slug = null; return; }
     if (s === PP.slug) return;
-    PP.slug = s; PP.name = name; PP.awards = PP.prog = null;
+    PP.slug = s; PP.name = name; PP.awards = PP.prog = null; PP.loaded = false;
     el('pp').hidden = false; el('ppName').textContent = name + ' · progress';
     el('ppMsg').textContent = 'Loading…'; el('ppList').textContent = ''; el('ppSum').textContent = '';
     var q = encodeURIComponent(name);
@@ -301,7 +357,7 @@
       ROSTER ? Promise.resolve() : fetch('../data.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { ROSTER = ROSTER || d; })
     ]).then(function (r) {
       if (PP.slug !== s) return;
-      PP.awards = r[0]; PP.prog = r[1]; el('ppMsg').textContent = ''; drawProgress();
+      PP.awards = r[0]; PP.prog = r[1]; PP.loaded = true; el('ppMsg').textContent = ''; drawProgress();
     }).catch(function (e) { if (PP.slug === s) { el('ppMsg').textContent = 'Could not load progress: ' + e.message; PP.slug = null; } });
   }
   // Everything known about one badge for the picked pilot. Mirrors the rules
@@ -375,7 +431,13 @@
       rv.onclick = function () { if (window.confirm('Revoke ' + b.name + ' from ' + PP.name + '? Only do this for a mistake.')) decideBadge(PP.name, b.id, 'revoked', msg, ['console']); };
       acts.appendChild(rv);
     }
-    row.appendChild(main); row.appendChild(acts); row.appendChild(det); row.appendChild(msg);
+    row.appendChild(main); row.appendChild(acts);
+    if (st.both && !st.quizPass && !st.kiosk) {
+      var w = document.createElement('div'); w.className = 'pwarn';
+      w.textContent = 'Quiz AND mentor approval: the quiz is not passed yet - you can still file an approval (you will be asked to confirm), but it will not count until it is.';
+      row.appendChild(w);
+    }
+    row.appendChild(det); row.appendChild(msg);
     return row;
   }
   function drawProgress() {
@@ -487,7 +549,9 @@
           var r = checkRules(it.pilot, bd);
           if (r && r.stop) { window.alert(r.stop.replace(/ Not filed\.$/, ' Fail it with a note, or wait.')); pass.disabled = fail.disabled = false; return; }
           if (r && r.ask && !window.confirm(r.ask)) { pass.disabled = fail.disabled = false; return; }
-          first = fileAward(it.pilot, it.badge, 'earned', 'photo review' + (note.value.trim() ? ': ' + note.value.trim() : ''), ['photo:' + it.id]);
+          first = quizAsk(it.pilot, bd).then(function (ask) {
+            if (ask && !window.confirm(ask)) throw Object.assign(new Error('not filed'), { quiet: true });
+          }).then(function () { return fileAward(it.pilot, it.badge, 'earned', 'photo review' + (note.value.trim() ? ': ' + note.value.trim() : ''), ['photo:' + it.id]); });
         }
         first.then(function () {
           return api('POST', '/api/submission', { action: 'review', pilot: it.pilot, id: it.id, result: result, note: note.value.trim() }, reviewHeaders());
@@ -499,7 +563,7 @@
           if (result === 'pass') { ROSTER = null; loadRoster(); }
         }).catch(function (e) {
           pass.disabled = fail.disabled = false;
-          window.alert('Could not record it: ' + e.message);
+          if (!e.quiet) window.alert('Could not record it: ' + e.message);
         });
       }
       pass.onclick = function () { decide('pass'); };
@@ -538,6 +602,7 @@
   el('app').hidden = false;
   drawApprovals();   // no key needed to build it; filing a decision still signs with the password
   el('go').onclick = signIn;
+  el('pwShow').addEventListener('change', function () { el('pw').type = el('pwShow').checked ? 'text' : 'password'; });
   el('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') signIn(); });
   el('refresh').onclick = loadStatus;
   el('rvRefresh').onclick = function () { loadReview(); };

@@ -103,3 +103,5 @@ button.primary.flush{margin-top:0}
 .roster div{cursor:pointer}
 .roster div:hover b{color:var(--accent)}
 @media (max-width:560px){ .prow{grid-template-columns:1fr} .pacts{grid-row:auto} }
+.show-pw{margin-top:6px;font-size:14px;color:var(--muted);cursor:pointer}
+.show-pw input{margin:0}

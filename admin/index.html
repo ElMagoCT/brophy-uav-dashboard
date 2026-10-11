@@ -34,8 +34,9 @@
       can't verify. The password never leaves this page. The GitHub side is handled by the club's API
       (<code>brophy-uav-api.netlify.app</code>), which holds the repo token so this page doesn't have to.</p>
     <label>Instructor password
-      <input id="pw" type="password" autocomplete="current-password">
+      <input id="pw" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="off">
     </label>
+    <label class="inline show-pw"><input id="pwShow" type="checkbox"> Show password</label>
     <div class="row">
       <button id="go" class="primary">Sign in</button>
       <span class="msg" id="signMsg"></span>
