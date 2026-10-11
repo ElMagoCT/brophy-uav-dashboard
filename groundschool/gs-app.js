@@ -636,7 +636,7 @@ var GSApp = (function(){
 
   /* ---- the 3-question check on a reading lesson ---- */
   function drawCheck(body){
-    var L = S.lesson.def, qs = L.check, qi = 0, right = 0;
+    var L = S.lesson.def, qs = shuffleOpts(GSPanels._shuffle(L.check)), qi = 0, right = 0;
     el('lNext').style.display = 'none';
     el('lPrev').style.display = 'none';
     el('lHint').textContent = 'Quick check';
@@ -697,7 +697,7 @@ var GSApp = (function(){
       var f = h('button','minibtn big go','Save and close');
       f.onclick = function(){ complete(score); };
       var r = h('button','minibtn big','Retake the check');
-      r.onclick = function(){ qi = 0; right = 0; draw(); };
+      r.onclick = function(){ qs = shuffleOpts(GSPanels._shuffle(L.check)); qi = 0; right = 0; draw(); };
       bs.appendChild(f); bs.appendChild(r);
       card.appendChild(bs);
       body.appendChild(card);
@@ -726,6 +726,20 @@ var GSApp = (function(){
       finish:function(score, extra){ complete(score, extra); }
     };
     S.live = runner(body, ctx);
+  }
+
+  /* Answer order is reshuffled on every attempt too (2026-10-10), on top of
+     the question order, so "it's always B" stops working. Copies - the
+     content in gs-content.js is never changed. */
+  function shuffleOpts(list){
+    return (list || []).map(function(q){
+      var idx = q.opts.map(function(_, i){ return i; });
+      for(var i = idx.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)), t = idx[i]; idx[i] = idx[j]; idx[j] = t; }
+      var c = {}; for(var k in q) c[k] = q[k];
+      c.opts = idx.map(function(i){ return q.opts[i]; });
+      c.a = idx.indexOf(q.a);
+      return c;
+    });
   }
 
   /* ============================================================ CHECKRIDE */
@@ -758,7 +772,7 @@ var GSApp = (function(){
       return GSPanels._shuffle(out).slice(0, Q_N);
     }
 
-    var qs = drawQuestions(), qi = 0, right = 0, marks = [];
+    var qs = shuffleOpts(drawQuestions()), qi = 0, right = 0, marks = [];
     var hoverScore = 0, orientScore = 0;
 
     function head(){
@@ -913,7 +927,7 @@ var GSApp = (function(){
       if(!passed){
         var r = h('button','minibtn big','Take it again now');
         r.onclick = function(){
-          qs = drawQuestions(); qi = 0; right = 0; marks = [];
+          qs = shuffleOpts(drawQuestions()); qi = 0; right = 0; marks = [];
           hoverScore = 0; orientScore = 0; drawQ();
         };
         bs.appendChild(r);
