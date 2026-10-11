@@ -79,3 +79,27 @@ button.primary.flush{margin-top:0}
 .rv .row button{margin-top:0;flex:1}
 .rv .done{font-size:14px;font-weight:600}
 .rv .done.pass{color:var(--ok)} .rv .done.fail{color:var(--bad)}
+
+/* ---- pilot progress on Approvals (2026-10-10) ---- */
+#pp h2{margin-bottom:4px}
+.phead{margin:18px 0 6px;font-size:15px;font-weight:600;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:4px}
+.phead span{font-weight:400;font-size:13.5px;color:var(--muted)}
+.prow{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14.5px}
+.prow:last-child{border-bottom:0}
+.prow.cp{border:1px dashed var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:8px 10px}
+.prow.cp.done{border-style:solid;border-color:var(--ok)}
+.pmain{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.pmain b{font-weight:600}
+.ptype{font:12px "Share Tech Mono",ui-monospace,monospace;color:var(--muted);letter-spacing:.3px}
+.pchips{display:inline-flex;flex-wrap:wrap;gap:4px}
+.pchip{font-size:12.5px;padding:1px 8px;border-radius:999px;background:var(--chip);color:var(--muted)}
+.pchip.ok{background:var(--ok);color:#fff} .pchip.warn{color:var(--warn)} .pchip.bad{color:var(--bad)} .pchip.src{color:var(--ink)}
+.pacts{display:flex;gap:6px;align-items:start;grid-row:span 2}
+.pacts button{padding:5px 11px;font-size:14px;margin-top:0}
+.pdet{font-size:13px;color:var(--muted)}
+.pwarn{font-size:13px;color:var(--warn);grid-column:1}
+.pmsg{grid-column:1 / -1}
+.pmsg:empty{display:none}
+.roster div{cursor:pointer}
+.roster div:hover b{color:var(--accent)}
+@media (max-width:560px){ .prow{grid-template-columns:1fr} .pacts{grid-row:auto} }

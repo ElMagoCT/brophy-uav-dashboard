@@ -23,6 +23,7 @@
     <div class="row">
       <a class="btn-link" href="../">&larr; Home page</a>
       <div class="who" id="who"></div>
+      <button id="signout" class="ghost" hidden>Sign out</button>
     </div>
   </header>
 
@@ -44,9 +45,9 @@
   <!-- ============ console ============ -->
   <section id="console" hidden>
     <nav class="views" id="views">
-      <a href="#kiosks" id="vKiosks" class="on">Kiosks</a>
+      <a href="#review" id="vReview" class="on">Review photos <span id="rvCount"></span></a>
       <a href="#approvals" id="vApprovals">Approvals</a>
-      <a href="#review" id="vReview">Review photos <span id="rvCount"></span></a>
+      <a href="#kiosks" id="vKiosks">Kiosks</a>
     </nav>
 
     <!-- ---- review: photos pilots submitted from Flight School (2026-10-08) ---- -->
@@ -86,6 +87,21 @@
           <span class="muted small" id="apMsg">Approving a badge that is already earned is harmless.</span>
         </div>
       </div>
+      <!-- the picked pilot's whole path (2026-10-10): every badge, where it came
+           from, and Approve / Revoke per badge through the same signed award -->
+      <div class="card" id="pp" hidden>
+        <div class="row between">
+          <h2 id="ppName">Progress</h2>
+          <button id="ppRefresh">Refresh</button>
+        </div>
+        <div class="muted small" id="ppSum"></div>
+        <p class="muted small">Sources: <b>kiosk</b> = the kiosk&rsquo;s last snapshot (<code>data.json</code>), <b>approved</b> = a
+          decision on file from this console, <b>quiz</b> / <b>lessons</b> / <b>steps</b> = what the pilot did on the website.
+          Approve and Revoke file the same signed decision as the form above (with its note); both kiosks apply it on their next
+          sync, and a revoke clears the badge there even if the kiosk awarded it.</p>
+        <div class="muted small" id="ppMsg"></div>
+        <div id="ppList"></div>
+      </div>
       <div class="card">
         <h2>Who holds what</h2>
         <p class="muted small" id="apRosterNote">Kiosk snapshot plus instructor decisions on file.</p>
@@ -123,7 +139,7 @@
     </div>
 
     <div class="card">
-      <div class="row between"><h2>Results</h2><button id="signout" class="ghost">Sign out</button></div>
+      <h2>Results</h2>
       <div id="results"><div class="muted">Nothing yet.</div></div>
     </div>
     </div><!-- /kiosks -->

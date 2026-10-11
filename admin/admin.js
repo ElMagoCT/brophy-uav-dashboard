@@ -72,8 +72,8 @@
     sha256Hex(pw).then(function (h) { S.keyHex = h; return importKey(h); }).then(function (k) {
       S.key = k; el('pw').value = ''; pw = null;
       el('signin').hidden = true; el('console').hidden = false;
-      el('who').textContent = 'Signed in · password kept in this tab only';
-      drawTabs(); drawActions(); loadStatus(); drawApprovals(); showView(); loadReview(true);
+      el('who').textContent = 'Signed in · password kept in this tab only'; el('signout').hidden = false;
+      drawTabs(); drawActions(); loadStatus(); showView(); loadReview(true);
     }).catch(function (e) { el('signMsg').textContent = e.message; }).then(function () { el('go').disabled = false; });
   }
   function signOut() { S.key = null; location.reload(); }
@@ -173,10 +173,12 @@
 
   // ---------------------------------------------------------------- approvals
   var ROSTER = null;
+  // Review photos is the first view (2026-10-10): no hash, or one we do not
+  // know, opens it. #approvals and #kiosks still deep-link.
   function showView() {
-    var ap = location.hash === '#approvals', rv = location.hash === '#review';
-    el('approvals').hidden = !ap; el('review').hidden = !rv; el('kiosks').hidden = ap || rv;
-    el('vKiosks').className = (ap || rv) ? '' : 'on'; el('vApprovals').className = ap ? 'on' : ''; el('vReview').className = rv ? 'on' : '';
+    var ap = location.hash === '#approvals', ki = location.hash === '#kiosks', rv = !ap && !ki;
+    el('approvals').hidden = !ap; el('review').hidden = !rv; el('kiosks').hidden = !ki;
+    el('vKiosks').className = ki ? 'on' : ''; el('vApprovals').className = ap ? 'on' : ''; el('vReview').className = rv ? 'on' : '';
     if ((ap || rv) && !ROSTER) loadRoster();
     if (rv && S.key) loadReview();
   }
@@ -194,7 +196,13 @@
       bs.appendChild(g);
     });
     bs.onchange = badgeInfo; badgeInfo();
-    el('apPilot').addEventListener('change', showHas);
+    var t = null;
+    el('apPilot').addEventListener('change', pickPilot);
+    el('apPilot').addEventListener('input', function () {   // a roster name picked or typed in full loads at once
+      clearTimeout(t); var v = el('apPilot').value.trim();
+      if (rosterPilot(FS.slug(v))) t = setTimeout(pickPilot, 150);
+    });
+    el('ppRefresh').onclick = function () { PP.slug = null; pickPilot(); };
     el('apAward').onclick = function () { award('earned'); };
     el('apRevoke').onclick = function () { if (window.confirm('Revoke this badge from the pilot? Only do this for a mistake.')) award('revoked'); };
   }
@@ -247,20 +255,173 @@
     });
   }
   function award(status) {
-    var pilot = el('apPilot').value.trim(), badge = el('apBadge').value, note = el('apNote').value.trim();
+    var pilot = el('apPilot').value.trim(), badge = el('apBadge').value;
     if (pilot.length < 2) { el('apPilot').focus(); return; }
-    var msg = el('apMsg');
-    var bd = FS.BADGES.filter(function (x) { return x.id === badge; })[0];
+    decideBadge(pilot, badge, status, el('apMsg'), ['dm']);
+  }
+  // One path for every console decision (the form above and the progress list):
+  // the badge rules, then the signed award, then a refresh of what is on file.
+  function decideBadge(pilot, badge, status, msg, evidence) {
+    var bd = FS.BADGES.filter(function (x) { return x.id === badge; })[0], note = el('apNote').value.trim();
     if (status === 'earned') {
       var rule = checkRules(pilot, bd);
       if (rule && rule.stop) { msg.textContent = rule.stop; return; }
       if (rule && rule.ask && !window.confirm(rule.ask)) { msg.textContent = 'Not filed.'; return; }
     }
     msg.textContent = 'signing…';
-    fileAward(pilot, badge, status, note, ['dm']).then(function () {
+    fileAward(pilot, badge, status, note, evidence).then(function () {
       msg.textContent = (status === 'earned' ? 'Approved: ' : 'Revoked: ') + badgeName(badge) + ' for ' + pilot + ' · on file; the kiosks pick it up on their next sync.';
       showHas(); ROSTER = null; loadRoster();
+      if (PP.slug === FS.slug(pilot)) { PP.slug = null; pickPilot(); }
     }).catch(function (e) { msg.textContent = 'Could not file it: ' + e.message; });
+  }
+
+  // ---------------------------------------------------------------- pilot progress (2026-10-10)
+  // Pick a pilot on Approvals and their whole path loads: every badge in
+  // flightschool/badges.js, earned or not, and where it came from - the kiosk
+  // snapshot (data.json), decisions on file (/api/award), and website quiz /
+  // lesson / step progress (/api/progress). Both API reads are public; only
+  // Approve / Revoke sign, through decideBadge above. Grouped the way Flight
+  // School shows it: "Building to Tier N" prerequisites, then that checkpoint,
+  // and so on; bonus badges last. Fields are read defensively - a badge may
+  // gain `quiz` on a witnessed/bench badge (= quiz AND a mentor's approval).
+  var PP = { slug: null, name: '', awards: null, prog: null };
+  function pickPilot() {
+    var name = el('apPilot').value.trim(), s = FS.slug(name);
+    showHas();
+    if (s.length < 2) { el('pp').hidden = true; PP.slug = null; return; }
+    if (s === PP.slug) return;
+    PP.slug = s; PP.name = name; PP.awards = PP.prog = null;
+    el('pp').hidden = false; el('ppName').textContent = name + ' · progress';
+    el('ppMsg').textContent = 'Loading…'; el('ppList').textContent = ''; el('ppSum').textContent = '';
+    var q = encodeURIComponent(name);
+    Promise.all([
+      api('GET', '/api/award?pilot=' + q).then(function (j) { return j.awards || null; }),
+      api('GET', '/api/progress?pilot=' + q).then(function (j) { return j.progress || null; }),
+      ROSTER ? Promise.resolve() : fetch('../data.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { ROSTER = ROSTER || d; })
+    ]).then(function (r) {
+      if (PP.slug !== s) return;
+      PP.awards = r[0]; PP.prog = r[1]; el('ppMsg').textContent = ''; drawProgress();
+    }).catch(function (e) { if (PP.slug === s) { el('ppMsg').textContent = 'Could not load progress: ' + e.message; PP.slug = null; } });
+  }
+  // Everything known about one badge for the picked pilot. Mirrors the rules
+  // Flight School uses (kiosk wins; an approval counts; a revoke clears; a quiz
+  // at FS.PASS earns a quiz badge) so the console and the pilot see the same.
+  function badgeState(b) {
+    var rp = rosterPilot(PP.slug), pr = PP.prog || {}, aws = (PP.awards && PP.awards.badges) || {};
+    var lessons = pr.lessons || {}, aw = aws[b.id] || null;
+    var st = { kiosk: !!(rp && rp.badges && rp.badges.indexOf(b.id) >= 0), aw: aw,
+               approved: !!(aw && aw.status === 'earned'), revoked: !!(aw && aw.status === 'revoked'),
+               hours: rp ? (rp.totalMs || 0) / 3600000 : 0, bits: [] };
+    // quiz: the best of the per-badge quiz record and the quiz lesson's score
+    var best = 0;
+    if (b.quiz) {
+      var qq = pr.quizzes && pr.quizzes[b.id], ql = lessons[b.quiz];
+      best = Math.max(qq ? (+qq.best || 0) : 0, ql ? (+ql.score || 0) : 0);
+      st.quizPass = best >= FS.PASS;
+      st.bits.push(best ? 'quiz best ' + best + ' %' + (st.quizPass ? ' ✓' : ' (needs ' + FS.PASS + ')') : 'quiz not taken');
+    }
+    var ls = (b.lessons || []).filter(function (l) { return l && l.id; });
+    if (ls.length) st.bits.push('lessons ' + ls.filter(function (l) { return lessons[l.id] && lessons[l.id].status === 'complete'; }).length + '/' + ls.length);
+    if (Array.isArray(b.steps) && b.steps.length) {
+      var ticks = (pr.steps && pr.steps[b.id]) || {};
+      st.bits.push('steps ' + b.steps.filter(function (x, i) { return ticks[i]; }).length + '/' + b.steps.length);
+    }
+    if (Array.isArray(b.prep) && b.prep.length)
+      st.bits.push('prep drills ' + b.prep.filter(function (id) { return lessons[id] && lessons[id].status === 'complete'; }).length + '/' + b.prep.length);
+    if (b.minHours) st.bits.push(st.hours.toFixed(1) + ' of ' + b.minHours + ' h in the sim');
+    if (b.minTier != null) st.bits.push('Tier ' + b.minTier + ' pilots · on Tier ' + (rp && rp.tier != null ? rp.tier : '?'));
+    var mentorType = b.type === 'witnessed' || b.type === 'bench';
+    st.both = !!(b.quiz && mentorType);              // quiz AND a mentor's approval
+    if (st.kiosk) st.earned = true;
+    else if (st.revoked) st.earned = false;
+    else if (st.approved) st.earned = st.both ? !!st.quizPass : true;
+    else st.earned = b.type === 'knowledge' && !!st.quizPass;
+    if (st.earned && b.minHours && !st.kiosk && st.hours < b.minHours) { st.earned = false; st.held = 'approved · counts at ' + b.minHours + ' h'; }
+    if (!st.earned && st.approved && st.both && !st.quizPass) st.held = 'approved · quiz still needed';
+    return st;
+  }
+  function chip(cls, text) { var c = document.createElement('span'); c.className = 'pchip ' + cls; c.textContent = text; return c; }
+  function when(at) { return at ? new Date(at).toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' }) : ''; }
+  function progressRow(b, st, extra) {
+    var row = document.createElement('div'); row.className = 'prow' + (st.earned ? ' done' : '') + (b.checkpoint ? ' cp' : '');
+    var main = document.createElement('div'); main.className = 'pmain';
+    var nm = document.createElement('b'); nm.textContent = b.name;
+    var ty = document.createElement('span'); ty.className = 'ptype';
+    ty.textContent = (b.checkpoint ? 'checkpoint · ' : '') + ({ knowledge: 'quiz', bench: 'bench', witnessed: 'witnessed', auto: 'auto' }[b.type] || b.type || '') + (st.both ? ' + quiz' : '');
+    main.appendChild(nm); main.appendChild(ty);
+    var chips = document.createElement('div'); chips.className = 'pchips';
+    if (st.earned) chips.appendChild(chip('ok', 'earned'));
+    else if (st.held) chips.appendChild(chip('warn', st.held));
+    else if (st.revoked) chips.appendChild(chip('bad', 'revoked ' + when(st.aw.at)));
+    else chips.appendChild(chip('', 'not yet'));
+    if (st.kiosk) chips.appendChild(chip('src', 'kiosk'));
+    if (st.approved) chips.appendChild(chip('src', 'approved ' + when(st.aw.at)));
+    if (st.both) chips.appendChild(chip(st.quizPass ? 'src' : '', st.quizPass ? 'quiz ✓' : 'quiz ✗'));
+    else if (b.type === 'knowledge' && st.quizPass) chips.appendChild(chip('src', 'quiz ✓'));
+    if (st.revoked && st.earned) chips.appendChild(chip('bad', 'revoked ' + when(st.aw.at) + ' · ' + (ROSTER && st.aw.at > (ROSTER.generated || 0) ? 'kiosk not synced yet' : 'kiosk still shows it')));
+    main.appendChild(chips);
+    var det = document.createElement('div'); det.className = 'pdet';
+    det.textContent = st.bits.concat(extra || []).concat(st.aw && st.aw.note ? ['note: “' + st.aw.note + '”'] : []).join(' · ');
+    var acts = document.createElement('div'); acts.className = 'pacts';
+    var msg = document.createElement('div'); msg.className = 'pmsg muted small';
+    if (b.type !== 'auto') {
+      var ok = document.createElement('button'); ok.textContent = st.approved ? 'Re-approve' : 'Approve'; ok.className = st.approved ? '' : 'primary flush';
+      ok.onclick = function () { decideBadge(PP.name, b.id, 'earned', msg, ['console']); };
+      acts.appendChild(ok);
+    }
+    if (st.kiosk || st.approved || st.earned) {
+      var rv = document.createElement('button'); rv.textContent = 'Revoke'; rv.className = 'danger';
+      rv.onclick = function () { if (window.confirm('Revoke ' + b.name + ' from ' + PP.name + '? Only do this for a mistake.')) decideBadge(PP.name, b.id, 'revoked', msg, ['console']); };
+      acts.appendChild(rv);
+    }
+    row.appendChild(main); row.appendChild(acts); row.appendChild(det); row.appendChild(msg);
+    return row;
+  }
+  function drawProgress() {
+    var list = el('ppList'); list.textContent = '';
+    var rp = rosterPilot(PP.slug), states = {};
+    FS.BADGES.forEach(function (b) { states[b.id] = badgeState(b); });
+    function head(text, sub) {
+      var h = document.createElement('h3'); h.className = 'phead'; h.textContent = text;
+      if (sub) { var s = document.createElement('span'); s.textContent = sub; h.appendChild(s); }
+      list.appendChild(h);
+    }
+    var shown = {}, counted = 0, earnedN = 0;
+    var tiers = FS.TIERS.filter(function (t) { return t.n >= 0; }).sort(function (a, b) { return a.n - b.n; });
+    tiers.forEach(function (t, i) {
+      var pre = FS.BADGES.filter(function (b) { return b.tier === t.id && !b.checkpoint; });
+      var cps = FS.BADGES.filter(function (b) { return b.tier === t.id && b.checkpoint; });
+      if (!pre.length && !cps.length) return;
+      var nextN = t.n + 1, done = pre.filter(function (b) { return states[b.id].earned; }).length;
+      if (pre.length) {
+        head('Building to Tier ' + nextN, done + ' of ' + pre.length + ' · ' + (t.gear || t.name));
+        pre.forEach(function (b) { shown[b.id] = 1; list.appendChild(progressRow(b, states[b.id])); });
+      }
+      cps.forEach(function (b) {
+        shown[b.id] = 1;
+        var left = pre.filter(function (m) { return !states[m.id].earned; });
+        head('Tier ' + nextN + ' checkpoint', left.length ? left.length + ' prerequisite' + (left.length === 1 ? '' : 's') + ' still open' : 'every prerequisite done ✓');
+        var row = progressRow(b, states[b.id], left.length ? ['still needs: ' + left.map(function (m) { return m.name; }).join(', ')] : []);
+        if (left.length && !states[b.id].earned) {
+          var w = document.createElement('div'); w.className = 'pwarn';
+          w.textContent = 'Prerequisites not done - you can still file an approval (you will be asked to confirm), but it will not count until they are.';
+          row.insertBefore(w, row.querySelector('.pdet'));
+        }
+        list.appendChild(row);
+      });
+    });
+    FS.BADGES.forEach(function (b) { if (FS.counted(b) && shown[b.id]) { counted++; if (states[b.id].earned) earnedN++; } });
+    var bonus = FS.BADGES.filter(function (b) { return !shown[b.id]; });
+    if (bonus.length) {
+      head('Bonus badges', 'any order · not counted');
+      bonus.forEach(function (b) { list.appendChild(progressRow(b, states[b.id])); });
+    }
+    el('ppSum').textContent = earnedN + ' of ' + counted + ' counted badges' +
+      ' · ' + bonus.filter(function (b) { return states[b.id].earned; }).length + ' bonus' +
+      (rp ? ' · Tier ' + (rp.tier != null ? rp.tier : '?') + ' at the kiosk · ' + (Math.round((rp.totalMs || 0) / 360000) / 10) + ' h in the sim'
+          : ' · not on the kiosk roster (no snapshot badges or hours)') +
+      (PP.prog && PP.prog.updated ? ' · website activity ' + when(PP.prog.updated) : '');
   }
 
   // ---------------------------------------------------------------- photo review (2026-10-08)
@@ -365,14 +526,17 @@
         s.textContent = badges.length ? badges.map(badgeName).join(' · ')
                                       : (Math.round((p.totalMs || 0) / 360000) / 10) + ' h in the sim · no badges published by the kiosk';
         div.appendChild(b); div.appendChild(s); box.appendChild(div);
+        div.title = 'Show ' + p.name + '’s progress';
+        div.onclick = function () { el('apPilot').value = p.name; pickPilot(); el('pp').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
       });
       el('apRosterNote').textContent = (any ? 'From the kiosk\'s last published snapshot (' + (d.generatedIso || '').slice(0, 16).replace('T', ' ') + ').'
-        : 'The kiosk is not publishing badges yet (Flight School v2, Phase 3). Hours shown instead.') + ' Type a name above to see the instructor decisions on file for them.';
+        : 'The kiosk is not publishing badges yet (Flight School v2, Phase 3). Hours shown instead.') + ' Pick a name above (or click one here) to see their whole path and edit it.';
     }).catch(function (e) { el('apRosterNote').textContent = 'Could not load data.json: ' + e.message; });
   }
 
   // ---------------------------------------------------------------- boot
   el('app').hidden = false;
+  drawApprovals();   // no key needed to build it; filing a decision still signs with the password
   el('go').onclick = signIn;
   el('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') signIn(); });
   el('refresh').onclick = loadStatus;
