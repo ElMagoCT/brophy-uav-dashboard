@@ -30,9 +30,6 @@ body{margin:0;background-color:var(--paper);color:var(--ink);font-family:var(--f
 #paper-bg .vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 45% 32%,rgba(255,255,255,.42) 0%,rgba(255,255,255,0) 48%),radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 55%,rgba(120,100,60,.13) 100%)}
 .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:28px 20px 64px}
 
-nav.crumbs{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--font-mono);font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
-nav.crumbs a{color:var(--ink-soft);text-decoration:none}
-nav.crumbs a:hover,nav.crumbs a[aria-current]{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
 
 header.title{background-color:var(--glass);border:1.5px solid var(--line-hard);border-radius:var(--r);box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px 24px;align-items:flex-end;justify-content:space-between}
 .title h1{font-family:var(--font-sketch);font-weight:700;font-size:clamp(34px,7vw,58px);line-height:.95;margin:0;letter-spacing:.5px}
@@ -40,7 +37,7 @@ header.title{background-color:var(--glass);border:1.5px solid var(--line-hard);b
 .title .sub{font-family:var(--font-mono);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px}
 .stamp{font-family:var(--font-hand);font-size:19px;color:var(--rust);transform:rotate(-3deg);border:2.5px solid var(--rust);border-radius:6px;padding:3px 11px;display:inline-block;margin-top:12px;opacity:.9}
 
-/* ---------- pilot picker ---------- */
+/* ---------- flying as ---------- */
 .pilot{background-color:var(--glass-2);border:1.5px solid var(--line-hard);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 18px;min-width:300px;flex:1;max-width:460px}
 .pilot .k{font-family:var(--font-mono);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
 .pilot .who{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:4px}
@@ -49,13 +46,6 @@ header.title{background-color:var(--glass);border:1.5px solid var(--line-hard);b
 .pilot .next{font-size:14.5px;color:var(--ink-soft);margin-top:8px;line-height:1.35}
 .pilot .next b{color:var(--ink);font-weight:600}
 .linkbtn{font-family:var(--font-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;background:none;border:0;color:var(--rust);cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:0}
-.picker{display:none;margin-top:12px;border-top:1px dashed var(--line-hard);padding-top:12px}
-.picker.open{display:block}
-.picker input{font:inherit;font-size:16px;width:100%;padding:9px 12px;border:1.5px solid var(--line-hard);border-radius:7px;background:var(--glass);color:var(--ink)}
-.picker .names{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;max-height:150px;overflow:auto}
-.picker .names button{font-family:var(--font-mono);font-size:13px;letter-spacing:.06em;background:var(--paper-2);border:1px solid var(--line-hard);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--ink)}
-.picker .names button:hover{background:var(--glass-2)}
-.picker .hint{font-size:13.5px;color:var(--ink-soft);margin-top:8px}
 
 section{margin-top:30px}
 .eyebrow{display:flex;align-items:baseline;gap:12px;margin:0 2px 12px}
@@ -192,16 +182,14 @@ footer a{color:var(--ink)}
 @media (max-width:900px){.how{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:600px){.wrap{padding:18px 13px 52px}header.title{padding:18px 16px}.how{grid-template-columns:1fr}.pilot{min-width:0;max-width:none}.tier .gate,.group .gate{margin-left:0}}
 </style>
+<link rel="stylesheet" href="../site.css">
 </head>
 <body>
 <div id="paper-bg" aria-hidden="true"><div class="grid"></div><div class="grid-fine"></div><div class="vignette"></div></div>
 <div class="wrap">
 
-  <nav class="crumbs" aria-label="Site">
-    <a href="../">Flight lab</a>
-    <a href="./" aria-current="page">Flight School</a>
-    <a href="../posters/">Posters</a>
-  </nav>
+  <nav class="crumbs" aria-label="Site"></nav>
+  <script src="../site.js"></script>
 
   <header class="title">
     <div>
@@ -213,11 +201,6 @@ footer a{color:var(--ink)}
       <div class="k">Flying as</div>
       <div class="who"><span class="nm none" id="pName">nobody yet</span><button class="linkbtn" id="pChange" type="button">pick a pilot</button></div>
       <div class="next" id="pNext">Pick your name and this page remembers where you are.</div>
-      <div class="picker" id="picker">
-        <input id="pInput" type="text" placeholder="Type your first name and last initial, e.g. Micah T." autocomplete="off">
-        <div class="names" id="pNames"></div>
-        <div class="hint">Same name you use at the kiosk, so the two line up. No password: progress only ever goes forward, so there is nothing to protect. Lessons and ticks you do here follow your name to the kiosk and your other devices.</div>
-      </div>
     </div>
   </header>
 
@@ -293,7 +276,6 @@ function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch
 function setPilot(name) {
   pilot = name ? { name: name.trim(), slug: FS.slug(name) } : null;
   lsSet(LS.pilot, pilot);
-  $('picker').classList.remove('open');
   SERVER = null; AWARDS = null; SUBS = null; LOADED = {}; render(); pullServer(); pullAwards(); pullSubs();
 }
 function pullAwards() {
@@ -707,7 +689,7 @@ $('tiers').addEventListener('click', function (e) {
   var card = e.target.closest ? e.target.closest('.badge') : null;
   if (!card) return;
   if (step) {
-    if (!pilot) { $('picker').classList.add('open'); $('pInput').focus(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    if (!pilot) { SiteNav.open(); return; }
     var id = card.getAttribute('data-id'), i = +step.getAttribute('data-step');
     var p = progress(); p[id] = p[id] || { steps: {} }; p[id].steps = p[id].steps || {};
     p[id].steps[i] = !p[id].steps[i]; p[id].updated = Date.now(); saveProgress(p);
@@ -719,16 +701,10 @@ $('tiers').addEventListener('click', function (e) {
   var want = !card.classList.contains('open'), top = card.offsetTop, sib = card.parentNode.children;
   for (var k = 0; k < sib.length; k++) if (sib[k].offsetTop === top) sib[k].classList.toggle('open', want);
 });
-$('pChange').onclick = function () { $('picker').classList.toggle('open'); if ($('picker').classList.contains('open')) $('pInput').focus(); };
-$('pInput').addEventListener('keydown', function (e) { if (e.key === 'Enter' && this.value.trim().length >= 2) setPilot(this.value); });
-$('pInput').addEventListener('input', drawNames);
-function drawNames() {
-  var q = FS.slug($('pInput').value), box = $('pNames'), names = (DATA && DATA.pilots ? DATA.pilots.map(function (p) { return p.name; }) : []);
-  box.innerHTML = names.filter(function (n) { return !q || FS.slug(n).indexOf(q) >= 0; }).slice(0, 40)
-    .map(function (n) { return '<button type="button" data-n="' + esc(n) + '">' + esc(n) + '</button>'; }).join('') +
-    (q && $('pInput').value.trim().length >= 2 ? '<button type="button" data-n="' + esc($('pInput').value.trim()) + '">+ new: ' + esc($('pInput').value.trim()) + '</button>' : '');
-}
-$('pNames').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setPilot(b.getAttribute('data-n')); });
+/* The profile lives in the site bar now (site.js, top right on every page);
+   the Flying-as box's button opens it, and a pick there re-renders this page. */
+$('pChange').onclick = function () { SiteNav.open(); };
+document.addEventListener('site:pilot', function (e) { setPilot(e.detail ? e.detail.name : null); });
 
 /* ---------- photo submissions (2026-10-08) ----------
    Any badge a mentor signs off can take a photo: the camera (the browser asks
@@ -760,7 +736,7 @@ function camShow(which) {
 }
 function camStop() { if (cam.stream) { cam.stream.getTracks().forEach(function (t) { t.stop(); }); cam.stream = null; } }
 function camOpen(badgeId) {
-  if (!pilot) { $('picker').classList.add('open'); $('pInput').focus(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  if (!pilot) { SiteNav.open(); return; }
   var b = FS.BADGES.filter(function (x) { return x.id === badgeId; })[0]; if (!b) return;
   cam.badge = b; cam.data = null;
   $('camTitle').textContent = 'Photo for ' + b.name; $('camNote').value = ''; $('camMsg').textContent = '';
@@ -875,8 +851,8 @@ render(); pullServer(); pullAwards(); pullSubs();
    while the tab is hidden; the picker list is left alone while it is open. */
 function pullData(first) {
   fetch('../data.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
-    DATA = d; if (first || !$('picker').classList.contains('open')) drawNames(); render();
-  }).catch(function () { if (first) drawNames(); });
+    DATA = d; render();
+  }).catch(function () {});
 }
 pullData(true);
 setInterval(function () { if (document.hidden) return; pullData(false); pullServer(); pullAwards(); pullSubs(); }, 60 * 1000);

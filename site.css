@@ -1,0 +1,62 @@
+/* Shared by every page, loaded AFTER the page's own <style> (2026-10-10).
+   1. a lighter desk: the page background and its grid. The tan and white
+      boxes on it (title banner, cards) are deliberately untouched.
+   2. the site bar from site.js: Home / Progression / Resources + profile. */
+
+body{background-color:#f8f5ee}
+#paper-bg .grid{opacity:.18}
+#paper-bg .grid-fine{opacity:.32}
+#paper-bg .vignette{background:radial-gradient(ellipse at 45% 32%,rgba(255,255,255,.5) 0%,rgba(255,255,255,0) 50%),
+  radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 60%,rgba(120,100,60,.07) 100%)}
+
+.sitebar{position:relative;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.sitenav{display:flex;gap:8px;flex-wrap:wrap}
+.sitenav a{font-family:var(--font-mono);font-size:14px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;
+  color:var(--ink);background:var(--glass-2,#fff);border:1.5px solid var(--line-hard);border-radius:999px;padding:8px 18px;
+  box-shadow:0 1px 0 rgba(45,69,101,.12),0 3px 10px rgba(45,69,101,.08)}
+.sitenav a:hover{border-color:var(--rust);color:var(--rust)}
+.sitenav a[aria-current]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+.sitme{position:relative;margin-left:auto}
+.mebtn{display:flex;align-items:center;gap:9px;cursor:pointer;font:inherit;color:var(--ink);text-align:left;
+  background:var(--glass-2,#fff);border:1.5px solid var(--rust);border-radius:999px;padding:5px 16px 5px 5px;
+  box-shadow:0 1px 0 rgba(45,69,101,.12),0 3px 10px rgba(45,69,101,.08)}
+.mebtn:hover{background:#fffaf2}
+.mebtn .av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;
+  font-family:var(--font-mono);font-size:14px;color:#fff;background:var(--rust)}
+.mebtn .av.none{background:var(--paper-2);color:var(--rust);font-size:17px;border:1.5px dashed var(--rust)}
+.mebtn .t{display:flex;flex-direction:column;line-height:1.1}
+.mebtn b{font-family:var(--font-mono);font-weight:400;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--rust)}
+.mebtn small{font-size:14px;font-weight:600;color:var(--ink)}
+
+.mepanel{position:absolute;right:0;top:calc(100% + 8px);width:340px;max-width:calc(100vw - 26px);
+  background:var(--glass-2,#fff);border:1.5px solid var(--line-hard);border-radius:var(--r,10px);padding:14px 16px;
+  box-shadow:0 2px 0 rgba(45,69,101,.12),0 14px 34px rgba(45,69,101,.16)}
+.mepanel[hidden]{display:none}
+.mepanel .mh{font-family:var(--font-mono);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+.mepanel .mname{font-family:var(--font-sketch);font-weight:700;font-size:30px;line-height:1.05;margin:4px 0 10px}
+.mepanel input{font:inherit;font-size:16px;width:100%;box-sizing:border-box;margin-top:8px;padding:9px 12px;
+  border:1.5px solid var(--line-hard);border-radius:7px;background:var(--glass,#f3eee2);color:var(--ink)}
+.mepanel .names{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;max-height:190px;overflow:auto}
+.mepanel .names button{font-family:var(--font-mono);font-size:13px;letter-spacing:.06em;background:var(--paper-2);
+  border:1px solid var(--line-hard);border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--ink)}
+.mepanel .names button:hover{border-color:var(--rust)}
+.mepanel .names button.new{border-style:dashed;color:var(--rust)}
+.mepanel .mhint{font-size:13.5px;color:var(--ink-soft);margin-top:8px;line-height:1.4}
+.mstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.mstats div{background:var(--paper-2);border-radius:7px;padding:7px 8px;text-align:center}
+.mstats b{display:block;font-family:var(--font-mono);font-weight:400;font-size:17px}
+.mstats span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.mgo{display:block;text-align:center;text-decoration:none;font-family:var(--font-mono);font-size:14px;letter-spacing:.12em;
+  text-transform:uppercase;color:#fff;background:var(--rust);border-radius:8px;padding:9px 12px}
+.mgo:hover{filter:brightness(1.08)}
+.mrow{display:flex;justify-content:space-between;margin-top:10px}
+.mlink{font:inherit;font-size:14px;background:none;border:0;padding:4px 0;cursor:pointer;color:var(--ink-soft);
+  text-decoration:underline;text-underline-offset:3px}
+.mlink:hover{color:var(--rust)}
+
+@media (max-width:600px){
+  .sitenav a{padding:7px 12px;font-size:12.5px;letter-spacing:.1em}
+  .mebtn .t small{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
+@media (max-width:600px){ .sitme{order:-1;flex-basis:100%;display:flex;justify-content:flex-end} .mepanel{right:0} }

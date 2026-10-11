@@ -13,22 +13,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Cabin+Sketch:wght@400;700&family=Architects+Daughter&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#f2ece0;--paper-2:#eae2d1;--ink:#1f3350;--ink-soft:#546881;--rust:#8f3d12;
-  --line:rgba(31,51,80,.20);--line-hard:rgba(31,51,80,.42);--glass:#f3eee2;--glass-2:#ffffff;
+  --paper:#f2ece0;--paper-2:#eae2d1;--ink:#2d4565;--ink-soft:#62768e;--rust:#b0532a;
+  --line:rgba(45,69,101,.20);--line-hard:rgba(45,69,101,.42);--glass:#f3eee2;--glass-2:#ffffff;
   --font-sketch:'Cabin Sketch','Architects Daughter',cursive;--font-hand:'Architects Daughter','Segoe Print',cursive;
   --font-mono:'Share Tech Mono','Consolas',monospace;--font-body:'Barlow','Segoe UI',system-ui,sans-serif;
-  --r:10px;--shadow:0 1px 0 rgba(31,51,80,.14),0 6px 18px rgba(31,51,80,.07);
+  --r:10px;--shadow:0 1px 0 rgba(45,69,101,.14),0 6px 18px rgba(45,69,101,.07);
 }
 *{box-sizing:border-box}
 body{margin:0;background-color:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5;min-height:100vh}
 #paper-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
 #paper-bg .grid{position:absolute;inset:0;opacity:.28;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
-#paper-bg .grid-fine{position:absolute;inset:0;opacity:.5;background-image:linear-gradient(rgba(31,51,80,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(31,51,80,.10) 1px,transparent 1px);background-size:7px 7px}
+#paper-bg .grid-fine{position:absolute;inset:0;opacity:.5;background-image:linear-gradient(rgba(45,69,101,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(45,69,101,.10) 1px,transparent 1px);background-size:7px 7px}
 #paper-bg .vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 45% 32%,rgba(255,255,255,.42) 0%,rgba(255,255,255,0) 48%),radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 55%,rgba(120,100,60,.13) 100%)}
 .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:28px 20px 64px}
-nav.crumbs{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--font-mono);font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
-nav.crumbs a{color:var(--ink-soft);text-decoration:none}
-nav.crumbs a:hover,nav.crumbs a[aria-current]{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
 header.title{background-color:var(--glass);border:1.5px solid var(--line-hard);border-radius:var(--r);box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px 24px;align-items:flex-end;justify-content:space-between}
 .title h1{font-family:var(--font-sketch);font-weight:700;font-size:clamp(34px,7vw,58px);line-height:.95;margin:0}
 .title .sub{font-family:var(--font-mono);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px}
@@ -62,16 +59,14 @@ footer a{color:var(--ink)}
 @media (max-width:760px){.notes{grid-template-columns:1fr}}
 @media (max-width:600px){.wrap{padding:18px 13px 52px}header.title{padding:18px 16px}}
 </style>
+<link rel="stylesheet" href="../site.css">
 </head>
 <body>
 <div id="paper-bg" aria-hidden="true"><div class="grid"></div><div class="grid-fine"></div><div class="vignette"></div></div>
 <div class="wrap">
 
-  <nav class="crumbs" aria-label="Site">
-    <a href="../">Flight lab</a>
-    <a href="../flightschool/">Flight School</a>
-    <a href="./" aria-current="page">Posters</a>
-  </nav>
+  <nav class="crumbs" aria-label="Site"></nav>
+  <script src="../site.js"></script>
 
   <header class="title">
     <div>

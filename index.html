@@ -371,9 +371,6 @@ footer a{color:var(--ink)}
 .msg.bad{color:var(--rust)}
 
 /* ---------- site nav + pilot path ---------- */
-nav.crumbs{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--font-mono);font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
-nav.crumbs a{color:var(--ink-soft);text-decoration:none}
-nav.crumbs a:hover,nav.crumbs a[aria-current]{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
 .tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .tier{display:flex;flex-direction:column;gap:5px;padding:14px 16px 13px;border-top:6px solid var(--c);text-decoration:none;color:var(--ink)}
 .tier:hover{background-color:#fffdf6}
@@ -406,6 +403,15 @@ nav.crumbs a:hover,nav.crumbs a[aria-current]{color:var(--ink);text-decoration:u
 .rung.top .climb{grid-template-columns:minmax(0,1fr) auto}
 .rung.top .climb .n{color:var(--c)}
 
+
+/* the picked profile, folded into the club's numbers and boards */
+.stat .you{margin-top:9px;padding-top:8px;border-top:1px dashed var(--line-hard);font-size:14.5px;color:var(--rust)}
+.stat .you b{font-family:var(--font-mono);font-weight:400;font-size:16px}
+.row.me{background:#fff6ec;box-shadow:inset 4px 0 0 var(--rust)}
+.row.me .who .nm{color:var(--rust)}
+.climb.me .nm{color:var(--rust)}
+.climb.me .nm::after{content:' (you)';font-weight:400;font-size:13px}
+
 /* ---------- responsive ---------- */
 @media (max-width:860px){
   .duo{grid-template-columns:1fr}
@@ -429,6 +435,7 @@ nav.crumbs a:hover,nav.crumbs a[aria-current]{color:var(--ink);text-decoration:u
   .btn,.more button{transition:background-color .14s ease}
 }
 </style>
+<link rel="stylesheet" href="site.css">
 </head>
 <body>
 
@@ -440,11 +447,8 @@ nav.crumbs a:hover,nav.crumbs a[aria-current]{color:var(--ink);text-decoration:u
 
 <div class="wrap">
 
-  <nav class="crumbs" aria-label="Site">
-    <a href="./" aria-current="page">Flight lab</a>
-    <a href="flightschool/">Flight School</a>
-    <a href="posters/">Posters</a>
-  </nav>
+  <nav class="crumbs" aria-label="Site"></nav>
+  <script src="site.js"></script>
 
   <header class="title">
     <div>
@@ -718,10 +722,34 @@ function renderStatus(){
   detail.innerHTML = line;
 }
 
+/* The club's numbers, with the picked profile's own folded into each card
+   (site.js, top right). Nobody picked: the club's numbers alone. */
 function renderStats(){
   var t = DATA.totals;
   var hoursTotal = Math.floor((t.clubMs || 0) / 3600000);
   var minsTotal  = Math.round(((t.clubMs || 0) % 3600000) / 60000);
+  var me = window.SiteNav && SiteNav.pilot();
+  var mine = me ? (DATA.pilots || []).filter(function (p) { return SiteNav.slug(p.name) === me.slug; })[0] || null : null;
+  var pilots = DATA.pilots || [];
+
+  function rankBy(key){
+    if (!mine || !(mine[key] > 0)) return 0;
+    return 1 + pilots.filter(function (p) { return (p[key] || 0) > mine[key]; }).length;
+  }
+  var you = [null, null, null, null];
+  if (me && !mine){
+    you[0] = 'you: no kiosk time yet';
+  } else if (mine){
+    var weekly = mine.weekMs != null;
+    var top = null, topMs = 0;
+    (DATA.sims || []).forEach(function (s) { var v = (mine.perSimMs || {})[s.id] || 0; if (v > topMs){ topMs = v; top = s.name; } });
+    you[0] = 'you: <b>' + hoursMinutes(mine.totalMs) + '</b>';
+    you[1] = rankBy('totalMs') ? 'you: <b>#' + rankBy('totalMs') + '</b> all-time' : 'you: unranked';
+    you[2] = !weekly ? 'you: last seen ' + (mine.lastSeen ? new Date(mine.lastSeen).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—')
+           : mine.weekMs > 0 ? 'you: <b>' + hoursMinutes(mine.weekMs) + '</b> &middot; #' + rankBy('weekMs')
+           : 'you: not yet this week';
+    you[3] = top ? 'your most-flown: <b>' + esc(top) + '</b>' : 'you: no sim time yet';
+  }
 
   var cells = [
     { n: hoursTotal + '<small>h ' + minsTotal + 'm</small>', k: 'Hours flown' },
@@ -732,8 +760,9 @@ function renderStats(){
 
   var html = '';
   for (var i = 0; i < cells.length; i++){
-    html += '<div class="card stat"><div class="n">' + cells[i].n + '</div>' +
-            '<div class="k">' + esc(cells[i].k) + '</div></div>';
+    html += '<div class="card stat' + (you[i] ? ' has-you' : '') + '"><div class="n">' + cells[i].n + '</div>' +
+            '<div class="k">' + esc(cells[i].k) + '</div>' +
+            (you[i] ? '<div class="you">' + you[i] + '</div>' : '') + '</div>';
   }
   $('stats').innerHTML = html;
 }
@@ -762,8 +791,12 @@ function renderBoard(){
 
   var top = rows[0][key] || 1;
   var html = '';
-  rows.slice(0, BOARD_SHOW).forEach(function (p, i){
+  var shown = rows.slice(0, BOARD_SHOW);
+  rows.forEach(function (p, i){ if (i >= BOARD_SHOW && isMe(p)) shown.push(p); });
+  shown.forEach(function (p){
+    var i = rows.indexOf(p);
     var medal = i < 3 ? ' medal m' + (i + 1) : '';
+    if (isMe(p)) medal += ' me';
     var meta = [];
     if (p.tier != null) meta.push('<span class="gs">Tier ' + p.tier + (p.badges ? ' · ' + countedBadges(p).length + ' badges' : '') + '</span>');
     if (weekly) meta.push(hoursMinutes(p.totalMs) + ' all-time');
@@ -782,6 +815,11 @@ function renderBoard(){
   if (rows.length > BOARD_SHOW)
     html += '<div class="more-pilots">+ ' + (rows.length - BOARD_SHOW) + ' more ' + (weekly ? 'flew this week' : 'pilots') + '</div>';
   $('board').innerHTML = html;
+}
+
+function isMe(p){
+  var me = window.SiteNav && SiteNav.pilot();
+  return !!(me && SiteNav.slug(p.name) === me.slug);
 }
 
 function countedBadges(p){
@@ -809,7 +847,7 @@ function renderLadder(){
     }).sort(function (a, b) { return b.have - a.have || (b.p.totalMs || 0) - (a.p.totalMs || 0); });
 
     /* a Tier 0 pilot with nothing yet is "starting out", not a row of empty pips */
-    var started = isTop ? rows : rows.filter(function (r) { return r.have > 0; });
+    var started = isTop ? rows : rows.filter(function (r) { return r.have > 0 || isMe(r.p); });
     var waiting = rows.length - started.length;
 
     html += '<div class="rung' + (isTop ? ' top' : '') + '" style="--c:' + t.color + '">' +
@@ -821,13 +859,13 @@ function renderLadder(){
     }
     started.slice(0, LADDER_SHOW).forEach(function (r){
       if (isTop){
-        html += '<div class="climb"><span class="nm">' + esc(r.p.name) + '</span><span class="n">Event Pilot</span></div>';
+        html += '<div class="climb' + (isMe(r.p) ? ' me' : '') + '"><span class="nm">' + esc(r.p.name) + '</span><span class="n">Event Pilot</span></div>';
         return;
       }
       var pips = '';
       for (var k = 0; k < reqs.length; k++) pips += '<i' + (k < r.have ? ' class="on"' : '') + '></i>';
       var ready = r.have === reqs.length;
-      html += '<div class="climb' + (ready ? ' ready' : '') + '" title="' +
+      html += '<div class="climb' + (ready ? ' ready' : '') + (isMe(r.p) ? ' me' : '') + '" title="' +
         esc(r.have + ' of ' + reqs.length + ' prerequisites' + (cp ? ' for ' + cp.name : '')) + '">' +
         '<span class="nm">' + esc(r.p.name) + '</span>' +
         '<span class="pips">' + pips + '</span>' +
@@ -1036,6 +1074,11 @@ function fail(msg){
   $('board').innerHTML = '<div class="msg bad">' + esc(msg) + '</div>';
   $('hours').innerHTML = '<div class="msg bad">' + esc(msg) + '</div>';
 }
+
+/* a profile picked or dropped in the site bar (site.js) */
+document.addEventListener('site:pilot', function (){
+  if (DATA){ renderStats(); renderBoard(); renderLadder(); }
+});
 
 function load(refresh){
   /* cache-bust so a CDN edge cache can never pin an old leaderboard */
