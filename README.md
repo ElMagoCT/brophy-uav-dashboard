@@ -98,8 +98,9 @@ change, Netlify rebuilds in a few seconds, and the site is current.
 | Path | What it is |
 |---|---|
 | `groundschool/` | the course app (same as the kiosk's), no longer a page of its own: Flight School opens one lesson at a time in a frame as `groundschool/?lesson=<id>`; the bare URL redirects to `flightschool/` |
-| `flightschool/` | **Flight School** — the whole badge curriculum (18 badges in four tiers plus 4 bonus badges that do not count; quiz, bench and witnessed badges; a time estimate on each), with a pilot picker so progress is per pilot. `badges.js` is the one badge catalogue the site uses; keep it in step with the kiosk's `config.json` catalogue. Progress merges the kiosk snapshot (earned badges, hours), Ground School lessons done on this device, and bench-step ticks made on the page |
-| `progression/` | redirect to `flightschool/` — kept because the printed posters' QR codes point here |
+| `pilot-path/` | **Pilot Path** (was Flight School until 2026-10-10) — the whole badge curriculum (18 badges in four tiers plus 4 bonus badges that do not count; quiz, bench and witnessed badges; a time estimate on each), with a pilot picker so progress is per pilot. `badges.js` is the one badge catalogue the site uses; keep it in step with the kiosk's `config.json` catalogue. Progress merges the kiosk snapshot (earned badges, hours), Ground School lessons done on this device, and bench-step ticks made on the page |
+| `flightschool/` | redirect to `pilot-path/` for old links; **`flightschool/badges.js` stays here** - it is still the badge catalogue |
+| `progression/` | redirect to `pilot-path/` — kept because the printed posters' QR codes point here |
 | `posters/` | the seven 11×17 posters above the simulators, as PDFs with PNG previews, plus a printing page. **Sources in `posters/src/`** — see below |
 | `admin/` | the instructor console (signed commands to the kiosks). `admin/#approvals` is the Flight School sign-off view: pick pilot + badge, Approve sends a signed `badge.award` to a kiosk |
 
@@ -249,7 +250,7 @@ plays.
 | `data.json` | the generated snapshot. **Do not hand-edit** — the next publish overwrites it |
 | `netlify.toml` | publish dir and cache headers. No build command, on purpose |
 | `robots.txt` | crawlable; the page is meant to be found |
-| `flightschool/`, `posters/` | the badge curriculum and the printed posters — see "The other pages" |
+| `pilot-path/`, `posters/` | the badge curriculum and the printed posters — see "The other pages" |
 | `publish.log` | what the exporter did. Git-ignored |
 | `.snapshot-hash` | local change-detection marker. Git-ignored |
 | `C:\BrophyUAV\Publish-Dashboard.ps1` | the exporter |

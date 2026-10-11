@@ -144,7 +144,7 @@
     d.setAttribute('style', 'position:fixed;left:0;right:0;bottom:0;z-index:9999;display:flex;justify-content:center;gap:14px;align-items:center;' +
       'padding:7px 14px;background:#1f3350;color:#f2ece0;font:14px/1.3 Barlow,system-ui,sans-serif;letter-spacing:.02em');
     d.innerHTML = '<span>' + (guest ? 'Progress is saved on this device as <b>Guest</b>.' : 'Lessons save on this device for <b></b>.') + '</span>' +
-      '<a href="../flightschool/" style="color:#f0a91a;font-family:\'Share Tech Mono\',monospace;font-size:13px;letter-spacing:.12em;text-transform:uppercase">' +
+      '<a href="../pilot-path/" style="color:#f0a91a;font-family:\'Share Tech Mono\',monospace;font-size:13px;letter-spacing:.12em;text-transform:uppercase">' +
       (guest ? 'Pick your pilot \u2192' : 'Flight School \u2192') + '</a>';
     if(!guest) d.querySelector('b').textContent = who.name;
     document.body.appendChild(d);

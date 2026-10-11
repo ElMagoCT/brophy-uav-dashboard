@@ -40,7 +40,7 @@
     return null;
   }
 
-  var page = /\/flightschool\//.test(location.pathname) ? 'prog'
+  var page = /\/(pilot-path|progression|flightschool)\//.test(location.pathname) ? 'prog'
            : /\/posters\//.test(location.pathname) ? 'res' : 'home';
 
   var bar = document.createElement('header');
@@ -48,7 +48,7 @@
   bar.innerHTML =
     '<nav class="sitenav" aria-label="Site">' +
       '<a href="' + BASE + '"' + (page === 'home' ? ' aria-current="page"' : '') + '>Home</a>' +
-      '<a href="' + BASE + 'flightschool/"' + (page === 'prog' ? ' aria-current="page"' : '') + '>Progression</a>' +
+      '<a href="' + BASE + 'pilot-path/"' + (page === 'prog' ? ' aria-current="page"' : '') + '>Pilot Path</a>' +
       '<a href="' + BASE + 'posters/"' + (page === 'res' ? ' aria-current="page"' : '') + '>Resources</a>' +
     '</nav>' +
     '<div class="sitme">' +
@@ -103,7 +103,7 @@
     panel.innerHTML =
       '<div class="mh">My profile</div>' +
       '<div class="mname">' + esc(p.name) + (r && r.tier != null ? ' <span class="mtier">Tier ' + r.tier + '</span>' : '') + '</div>' + stats +
-      '<a class="mgo" href="' + BASE + 'flightschool/">My progression &rarr;</a>' +
+      '<a class="mgo" href="' + BASE + 'pilot-path/">My Pilot Path &rarr;</a>' +
       '<div class="mrow"><button type="button" class="mlink" data-act="switch">Switch profile</button>' +
       '<button type="button" class="mlink" data-act="out">Sign out</button></div>';
   }
