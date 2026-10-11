@@ -31,7 +31,8 @@ body{margin:0;background-color:var(--paper);color:var(--ink);font-family:var(--f
 .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:28px 20px 64px}
 
 
-header.title{background-color:var(--glass);border:1.5px solid var(--line-hard);border-radius:var(--r);box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px 24px;align-items:flex-end;justify-content:space-between}
+header.title{background-color:var(--glass);border:1.5px solid var(--line-hard);border-radius:var(--r);box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px 24px;align-items:stretch;justify-content:space-between}
+.title>div:first-child{align-self:flex-end;margin-right:auto}
 .title h1{font-family:var(--font-sketch);font-weight:700;font-size:clamp(34px,7vw,58px);line-height:.95;margin:0;letter-spacing:.5px}
 .title h1 .a{color:var(--rust)}
 .title .sub{font-family:var(--font-mono);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px}
@@ -54,7 +55,30 @@ section{margin-top:30px}
 .eyebrow .hint{font-size:13.5px;color:var(--ink-soft)}
 .card{background-color:var(--glass-2);border:1.5px solid var(--line-hard);border-radius:var(--r);box-shadow:var(--shadow)}
 
-/* ---------- how it works ---------- */
+/* ---------- next up (in the title banner) ---------- */
+.upnext{background-color:var(--glass-2);border:1.5px solid var(--rust);border-radius:var(--r);box-shadow:var(--shadow);
+  padding:14px 18px;min-width:260px;flex:1;max-width:380px;display:flex;flex-direction:column;gap:4px}
+.upnext .k{font-family:var(--font-mono);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--rust)}
+.upnext .un{font-family:var(--font-sketch);font-weight:700;font-size:28px;line-height:1.05}
+.upnext .un.none{font-family:var(--font-body);font-weight:500;font-size:16px;color:var(--ink-soft)}
+.upnext .uv{font-size:14.5px;color:var(--ink-soft);line-height:1.35}
+.upnext .meter{margin-top:6px;height:7px;border-radius:4px;background:var(--paper-2);border:1px solid var(--line);overflow:hidden}
+.upnext .meter i{display:block;height:100%;background:var(--rust)}
+.ubtn{align-self:flex-start;margin-top:8px;font-family:var(--font-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+  color:#fff;background:var(--rust);border:0;border-radius:7px;padding:8px 14px;cursor:pointer}
+.ubtn:hover{filter:brightness(1.08)}
+
+/* ---------- how it works (a closed dropdown, 2026-10-10) ---------- */
+.howbox{margin-top:30px}
+.howbox>summary{cursor:pointer;list-style:none}
+.howbox>summary::-webkit-details-marker{display:none}
+.howbox>summary h2::before{content:'\25B8';display:inline-block;margin-right:8px;transition:transform .15s}
+.howbox[open]>summary h2::before{transform:rotate(90deg)}
+.howbox[open]>summary{margin-bottom:12px}
+
+/* the short description shows only on an opened card - closed, it made the
+   page a long scroll (2026-10-10) */
+.badge:not(.open) .do{display:none}
 .how{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .how .h{padding:14px 16px}
 .how .k{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--rust)}
@@ -180,7 +204,7 @@ footer{margin-top:34px;padding:16px 18px;background-color:var(--glass);border:1.
 footer a{color:var(--ink)}
 
 @media (max-width:900px){.how{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:600px){.wrap{padding:18px 13px 52px}header.title{padding:18px 16px}.how{grid-template-columns:1fr}.pilot{min-width:0;max-width:none}.tier .gate,.group .gate{margin-left:0}}
+@media (max-width:600px){.wrap{padding:18px 13px 52px}header.title{padding:18px 16px}.how{grid-template-columns:1fr}.pilot,.upnext{min-width:0;max-width:none;flex-basis:100%}.title>div:first-child{flex-basis:100%}.howbox>summary .hint{display:none}.tier .gate,.group .gate{margin-left:0}}
 </style>
 <link rel="stylesheet" href="../site.css">
 </head>
@@ -200,17 +224,18 @@ footer a{color:var(--ink)}
       <div class="who"><span class="nm none" id="pName">nobody yet</span><button class="linkbtn" id="pChange" type="button">pick a pilot</button></div>
       <div class="next" id="pNext">Pick your name and this page remembers where you are.</div>
     </div>
+    <div class="upnext" id="upNext"></div>
   </header>
 
-  <section aria-labelledby="hHead">
-    <div class="eyebrow"><h2 id="hHead">How it works</h2><span class="rule"></span></div>
+  <details class="howbox">
+    <summary class="eyebrow"><h2>How it works</h2><span class="rule"></span><span class="hint">quiz, bench and witnessed badges &middot; checkpoints</span></summary>
     <div class="how">
       <div class="card h"><div class="k">Quiz badges</div><div class="v">Short lessons, then a 10-question quiz - all opened right here from the badge card, with <b>Proceed to next</b> when each one ends. <b>80 % passes.</b> Retake as often as you like; your best score counts. The kiosk awards these by itself.</div></div>
       <div class="card h"><div class="k">Bench badges</div><div class="v">Step-by-step instructions on the kiosk or here. Tick the boxes as you go, then <b>submit a photo</b> of your work right from the card &mdash; a mentor reviews it and passes or fails it.</div></div>
       <div class="card h"><div class="k">Witnessed badges</div><div class="v">A mentor who holds the badge watches you do it against <b>the standard</b> written on the card. Prep drills open right from the card. <b>Spotter</b> and <b>Event Ops</b> are both: a short course and quiz first, then a mentor signs them off. Every card has optional resources.</div></div>
       <div class="card h"><div class="k">Checkpoints</div><div class="v">Tiers 1, 2 and 3 each open with a <b>checkpoint flight</b>. Its card lists the prerequisite badges and ticks each one as you earn it; when they are all done it gets a <b>big green &#10003;</b> and you may attempt it with a mentor watching. Pass it and <b>you are on that tier.</b> Bonus badges are extra, any time, and don&rsquo;t count toward your total &mdash; <b>Mentor</b> is for Tier 2 pilots.</div></div>
     </div>
-  </section>
+  </details>
 
   <section aria-labelledby="cHead">
     <div class="eyebrow"><h2 id="cHead">The whole curriculum</h2><span class="rule"></span><span class="hint" id="srcHint">tap a badge for details</span></div>
@@ -438,7 +463,17 @@ function countDone(bs) {
 function prereqs(i) { return FS.BADGES.filter(function (b) { return b.tier === 't' + i && !b.checkpoint; }); }
 function checkpointOf(i) { return FS.BADGES.filter(function (b) { return b.tier === 't' + i && b.checkpoint; })[0]; }
 function nextStep() {
-  if (!pilot) return 'Pick your name and this page remembers where you are.';
+  var n = nextUp();
+  if (!n) return 'Pick your name and this page remembers where you are.';
+  return n.line;
+}
+/* The one thing to do next: {line, badge, label, verb}. */
+function nextUp() {
+  if (!pilot) return null;
+  var r = nextUpRaw();
+  return r;
+}
+function nextUpRaw() {
   for (var i = 0; i < 3; i++) {
     var bs = prereqs(i), cp = checkpointOf(i), open = bs.filter(function (b) { return !status(b).earned; });
     if (open.length) {
@@ -446,12 +481,28 @@ function nextStep() {
       var verb = { knowledge: 'do the lessons and pass the quiz', bench: 'work through the steps at the kiosk', witnessed: 'ask a mentor to watch you', auto: 'keep flying the sim' }[pick.type];
       if (FS.both(pick)) verb = status(pick).quizPassed ? 'quiz passed - ask a mentor to watch you' : 'do the short course and pass the quiz, then a mentor signs it off';
       if (pick.minHours && status(pick).needHours) verb = 'log ' + pick.minHours + ' h in the sim, then ask a mentor to judge it';
-      return '<b>Building to Tier ' + (i + 1) + ' · ' + (bs.length - open.length) + ' of ' + bs.length + '</b> · next: <b>' + esc(pick.name) + '</b> — ' + verb + '.';
+      return { line: '<b>Tier ' + (i + 1) + ' path · ' + (bs.length - open.length) + ' of ' + bs.length + ' badges</b>',
+               badge: pick, label: 'Tier ' + (i + 1) + ' path', verb: verb };
     }
     if (cp && !status(cp).earned)
-      return '<b>Tier ' + (i + 1) + ' checkpoint ✓</b> · every prerequisite is done: <b>' + esc(cp.name) + '</b> — ask a mentor to watch your attempt.';
+      return { line: '<b>Tier ' + (i + 1) + ' path · every prerequisite done ✓</b>',
+               badge: cp, label: 'Tier ' + (i + 1) + ' checkpoint', verb: 'ask a mentor to watch your attempt' };
   }
-  return '<b>Event Pilot.</b> Every checkpoint passed. Bonus badges remain.';
+  return { line: '<b>Event Pilot.</b> Every checkpoint passed.', badge: null, label: 'Bonus badges', verb: 'every checkpoint passed - the bonus badges are left' };
+}
+function drawUpNext() {
+  var n = nextUp(), box = $('upNext');
+  if (!n) {
+    box.innerHTML = '<div class="k">Next up</div><div class="un none">Pick your profile to see your next badge.</div>' +
+      '<button type="button" class="ubtn" data-up="pick">Select profile</button>';
+    return;
+  }
+  var b = n.badge, s = b ? status(b) : null;
+  box.innerHTML = '<div class="k">Next up &middot; ' + esc(n.label) + '</div>' +
+    (b ? '<div class="un">' + esc(b.name) + '</div>' : '<div class="un">Bonus badges</div>') +
+    '<div class="uv">' + esc(n.verb.charAt(0).toUpperCase() + n.verb.slice(1)) + (b && b.est ? ' &middot; ' + esc(b.est) : '') + '</div>' +
+    (b && s && s.pct > 0 && !s.earned ? '<div class="meter"><i style="width:' + s.pct + '%"></i></div>' : '') +
+    '<button type="button" class="ubtn" data-up="' + (b ? b.id : 'el') + '">Open it &darr;</button>';
 }
 
 /* ---------- render ---------- */
@@ -460,6 +511,7 @@ function render() {
   $('pName').className = 'nm' + (pilot ? '' : ' none');
   $('pChange').textContent = pilot ? 'change' : 'pick a pilot';
   $('pNext').innerHTML = nextStep();
+  drawUpNext();
   var kp = kioskPilot();
   $('srcHint').textContent = !pilot ? 'tap a badge for details' :
     (kp ? (kp.badges ? 'earned badges and hours from the kiosk · ticks saved here' : 'hours from the kiosk · badges not published by the kiosk yet · ticks saved here')
@@ -469,7 +521,7 @@ function render() {
   var html = '';
   function head(cls, id, c, tn, nm, gear, d, gate) {
     return '<div class="' + cls + '" id="' + id + '" style="--c:' + c + '"><div class="th">' +
-      '<span class="tn">' + tn + '</span><span class="nm">' + esc(nm) + '</span>' +
+      (tn ? '<span class="tn">' + tn + '</span>' : '') + '<span class="nm">' + esc(nm) + '</span>' +
       '<span class="gear">' + esc(gear) + '</span>' +
       (pilot && d ? '<span class="prog' + (d.n === d.of ? ' done' : '') + '">' + d.n + ' / ' + d.of + '</span>' : '') +
       (gate ? '<span class="gate">' + esc(gate) + '</span>' : '') + '</div>';
@@ -480,8 +532,8 @@ function render() {
      anchors #t0..#t3 still land on "where Tier N is". */
   for (var i = 0; i < 3; i++) {
     var T = FS.TIERS[i], N = FS.TIERS[i + 1], bs = prereqs(i), cp = checkpointOf(i);
-    html += head('group', i === 0 ? 't0' : 'pre' + (i + 1), T.color, (i === 0 ? 'Tier 0 · start here' : 'Tier ' + i) + ' &rarr; Tier ' + (i + 1),
-                 'Building to Tier ' + (i + 1), 'You fly: ' + T.gear, countDone(bs), 'Then the Tier ' + (i + 1) + ' checkpoint ↓') + grid(bs) + '</div>';
+    html += head('group', i === 0 ? 't0' : 'pre' + (i + 1), T.color, '',
+                 'Tier ' + (i + 1) + ' path', 'You fly: ' + T.gear, countDone(bs), 'Then the Tier ' + (i + 1) + ' checkpoint ↓') + grid(bs) + '</div>';
     if (cp) html += head('tier', 't' + (i + 1), N.color, 'Tier ' + (i + 1), N.name, N.gear, null, 'Checkpoint') + card(cp, open) + '</div>';
   }
   var el = FS.TIERS.filter(function (t) { return t.id === 'el'; })[0];
@@ -702,6 +754,16 @@ $('tiers').addEventListener('click', function (e) {
 /* The profile lives in the site bar now (site.js, top right on every page);
    the Flying-as box's button opens it, and a pick there re-renders this page. */
 $('pChange').onclick = function () { SiteNav.open(); };
+$('upNext').addEventListener('click', function (e) {
+  var b = e.target.closest ? e.target.closest('[data-up]') : null;
+  if (!b) return;
+  var id = b.getAttribute('data-up');
+  if (id === 'pick') { SiteNav.open(); return; }
+  var to = id === 'el' ? $('el') : document.querySelector('.badge[data-id="' + id + '"]');
+  if (!to) return;
+  if (to.classList.contains('badge')) to.classList.add('open');
+  to.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
 document.addEventListener('site:pilot', function (e) { setPilot(e.detail ? e.detail.name : null); });
 
 /* ---------- photo submissions (2026-10-08) ----------

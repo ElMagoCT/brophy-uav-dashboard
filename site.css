@@ -57,7 +57,7 @@ body{background-color:#f8f5ee}
 
 @media (max-width:600px){
   .sitenav a{padding:7px 12px;font-size:12.5px;letter-spacing:.1em}
-  .mebtn .t small{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mebtn .t small{max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 @media (max-width:600px){ .sitme{order:-1;flex-basis:100%;display:flex;justify-content:flex-end} .mepanel{right:0} }
 /* the tier beside your name (button + profile panel) */
