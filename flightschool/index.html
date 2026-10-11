@@ -116,6 +116,11 @@ section{margin-top:30px}
 .btn:hover{background:var(--paper-2)}
 .btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .btn.primary:hover{background:#182740}
+.badge .res{border:1px dashed var(--line-hard);border-radius:7px;padding:7px 10px;margin-top:8px;font-size:13.5px}
+.badge .res b{font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:400;color:var(--ink-soft)}
+.badge .res ul{display:block;margin:4px 0 0;padding-left:16px;list-style:disc}
+.badge .res li{display:list-item}
+.badge .res a{color:var(--sky)}
 .approve{font-size:13.5px;color:var(--ink-soft);margin-top:8px;line-height:1.4}
 .approve b{color:var(--ink);font-weight:600}
 
@@ -203,7 +208,7 @@ footer a{color:var(--ink)}
     <div class="how">
       <div class="card h"><div class="k">Quiz badges</div><div class="v">Short lessons, then a 10-question quiz. <b>80 % passes.</b> Retake as often as you like; your best score counts. The kiosk awards these by itself.</div></div>
       <div class="card h"><div class="k">Bench badges</div><div class="v">Step-by-step instructions on the kiosk or here. Tick the boxes as you go, then <b>submit a photo</b> of your work right from the card &mdash; a mentor reviews it and passes or fails it.</div></div>
-      <div class="card h"><div class="k">Witnessed badges</div><div class="v">A mentor who holds the badge watches you do it against <b>the standard</b> written on the card. Prep drills are in Ground School.</div></div>
+      <div class="card h"><div class="k">Witnessed badges</div><div class="v">A mentor who holds the badge watches you do it against <b>the standard</b> written on the card. Prep drills are in Ground School. <b>Spotter</b> and <b>Event Ops</b> are both: a short course and quiz first, then a mentor signs them off. Every card has optional resources.</div></div>
       <div class="card h"><div class="k">Checkpoints</div><div class="v">Tiers 1, 2 and 3 each open with a <b>checkpoint flight</b>. Its card lists the prerequisite badges and ticks each one as you earn it; when they are all done it gets a <b>big green &#10003;</b> and you may attempt it with a mentor watching. Pass it and <b>you are on that tier.</b> Bonus badges are extra, any time, and don&rsquo;t count toward your total &mdash; <b>Mentor</b> is for Tier 2 pilots.</div></div>
     </div>
   </section>
@@ -394,6 +399,15 @@ function rawStatus(b) {
     out.detail = ticked + ' of ' + steps.length + ' steps ticked';
     return out;
   }
+  if (FS.both(b)) {         // 2026-10-10: lessons + quiz, then a mentor signs it off
+    var bl = (b.lessons || []).map(function (l) { return l.id; }), bd = 0;
+    bl.forEach(function (id) { var r = gp && gp.groundSchool && gp.groundSchool.lessons[id]; if (r && r.status === 'complete') bd++; });
+    var qb = quizBest(b, gp);
+    out.quizPassed = qb >= FS.PASS;
+    out.pct = out.quizPassed ? 60 : Math.round((bd + (qb > 0 ? 0.5 : 0)) / (bl.length + 1) * 55);
+    out.detail = out.quizPassed ? 'quiz ' + qb + ' · now a mentor watches you and signs it off' : (bd + ' of ' + (bl.length + 1) + ' parts' + (qb > 0 ? ' · best quiz ' + qb : '') + ' · quiz first, then a mentor');
+    return out;
+  }
   if (b.type === 'witnessed') {
     var prep = b.prep || [], pd = 0;
     prep.forEach(function (id) { var r = gp && gp.groundSchool && gp.groundSchool.lessons[id]; if (r && r.status === 'complete') pd++; });
@@ -402,6 +416,10 @@ function rawStatus(b) {
     return out;
   }
   return out;
+}
+function quizBest(b, gp) {
+  var q = gp && gp.groundSchool && b.quiz && gp.groundSchool.lessons[b.quiz];
+  return Math.max(q ? (q.score || 0) : 0, (SERVER && SERVER.quizzes && SERVER.quizzes[b.id]) ? (SERVER.quizzes[b.id].best || 0) : 0);
 }
 function countDone(bs) {
   var n = 0; bs.forEach(function (b) { if (status(b).earned) n++; });
@@ -418,6 +436,7 @@ function nextStep() {
     if (open.length) {
       var pick = open.filter(function (b) { return b.type === 'knowledge' || b.type === 'bench'; })[0] || open[0];
       var verb = { knowledge: 'do the lessons and pass the quiz', bench: 'work through the steps at the kiosk', witnessed: 'ask a mentor to watch you', auto: 'keep flying the sim' }[pick.type];
+      if (FS.both(pick)) verb = status(pick).quizPassed ? 'quiz passed - ask a mentor to watch you' : 'do the short course and pass the quiz, then a mentor signs it off';
       if (pick.minHours && status(pick).needHours) verb = 'log ' + pick.minHours + ' h in the sim, then ask a mentor to judge it';
       return '<b>Building to Tier ' + (i + 1) + ' · ' + (bs.length - open.length) + ' of ' + bs.length + '</b> · next: <b>' + esc(pick.name) + '</b> — ' + verb + '.';
     }
@@ -466,6 +485,7 @@ function render() {
 function card(b, open) {
   var s = status(b), col = { flight: 'var(--sky)', build: 'var(--amber)', know: 'var(--green)', crew: 'var(--violet)' }[b.track];
   var type = { knowledge: 'Quiz', bench: 'Bench', witnessed: 'Witnessed', auto: 'Automatic' }[b.type];
+  if (FS.both(b)) type = 'Quiz + ' + type.toLowerCase();
   var st = s.earned ? '<span class="st earned">earned' + (s.source === 'kiosk' ? ' · kiosk' : (s.source === 'web' ? ' · quiz passed' : (s.source === 'instructor' ? ' · signed off' : ''))) + '</span>' : (pilot && s.pct > 0 ? '<span class="st progress">' + s.pct + '%</span>' : '');
   var cp = b.checkpoint ? ' checkpoint' + (s.earned ? ' won' : (s.ready ? ' ready' : '')) : '';
   var main = '<div class="lab"><span class="type">' + type + '</span><span>' + esc(FS.TRACK[b.track]) + '</span></div>' +
@@ -514,6 +534,17 @@ function more(b, s) {
     h += '</ul>';
     h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done — passed by a mentor.' : 'submit a photo of your work below; a mentor reviews it and passes or fails it. A pass shows here within a minute.') + '</div>';
   } else if (b.type === 'witnessed') {
+    if (FS.both(b)) {
+      h += '<ul>';
+      (b.lessons || []).forEach(function (l) {
+        var r = gp && gp.groundSchool && gp.groundSchool.lessons[l.id], on = r && r.status === 'complete';
+        h += '<li><span class="tick' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><span>' + esc(l.t) + '</span></li>';
+      });
+      var qb2 = quizBest(b, gp);
+      h += '<li><span class="tick' + (qb2 >= FS.PASS ? ' on' : '') + '">' + (qb2 >= FS.PASS ? '✓' : '') + '</span><span>Quiz · 10 questions · ' + FS.PASS + ' % to pass' + (qb2 > 0 ? ' · best ' + qb2 : '') + '</span></li>';
+      h += '<li><span class="tick' + (s.earned ? ' on' : '') + '">' + (s.earned ? '✓' : '') + '</span><span>A mentor watches you and signs it off</span></li></ul>';
+      h += '<div class="act"><a class="btn primary" href="../groundschool/">Open the lessons &rarr;</a></div>';
+    }
     if (b.prep && b.prep.length) {
       h += '<ul>';
       b.prep.forEach(function (id) {
@@ -524,6 +555,11 @@ function more(b, s) {
     }
     h += '<div class="std"><b>The standard</b>' + esc(b.standard || '') + '</div>';
     h += '<div class="approve"><b>Approval:</b> ' + (s.earned ? 'done.' : (((b.minTier != null || b.minHours) && s.detail) ? esc(s.detail) + '. ' : '') + 'a mentor who holds this badge watches you, then signs it off in the instructor console.') + '</div>';
+  }
+  if (b.res && b.res.length) {
+    h += '<div class="res"><b>Optional resources</b><ul>' + b.res.map(function (r) {
+      return r.u ? '<li><a href="' + esc(r.u) + '" target="_blank" rel="noopener">' + esc(r.t) + ' &#8599;</a></li>' : '<li>Tip: ' + esc(r.tip) + '</li>';
+    }).join('') + '</ul></div>';
   }
   if (FS.photoOk(b)) h += photoBlock(b, s);
   if (b.type === 'auto') {

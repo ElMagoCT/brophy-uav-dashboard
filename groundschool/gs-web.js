@@ -81,7 +81,7 @@
      Fire-and-forget; the page never waits on it and a failure changes nothing
      locally. Guests are not mirrored - there is no name to file it under. */
   var QUIZ_BADGE = { saf:'safe-flight', bat:'battery-care', elc:'electrical-components', rad:'radio-protocol',
-                     evt:'event-ops' };   /* asp and emg quizzes retired 2026-10-06 */
+                     evt:'event-ops', spt:'spotter' };   /* asp and emg quizzes retired 2026-10-06; spt added 2026-10-10 */
   function push(lessonId, L){
     var who = pilot(); if(who.slug === 'guest') return;
     var lessons = {}; lessons[lessonId] = { status:L.status, score:L.score };

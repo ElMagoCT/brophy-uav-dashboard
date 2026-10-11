@@ -135,56 +135,58 @@ var GSPanels = (function(){
   /* ======================================================================
      gs-rul-03 - GO / NO-GO
      ====================================================================== */
-  /* THE MIDDLE BUCKET IS "NOT YET", NOT "FIX IT".
-     It used to be "Fix it first", which only makes sense when the problem is a
-     part on the aircraft. A person walking along the edge of the field is not
-     something you repair, and neither is an aircraft overhead - so with the old
-     labels those two items had no logical answer. "Not yet" covers both a thing
-     you mend and a situation you wait out, which is what the pile actually is.
-     Keep the three buckets meaning: nothing to change / something small changes
-     first / not today. */
+  /* TWO PILES, FIVE CARDS, BLACK AND WHITE (Micah, 2026-10-10).
+     Three piles (fly / not yet / no fly) were too ambiguous - a swollen pack
+     is "no fly" for that pack but "not yet" for the session - so it is now
+     FLY or NOT YET, and every card has one clear answer. Any wind is "not
+     yet". Five cards a run: two FLY and three NOT YET, shuffled. */
   var SCENARIOS = [
     { text:'One pack in the bag is visibly swollen. The shrink wrap is tight and domed.',
-      a:2, why:'That pack is finished, and waiting will not un-swell it. It does not get flown, it does not get charged, and it goes for proper disposal. A puffed cell has already vented gas inside itself.' },
-    { text:'You are new to this and the wind is steady 8 mph, gusting to 20.',
-      a:2, why:'Gusts near 20 move a light quad faster than a beginner can correct. Steady 8 on its own would be fine - it is the gap between 8 and 20 that catches you out, and that gap is not going to close in five minutes.' },
+      a:1, why:'That pack never flies again - swap to a good one, then go. A puffed cell has already vented gas inside itself.' },
+    { text:'The flags on the field are moving in a steady breeze.',
+      a:1, why:'Any wind is "not yet". Wait for it to drop, or ask a mentor whether it is fine for what you are flying.' },
     { text:'Your video is clean everywhere except the far end of the field, where it picks up light static.',
       a:0, why:'That is analog working exactly as designed, and it has just told you where your range ends. Nothing needs fixing. Fly, and treat that spot as the boundary.' },
     { text:'Two others are already flying on Raceband R1 and R5. You are set to R8.',
-      a:0, why:'R8 is 5917 MHz, R5 is 5806 and R1 is 5658 - your nearest neighbour is 111 MHz away, which is plenty. Channels were sorted on the ground, which is the whole point. Go.' },
-    { text:'Your 4S pack reads 16.6 V at rest and the props are clean and unmarked.',
-      a:0, why:'4.15 V a cell and nothing wrong with the aircraft. Not every flag is a stop - part of pre-flight is being able to say "this is fine" and mean it.' },
+      a:0, why:'R8 is 5917 MHz, R5 is 5806 and R1 is 5658 - your nearest neighbour is 111 MHz away, which is plenty. Go.' },
+    { text:'Your pack is charged, the props are clean, your spotter is ready and the area is clear.',
+      a:0, why:'Nothing to change. Part of pre-flight is being able to say "this is fine" and mean it. Call ARMING and go.' },
+    { text:'Indoors, calm air, a full pack, and your spotter has just said the room is clear.',
+      a:0, why:'Everything is in place. Fly.' },
     { text:'One prop has a small nick out of the trailing edge.',
-      a:1, why:'Props are the cheapest part on the aircraft and a nicked one is out of balance. Swap it - two minutes - rather than fly a vibration into your gyro. Then go.' },
-    { text:'Somebody is walking a dog along the far edge of the field.',
-      a:1, why:'Nothing to repair here, but do not launch into an unknown. Watch where they are heading, then set your flight area so the aircraft is never over them and never between you and them. Once you know that, fly.' },
+      a:1, why:'Swap it - two minutes - rather than fly a vibration into your gyro. Then go.' },
+    { text:'Somebody is walking a dog across the flying area.',
+      a:1, why:'Wait until they are out of the area. You never fly over people, and you land if somebody walks in.' },
     { text:'Another pilot has just landed and is walking out to collect their quad.',
-      a:1, why:'Nobody flies while somebody is downrange. Wait for the DOWN call and for them to be back behind the line, then go. This is the rule that stops the injuries.' },
+      a:1, why:'Nobody flies while somebody is out there. Wait for them to come back, then go.' },
     { text:'An aircraft you do not recognise is circling low over the field.',
-      a:1, why:'Land now and stay down - you always give way, and you have no idea what it is doing. But it is a wait, not the end of your session: once it has gone you can fly again.' },
+      a:1, why:'You always give way. Wait on the ground until it has gone.' },
     { text:'Your goggles have fogged and you can make out maybe half the picture.',
-      a:1, why:'Land, wipe them, go again. Flying on half a picture is how people fly into whatever was in the other half.' },
-    { text:'You are in goggles and your spotter has left for the rest of the session.',
-      a:2, why:'A visual observer is a requirement when you are in goggles, not a courtesy. With nobody to watch the aircraft you are done for today - unless somebody else takes the job. If you are already airborne, land now.' }
+      a:1, why:'Wipe them, then go. Flying on half a picture is how people fly into whatever was in the other half.' },
+    { text:'You are in goggles and your spotter has just left.',
+      a:1, why:'No spotter, no goggle flight. Wait until somebody else takes the job.' }
   ];
+  function pickFive(){
+    var fly = shuffle(SCENARIOS.filter(function(s){ return s.a === 0; })).slice(0, 2);
+    var wait = shuffle(SCENARIOS.filter(function(s){ return s.a === 1; })).slice(0, 3);
+    return shuffle(fly.concat(wait)).map(function(s){
+      return { text:s.text, opts:['Fly','Not yet'], a:s.a, why:' ' + s.why };
+    });
+  }
 
   function goNoGo(root, ctx){
-    return runCards(root, ctx, {
-      briefTitle:'Sort it',
-      briefBody:'Things that could happen before a flight. Each one goes in exactly one pile. <b>FLY</b> &mdash; nothing needs to change, go. <b>NOT YET</b> &mdash; one small thing changes first, then you go: mend a part, or wait for the field to clear. <b>NO FLY</b> &mdash; not today, and not with a workaround.',
+    var run = runCards(root, ctx, {
+      briefTitle:'Fly, or not yet?',
+      briefBody:'Five things that could happen before a flight. Each one goes in one pile. <b>FLY</b> &mdash; nothing needs to change, go. <b>NOT YET</b> &mdash; one thing changes first: swap a part, wait for the wind or for the area to clear.',
       unit:'SCENARIO',
-      items: shuffle(SCENARIOS).map(function(s){
-        return { text:s.text, opts:['Fly','Not yet','No fly'], a:s.a, why:' ' + s.why };
-      }),
-      pass:75,
+      items: pickFive(),
+      pass:80,
       outro:'The mistake is almost never putting something in the wrong pile. It is not sorting at all, and flying because the pack is charged and everyone is waiting.',
-      regenerate:function(){
-        return shuffle(SCENARIOS).map(function(s){
-          return { text:s.text, opts:['Fly','Not yet','No fly'], a:s.a, why:' ' + s.why };
-        });
-      },
+      regenerate:pickFive,
       extra:function(c,t){ return { scenariosRight:c, scenariosTotal:t }; }
     });
+    var d = root.querySelector('.drill'); if(d) d.classList.add('bw');
+    return run;
   }
 
   /* ======================================================================

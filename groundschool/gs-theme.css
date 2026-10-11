@@ -876,3 +876,15 @@ input[type=range]::-webkit-slider-thumb{
   #syllabus{grid-template-columns:1fr}
   .rcard{grid-template-columns:1fr;max-width:min(900px,92vw)}
 }
+
+/* Go / No-Go in black and white (Micah, 2026-10-10): two big plain buttons,
+   ink on white; the right answer fills black, a wrong pick is struck through. */
+.drill.bw .scen{background:#fff;border-color:#111;box-shadow:4px 4px 0 #111}
+.drill.bw .scen::before{border-color:rgba(0,0,0,.25)}
+.drill.bw .scen .sn{color:#111}
+.drill.bw .scen .st{color:#111}
+.drill.bw .sortbtns .minibtn.big{background:#fff;color:#111;border:2px solid #111;min-width:170px;font-size:19px;padding:14px 26px;letter-spacing:3px}
+.drill.bw .sortbtns .minibtn.big:hover{background:#111;color:#fff}
+.drill.bw .sortbtns .minibtn.go[disabled],.drill.bw .sortbtns .minibtn.go[disabled]:hover{background:#111;color:#fff;border-color:#111}
+.drill.bw .sortbtns .minibtn.danger[disabled],.drill.bw .sortbtns .minibtn.danger[disabled]:hover{background:#fff;color:#111;border-color:#111;text-decoration:line-through}
+.drill.bw .why{background:#fff;border-color:#111;color:#111}

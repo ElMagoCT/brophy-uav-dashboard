@@ -867,9 +867,13 @@ var GSApp = (function(){
          badge has been celebrated so the dash (on this kiosk or the other one)
          does not pop it up again. On the website gs-web.js answers that call
          from this device's storage. 2026-10-08. */
+      /* signoff modules (Spotter, Event Ops - 2026-10-10): the quiz is half the
+         badge; a mentor signs the rest off, so no badge celebration here. */
+      var MOD = null;
+      GS_MODULES.forEach(function(M){ if(M.code === S.lesson.def.mod) MOD = M; });
+      var SIGNOFF = !!(MOD && MOD.signoff);
       if(POOL && passed && (rec(S.lesson.def.id).score || 0) < S.passScore){
-        var bid = null;
-        GS_MODULES.forEach(function(M){ if(M.code === S.lesson.def.mod && M.badge) bid = M.badge; });
+        var bid = (MOD && MOD.badge && !SIGNOFF) ? MOD.badge : null;
         try{ if(window.FPVConfetti) FPVConfetti.burst(); }catch(e){}
         if(bid){
           try{ fetch(API + '/api/badges/celebrated', { method:'POST', headers:{'Content-Type':'application/json'},
@@ -881,7 +885,7 @@ var GSApp = (function(){
       var card = h('div','scorecard');
       card.appendChild(h('div','bigscore ' + (passed ? 'pass' : 'fail'), String(total)));
       card.appendChild(h('div','verdict ' + (passed ? 'pass' : 'fail'),
-        passed ? (POOL ? 'Badge earned' : 'Ground school passed') : 'Not yet — ' + S.passScore + ' to pass'));
+        passed ? (POOL ? (SIGNOFF ? 'Quiz passed' : 'Badge earned') : 'Ground school passed') : 'Not yet — ' + S.passScore + ' to pass'));
 
       var tab = h('table','rtab');
       tab.innerHTML =
@@ -892,7 +896,7 @@ var GSApp = (function(){
       card.appendChild(tab);
 
       var p = h('p','', passed
-        ? (POOL ? 'That badge is yours - no sign-off needed. Best score is kept, so a retake can only help.'
+        ? (POOL ? (SIGNOFF ? 'Quiz passed. The other half of this badge is a mentor watching you do it for real - ask one, and they sign it off.' : 'That badge is yours - no sign-off needed. Best score is kept, so a retake can only help.')
                 : 'That mark goes on your record and shows on the hangar leaderboard. Best score is kept, so a retake can only help.')
         : 'The questions reshuffle every attempt, so go back through whichever module let you down and come again. Only your best score is kept — a retake cannot cost you anything.');
       p.style.cssText = 'margin-top:20px;font-weight:400;font-size:17px;line-height:1.55;color:var(--ink)';

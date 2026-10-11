@@ -24,6 +24,12 @@
    Bench steps end in a PHOTO step: the pilot takes a picture on this site and
    a mentor passes or fails it in the console's Review tab.
 
+   2026-10-10: a witnessed badge may also carry lessons + a quiz (Spotter,
+   Event Ops): BOTH are needed - pass the quiz, then a mentor signs it off.
+   The quiz alone never earns it (kiosk Apply-QuizResult records the score
+   only). Every badge has optional resources (RES below): tips and links.
+   Mentor needs deep knowledge of the FAA rules - judged by an officer, no quiz.
+
    type: 'knowledge'  lessons + quiz at 80 %, earned by the kiosk itself
          'bench'      step checklist, a photo submitted here, a mentor reviews it
          'witnessed'  a mentor watches you do it and signs it off
@@ -51,9 +57,10 @@
       do: 'Log 5 hours in the simulator, then fly a checkride for a mentor: an orbit, a Split-S, gaps, and a finished race.', why: 'Acro muscle memory where crashes cost nothing, then proof of real control. Sim-only, so it can gate the first real flight.',
       prep: ['gs-fly-01', 'gs-fly-02', 'gs-fly-03', 'gs-fly-04'],
       standard: 'Only once the kiosk shows 5 h across the five flight sims (Ground School time does not count). Then a mentor watches you in Liftoff: a clean orbit around a gate, a Split-S, three gaps without a crash, and a finished race.' },
-    { id: 'spotter', tier: 't0', track: 'crew', type: 'witnessed', name: 'Spotter', est: 'about 1 h',
-      do: 'Run the pre-flight checklist, airspace check included; keep visual line of sight and call hazards. Do it before anything else - you will spot for others long before you fly.', why: 'FPV pilots can’t see around themselves.',
-      standard: 'Spot a real flight for a mentor: run the checklist aloud (including the B4UFLY / LAANC check for where you are standing), keep eyes on the aircraft the whole battery, call every person and obstacle before the pilot needs to know.' },
+    { id: 'spotter', quiz: 'gs-spt-quiz', tier: 't0', track: 'crew', type: 'witnessed', name: 'Spotter', est: 'about 1 h',
+      do: 'Do the short Spotter course and pass its quiz, then spot a real flight for a mentor: check the field, keep eyes on the aircraft and call hazards. Do it before anything else - you will spot for others long before you fly.', why: 'FPV pilots can’t see around themselves.',
+      lessons: [{ id: 'gs-spt-01', t: 'The spotter’s job' }, { id: 'gs-spt-02', t: 'What to call' }],
+      standard: 'Quiz passed first (80 %). Then spot a real flight for a mentor: check the field before the battery goes in, keep eyes on the aircraft the whole battery, and call every person and obstacle before the pilot needs to know. The mentor checks the airspace; you check the field.' },
     { id: 'safe-flight', quiz: 'gs-saf-quiz', tier: 't0', track: 'know', type: 'knowledge', name: 'Safe Flight', est: 'about 20 min',
       do: 'Know and follow the Brophy FPV safe-flight rules.', why: 'The baseline code of conduct for real hardware.',
       lessons: [{ id: 'gs-saf-01', t: "Who's flying, who's watching" }, { id: 'gs-saf-02', t: 'The Brophy FPV rules sheet' }, { id: 'gs-saf-03', t: 'Go / No-Go', drill: true }] },
@@ -100,8 +107,9 @@
     { id: 'faa-trust', tier: 't2', track: 'know', type: 'witnessed', name: 'FAA TRUST', est: 'about 30 min',
       do: 'Complete the free FAA TRUST certificate online (~20 min, cannot be failed).', why: 'Federal requirement for recreational flyers. Official.',
       standard: 'Submit a photo of your TRUST certificate below (or show the PDF to a mentor).' },
-    { id: 'event-ops', quiz: 'gs-evt-quiz', tier: 't2', track: 'know', type: 'knowledge', name: 'Event Ops', est: 'about 50 min',
-      do: 'Check the airspace and get permission to fly there; set up a flight zone, brief bystanders, keep flights away from crowds; demonstrate failsafe setup, flyaway response, LiPo fire procedure and incident reporting.', why: 'Ground work before flying at a game or rally - starting with whether you may fly there at all, since the campus sits under Sky Harbor’s Class B - and a plan for when something goes wrong.',
+    { id: 'event-ops', quiz: 'gs-evt-quiz', tier: 't2', track: 'know', type: 'witnessed', name: 'Event Ops', est: 'about 1.5 h',
+      do: 'Pass the Event Ops quiz, then show a mentor at a real setup: set up a flight zone, brief bystanders, keep flights away from crowds; demonstrate failsafe setup, flyaway response, LiPo fire procedure and incident reporting.',
+      standard: 'Quiz passed first (80 %). Then at a real setup a mentor watches you mark and brief the zone, set and test failsafe, and talk through a flyaway and a LiPo fire. The mentor checks the airspace and permission.', why: 'Ground work before flying at a game or rally - starting with whether you may fly there at all, since the campus sits under Sky Harbor’s Class B - and a plan for when something goes wrong.',
       lessons: [{ id: 'gs-asp-01', t: 'Class B, 400 ft and Sky Harbor' }, { id: 'gs-asp-02', t: 'B4UFLY, LAANC and TRUST' }, { id: 'gs-evt-01', t: 'The flight zone' }, { id: 'gs-evt-02', t: 'Briefing bystanders' }, { id: 'gs-evt-03', t: 'Pilot and spotter call-outs' }, { id: 'gs-emg-01', t: 'Failsafe: set it, test it' }, { id: 'gs-emg-02', t: 'Flyaway and lost video' }, { id: 'gs-emg-03', t: 'LiPo fire and injury' }, { id: 'gs-emg-04', t: 'The incident report' }, { id: 'gs-emg-05', t: 'Scenario drill', drill: true }] },
     { id: 'cinematography', tier: 't2', track: 'crew', type: 'witnessed', name: 'Cinematography', est: 'about 3 h',
       do: 'Write a shot list for a real event with a coach or moderator; frame a follow shot, an orbit and a reveal; deliver one usable clip.', why: 'Turns pilots into shooters for Best of Brophy who can work with other organizations professionally. Filming.',
@@ -127,9 +135,44 @@
       do: 'Run equipment check-in/out and a maintenance log for one semester.', why: 'Accountability for school-funded gear.',
       standard: 'A semester of the check-in/out sheet and maintenance log, reviewed by a mentor.' },
     { id: 'mentor', tier: 'el', track: 'crew', type: 'witnessed', name: 'Mentor', est: 'about a month', minTier: 2,
-      do: 'Be a Tier 2 pilot, then coach a new member through their first two badges. A mentor who holds a badge may sign it off for others, with officer approval.', why: 'The program trains its own replacements, and defines who may sign badges off.',
-      standard: 'Tier 2 pilots only: every Tier 0 and Tier 1 badge earned. Then two badges earned by someone you coached, confirmed by them and an officer. With an officer’s approval, a mentor signs off the badges they hold and is given the instructor password.' }
+      do: 'Be a Tier 2 pilot with deep knowledge of the FAA rules, then coach a new member through their first two badges. A mentor who holds a badge may sign it off for others, with officer approval.', why: 'The program trains its own replacements, and defines who may sign badges off. Mentors watch for anything that would break the law, so club rules can stay simple.',
+      standard: 'Tier 2 pilots only: every Tier 0 and Tier 1 badge earned. Deep knowledge of the FAA rules for recreational flying (most mentors hold a licence) - an officer judges it, no quiz. Then two badges earned by someone you coached, confirmed by them and an officer. With an officer’s approval, a mentor signs off the badges they hold and is given the instructor password.' }
   ];
+
+  /* Optional resources for every badge (2026-10-10): { tip } is a flying tip,
+     { t, u } a link (checked live 2026-10-10). Never required. */
+  var LIFT = { t: 'Liftoff on Steam (the main club sim)', u: 'https://store.steampowered.com/app/410340/' };
+  var JB = { t: 'Joshua Bardwell on YouTube - FPV how-tos', u: 'https://www.youtube.com/@JoshuaBardwell' };
+  var FAA = { t: 'FAA: recreational flyers', u: 'https://www.faa.gov/uas/recreational_flyers' };
+  var LEARN = { t: 'Oscar Liang: learn to fly FPV - tips and practice', u: 'https://oscarliang.com/learn-flying-fpv-multirotors/' };
+  var BF = { t: 'Betaflight docs', u: 'https://betaflight.com/docs/wiki' };
+  var RES = {
+    'proficient-flight': [{ tip: 'Short sessions every day beat one long one - 20 minutes, then a break.' }, { tip: 'Look where you want to go, not at the gate you are passing; your hands follow your eyes.' }, { tip: 'Learn throttle first: a steady height through a turn is most of acro.' }, LIFT, LEARN],
+    'spotter': [{ tip: 'Stand next to the pilot, a little behind, where you can see the aircraft and the pilot can hear you.' }, { tip: 'Say what you see in two words or fewer.' }, FAA],
+    'safe-flight': [{ tip: 'When you are not sure something is allowed, ask a mentor first.' }, FAA, { t: 'Academy of Model Aeronautics safety code (PDF)', u: 'https://www.modelaircraft.org/sites/default/files/documents/100.pdf' }],
+    'battery-care': [{ tip: 'Write the date on a pack when it goes to storage.' }, { tip: 'Land at 3.5 V a cell, not at the beep - packs last much longer.' }, { t: 'Oscar Liang: LiPo battery guide', u: 'https://oscarliang.com/lipo-battery-guide/' }],
+    'building': [{ tip: 'Lay the parts out in order on a tray first; tiny screws love carpet.' }, { tip: 'Take a photo before you unplug anything - it is your wiring diagram.' }, { t: 'BetaFPV Meteor75 Pro (manual and parts)', u: 'https://betafpv.com/products/meteor75-pro-brushless-whoop-quadcopter' }, { t: 'Oscar Liang: how to build an FPV drone', u: 'https://oscarliang.com/how-to-build-fpv-drone/' }],
+    'betaflight': [{ tip: 'Save a backup ("diff all") before you change anything.' }, BF, { t: 'Betaflight in the browser (app.betaflight.com)', u: 'https://app.betaflight.com' }, { t: 'Oscar Liang: Betaflight OSD setup', u: 'https://oscarliang.com/betaflight-osd/' }],
+    'line-of-sight': [{ tip: 'Keep the nose pointed away from you at first, so left is left.' }, { tip: 'Small stick moves; a whoop answers fast.' }, { t: 'Oscar Liang: from angle mode to acro', u: 'https://oscarliang.com/tiny-whoop/' }],
+    'tiny-whoop': [{ tip: 'Fly the same figure-eight in the sim the day before.' }, { tip: 'If it goes wrong, disarm - a whoop falling is fine.' }, LEARN],
+    'soldering': [{ tip: 'Clean, tinned tip; heat the pad and the wire together for 2-3 seconds.' }, { tip: 'A good joint is shiny and shaped like a little volcano.' }, { t: 'Oscar Liang: soldering for FPV drones', u: 'https://oscarliang.com/soldering-guide/' }],
+    'electrical-components': [{ tip: 'Start with the battery voltage and prop size; everything else follows.' }, { t: 'Oscar Liang: choosing FPV motors', u: 'https://oscarliang.com/motors/' }, { t: 'Oscar Liang: propellers', u: 'https://oscarliang.com/propellers/' }],
+    'radio-protocol': [{ tip: 'Antennas never point straight at the drone - the side of an antenna is where it is strongest.' }, { t: 'ExpressLRS documentation', u: 'https://www.expresslrs.org/' }, { t: 'Oscar Liang: FPV video systems compared', u: 'https://oscarliang.com/fpv-system/' }],
+    'field-repair': [{ tip: 'Check the simple things first: battery, props, binding, switch positions.' }, { t: 'Betaflight: arming and why it will not arm', u: 'https://betaflight.com/docs/wiki/guides/current/Arming-Sequence-And-Safety' }, JB],
+    'freestyle-flight': [{ tip: 'Learn each trick high and slow in the sim, then lower and faster.' }, { tip: 'Watch the trick at half speed on YouTube and copy the sticks, not the camera.' }, LIFT, JB],
+    'pavo-flight': [{ tip: 'The Pavo is heavier than the Meteor - give it more room to stop.' }, { t: 'BetaFPV Pavo20 Pro', u: 'https://betafpv.com/products/pavo20-pro-brushless-whoop-quadcopter' }],
+    'faa-trust': [{ t: 'FAA TRUST (the free test)', u: 'https://www.faa.gov/uas/recreational_flyers/knowledge_test_updates' }, FAA],
+    'event-ops': [{ tip: 'Walk the zone before the event with the organiser.' }, { t: 'FAA B4UFLY', u: 'https://www.faa.gov/uas/getting_started/b4ufly' }, FAA],
+    'cinematography': [{ tip: 'Smooth beats fast: slow throttle changes, wide gentle turns.' }, { t: 'Oscar Liang: making FPV video cinematic', u: 'https://oscarliang.com/cinematic-fpv/' }],
+    'indoor-proximity': [{ tip: 'Lower your rates for tight spaces.' }, { tip: 'Fly the hallway course in the sim first.' }],
+    'racing': [{ tip: 'Smooth is fast: clean lines beat full throttle.' }, { t: 'MultiGP (drone racing league)', u: 'https://www.multigp.com' }],
+    'event-pilot': [{ tip: 'Fly a practice battery at the venue before people arrive.' }, { tip: 'Agree the LAND call with your spotter before take-off.' }],
+    'editing': [{ tip: 'Cut on the action; 30 seconds of the best beats 3 minutes of everything.' }, { t: 'DaVinci Resolve (free editor)', u: 'https://www.blackmagicdesign.com/products/davinciresolve' }],
+    'tuning': [{ tip: 'Change one thing at a time and fly the same line after each change.' }, { t: 'Betaflight PID tuning guide', u: 'https://betaflight.com/docs/wiki/guides/current/PID-Tuning-Guide' }, { t: 'Oscar Liang: Blackbox', u: 'https://oscarliang.com/blackbox/' }],
+    'fleet-steward': [{ tip: 'Check gear in and out every time, even for five minutes.' }],
+    'mentor': [{ tip: 'Let the new pilot do it; you only talk.' }, FAA]
+  };
+  B.forEach(function (b) { b.res = RES[b.id] || []; });
 
   var LESSON_TITLES = {
     'gs-rul-01': "Who's flying, who's watching", 'gs-rul-02': 'Where you may fly', 'gs-rul-03': 'Go / No-Go',
@@ -148,5 +191,7 @@
     /* the other badges of a checkpoint's tier */
     mates: function (b) { return B.filter(function (x) { return x !== b && x.tier === b.tier && !x.checkpoint; }); },
     /* a photo can be submitted for any badge a mentor signs off */
-    photoOk: function (b) { return b.type === 'bench' || b.type === 'witnessed'; } };
+    photoOk: function (b) { return b.type === 'bench' || b.type === 'witnessed'; },
+    /* quiz AND a mentor's sign-off (2026-10-10) */
+    both: function (b) { return !!b.quiz && b.type !== 'knowledge'; } };
 })();
